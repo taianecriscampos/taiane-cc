@@ -11,6 +11,8 @@ const cases = defineCollection({
 	loader: glob({ base: "./src/content/cases", pattern: "**/[^_]*.{md,mdx}" }),
 	schema: z.object({
 		titulo: z.string().min(1),
+		/** Uma linha para a lista de projetos da página inicial. */
+		chamada: z.string().min(1).max(120),
 		/** Até 3 frases: quem, o quê, resultado (ADR 0002). */
 		resumo: z.string().min(1).max(400),
 		empresa: z.string().min(1),
