@@ -1,6 +1,6 @@
 ---
 /**
- * Página inicial. Ordem de leitura: abertura, projetos, textos, sobre e "Vamos conversar?".
+ * Página inicial. Ordem de leitura: abertura, projetos, artigos, sobre e "Vamos conversar?".
  * O rodapé vem do LayoutBase.
  */
 import { getCollection } from "astro:content";
@@ -40,10 +40,10 @@ const projetos: Entrada[] = cases.map(({ id, data }) => ({
 		vazio="Os projetos entram aqui em breve."
 	/>
 	<ListaDeEntradas
-		id="textos"
-		rotulo="Textos"
+		id="artigos"
+		rotulo="Artigos"
 		entradas={textos}
-		vazio="Os textos entram aqui em breve."
+		vazio="Os artigos entram aqui em breve."
 	/>
 	<Sobre />
 	<Contato />

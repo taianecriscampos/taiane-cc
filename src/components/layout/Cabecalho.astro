@@ -1,13 +1,17 @@
 ---
 /**
  * Cabeçalho de todas as páginas: fixo no topo, translúcido, sem linha embaixo.
- * À esquerda, o nome leva ao início. À direita, os links: as seções da página inicial,
- * ou, nos cases, as seções do próprio case.
- * Em telas estreitas, os links ficam num painel aberto pelo botão de menu. O painel usa o
- * recurso nativo de popover do navegador: abre e fecha com teclado, toque e Esc, sem script.
- * O único script fecha o painel quando a pessoa escolhe um link.
+ * Esquerda: o nome leva ao início. Centro: a ilha. Direita: o modelo de trabalho com o ponto
+ * verde (no celular ele desce para a faixa de baixo da abertura, por falta de espaço).
+ *
+ * A ilha é uma cápsula escura com o nome da seção atual. Ao clicar, ela cresce e vira a lista
+ * das seções (morph: o recorte da cápsula se abre até o painel, com uma mola leve). Escolher
+ * uma seção rola até ela e a cápsula volta ao tamanho pequeno, sem mola. Esc fecha e devolve
+ * o foco ao botão. Aberta pelo teclado, abre e fecha sem animação.
+ * Nos cases, a lista traz as seções do próprio case.
  */
 import { perfil } from "../../dados/perfil";
+import Disponibilidade from "../ui/Disponibilidade.astro";
 
 export interface LinkDoCabecalho {
 	texto: string;
@@ -18,74 +22,163 @@ interface Props {
 	links?: LinkDoCabecalho[];
 	/** Nome da navegação para o leitor de tela. */
 	rotulo?: string;
-	/** "computador" troca o painel pelos links só a partir de 1200 px, para listas longas. */
-	quebra?: "tablet" | "computador";
+	/** O que a cápsula mostra antes da primeira seção. */
+	inicio?: string;
 }
 
 const {
 	links = [
 		{ texto: "Projetos", href: "/#projetos" },
-		{ texto: "Textos", href: "/#textos" },
+		{ texto: "Artigos", href: "/#artigos" },
 		{ texto: "Sobre", href: "/#sobre" },
 	],
 	rotulo = "Principal",
-	quebra = "tablet",
+	inicio = "Início",
 } = Astro.props;
 ---
 
-<header class="cabecalho" data-quebra={quebra}>
+<header class="cabecalho">
 	<div class="cabecalho__barra envoltorio">
 		<a class="link cabecalho__nome" href="/">
 			{perfil.nome}
 		</a>
 
-		<nav class="cabecalho__nav" aria-label={rotulo}>
-			<ul class="cabecalho__links" role="list">
-				{links.map((link) => (
-					<li>
-						<a class="link" href={link.href}>
-							{link.texto}
-						</a>
-					</li>
-				))}
-			</ul>
+		<nav class="ilha" aria-label={rotulo} data-ilha data-inicio={inicio}>
+			<button class="ilha__botao" type="button" aria-expanded="false" aria-controls="ilha-painel">
+				<span class="so-leitor-de-tela">Menu, seção atual: </span>
+				<span class="ilha__atual" data-atual>
+					{inicio}
+				</span>
+				<svg
+					class="ilha__seta"
+					viewBox="0 0 20 20"
+					width="16"
+					height="16"
+					aria-hidden="true"
+					focusable="false"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path d="M5 8l5 5 5-5"></path>
+				</svg>
+			</button>
+
+			<div class="ilha__painel" id="ilha-painel">
+				<ul class="ilha__links" role="list">
+					{links.map((link) => (
+						<li>
+							<a class="link ilha__link" href={link.href}>
+								{link.texto}
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
 		</nav>
 
-		<button class="cabecalho__menu" type="button" popovertarget="menu-painel" aria-label="Menu">
-			<svg
-				viewBox="0 0 20 20"
-				width="20"
-				height="20"
-				aria-hidden="true"
-				focusable="false"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="1.5"
-				stroke-linecap="round"
-			>
-				<path d="M3.5 7h13M3.5 13h13"></path>
-			</svg>
-		</button>
+		<div class="cabecalho__status">
+			<Disponibilidade />
+		</div>
 	</div>
-
-	<nav id="menu-painel" class="cabecalho__painel envoltorio" popover aria-label={rotulo}>
-		<ul class="cabecalho__painel-links" role="list">
-			{links.map((link) => (
-				<li>
-					<a class="link" href={link.href}>
-						{link.texto}
-					</a>
-				</li>
-			))}
-		</ul>
-	</nav>
 </header>
 
 <script>
-	const painel = document.getElementById("menu-painel");
-	painel?.addEventListener("click", (evento) => {
-		if ((evento.target as HTMLElement).closest("a")) painel.hidePopover();
-	});
+	const ilha = document.querySelector<HTMLElement>("[data-ilha]");
+	const botao = ilha?.querySelector<HTMLButtonElement>(".ilha__botao");
+	const painel = ilha?.querySelector<HTMLElement>(".ilha__painel");
+	const atual = ilha?.querySelector<HTMLElement>("[data-atual]");
+
+	if (ilha && botao && painel && atual) {
+		const aberta = () => ilha.hasAttribute("data-aberta");
+
+		// O recorte fechado tem o tamanho e o lugar exatos da cápsula, para o painel crescer dela.
+		const medirRecorte = () => {
+			const topo = botao.offsetTop - painel.offsetTop;
+			const esquerda = botao.offsetLeft - painel.offsetLeft;
+			const direita = painel.offsetWidth - esquerda - botao.offsetWidth;
+			const baixo = painel.offsetHeight - topo - botao.offsetHeight;
+			painel.style.setProperty(
+				"--ilha-recorte",
+				`inset(${topo}px ${direita}px ${baixo}px ${esquerda}px round ${botao.offsetHeight / 2}px)`,
+			);
+		};
+
+		const abrir = (instantaneo: boolean) => {
+			ilha.toggleAttribute("data-instantaneo", instantaneo);
+			medirRecorte();
+			void painel.offsetWidth; // aplica o recorte fechado antes de abrir
+			ilha.setAttribute("data-aberta", "");
+			botao.setAttribute("aria-expanded", "true");
+		};
+
+		const fechar = (instantaneo: boolean, devolverFoco = false) => {
+			if (!aberta()) return;
+			ilha.toggleAttribute("data-instantaneo", instantaneo);
+			ilha.removeAttribute("data-aberta");
+			botao.setAttribute("aria-expanded", "false");
+			if (devolverFoco) botao.focus();
+		};
+
+		// detail 0: o clique veio do teclado (Enter ou espaço), então sem animação.
+		botao.addEventListener("click", (evento) => {
+			if (aberta()) fechar(evento.detail === 0);
+			else abrir(evento.detail === 0);
+		});
+
+		painel.addEventListener("click", (evento) => {
+			if ((evento.target as HTMLElement).closest("a")) fechar(false);
+		});
+
+		document.addEventListener("keydown", (evento) => {
+			if (evento.key === "Escape" && aberta()) fechar(true, true);
+		});
+
+		document.addEventListener("pointerdown", (evento) => {
+			if (aberta() && !ilha.contains(evento.target as Node)) fechar(false);
+		});
+
+		ilha.addEventListener("focusout", (evento) => {
+			if (aberta() && !ilha.contains(evento.relatedTarget as Node | null)) fechar(true);
+		});
+
+		// Seção atual: a que cruza a faixa do meio da tela.
+		const inicio = ilha.dataset.inicio ?? "";
+		const linksDaIlha = [...painel.querySelectorAll<HTMLAnchorElement>("a")];
+		const secoes = linksDaIlha
+			.map((link) => {
+				const id = decodeURIComponent(link.hash.slice(1));
+				return { link, alvo: id ? document.getElementById(id) : null };
+			})
+			.filter((s): s is { link: HTMLAnchorElement; alvo: HTMLElement } => s.alvo !== null);
+
+		const marcar = (texto: string, link?: HTMLAnchorElement) => {
+			atual.textContent = texto;
+			for (const l of linksDaIlha) {
+				if (l === link) l.setAttribute("aria-current", "location");
+				else l.removeAttribute("aria-current");
+			}
+		};
+
+		if (secoes.length > 0) {
+			const visiveis = new Set<Element>();
+			const observador = new IntersectionObserver(
+				(registros) => {
+					for (const r of registros) {
+						if (r.isIntersecting) visiveis.add(r.target);
+						else visiveis.delete(r.target);
+					}
+					const ativa = secoes.filter((s) => visiveis.has(s.alvo)).at(-1);
+					if (ativa) marcar(ativa.link.textContent?.trim() ?? "", ativa.link);
+					else if (secoes[0].alvo.getBoundingClientRect().top > innerHeight / 2) marcar(inicio);
+				},
+				{ rootMargin: "-45% 0px -54% 0px" },
+			);
+			for (const s of secoes) observador.observe(s.alvo);
+		}
+	}
 </script>
 
 <style>
@@ -99,85 +192,147 @@ const {
 	}
 
 	.cabecalho__barra {
-		display: flex;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: center;
-		justify-content: space-between;
 		gap: var(--space-medio);
 		block-size: var(--cabecalho-altura);
 	}
 
 	.cabecalho__nome {
+		justify-self: start;
 		white-space: nowrap;
 	}
 
-	.cabecalho__links,
-	.cabecalho__painel-links {
-		padding: 0;
-		list-style: none;
-	}
-
-	.cabecalho__links {
-		display: flex;
-		gap: var(--space-medio);
-	}
-
-	.cabecalho__nav {
+	.cabecalho__status {
 		display: none;
+		justify-self: end;
 	}
 
-	.cabecalho__menu {
-		display: grid;
-		place-items: center;
-		inline-size: var(--alvo-toque);
-		block-size: var(--alvo-toque);
-		padding: 0;
+	/* ---------- ilha ---------- */
+	.ilha {
+		position: relative;
+		display: flex;
+		justify-content: end;
+	}
+
+	.ilha__botao {
+		position: relative;
+		z-index: 1;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-pequeno);
+		block-size: var(--ilha-altura);
+		padding-inline: var(--ilha-espaco) var(--space-medio);
 		border: 0;
 		border-radius: var(--radius-pilula);
-		background: transparent;
-		color: var(--color-texto);
+		background: var(--ilha-fundo);
+		color: var(--ilha-texto);
 		cursor: pointer;
+		user-select: none;
+		-webkit-user-select: none;
+		transition: transform var(--motion-duration-pressionar) var(--motion-ease-out);
 	}
 
-	/* Painel: logo abaixo do cabeçalho, na largura da tela. */
-	.cabecalho__painel {
-		position: fixed;
-		inset: var(--cabecalho-altura) 0 auto;
-		margin: 0;
-		max-width: none;
-		padding-block: var(--space-medio) var(--space-grande);
-		border: 0;
-		background: var(--painel-fundo);
-		color: var(--color-texto);
+	.ilha__botao:active {
+		transform: scale(var(--motion-escala-pressionado));
 	}
 
-	.cabecalho__painel-links {
+	.ilha__seta {
+		transition: transform var(--motion-duration-rapida) var(--motion-ease-out);
+	}
+
+	.ilha[data-aberta] .ilha__seta {
+		transform: rotate(180deg);
+	}
+
+	/*
+	 * Painel: fica atrás da cápsula, recortado no formato dela. Ao abrir, o recorte se abre até o
+	 * painel inteiro e o painel assenta de 95% para 100% com mola. Ao fechar, o contrário, mais
+	 * rápido e sem mola; no fim, some de vez (visibility), para os links saírem da ordem do Tab.
+	 */
+	.ilha__painel {
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-end: 0;
+		inline-size: min(var(--ilha-largura-aberta), 100vw - 2 * var(--space-margem-pagina));
+		padding: calc(var(--ilha-altura) + var(--space-pequeno)) var(--ilha-espaco) var(--ilha-espaco);
+		border-radius: var(--ilha-raio-aberta);
+		background: var(--ilha-fundo);
+		color: var(--ilha-texto);
+		clip-path: var(--ilha-recorte, inset(0 round var(--ilha-raio-aberta)));
+		transform: scale(var(--motion-escala-entrada));
+		transform-origin: top right;
+		visibility: hidden;
+		transition:
+			clip-path var(--motion-duration-rapida) var(--motion-ease-out),
+			transform var(--motion-duration-rapida) var(--motion-ease-out),
+			visibility 0s linear var(--motion-duration-rapida);
+	}
+
+	.ilha[data-aberta] .ilha__painel {
+		clip-path: inset(0 round var(--ilha-raio-aberta));
+		transform: none;
+		visibility: visible;
+		transition:
+			clip-path var(--motion-duration-abrir) var(--motion-ease-out),
+			transform var(--motion-duration-abrir) var(--motion-ease-mola),
+			visibility 0s;
+	}
+
+	.ilha__links {
 		display: grid;
-		gap: var(--space-medio);
+		gap: var(--space-pequeno);
 		justify-items: start;
+		padding: 0;
+		list-style: none;
 		font-size: var(--text-subtitulo);
 		letter-spacing: var(--tracking-subtitulo);
 		line-height: var(--leading-subtitulo);
+		opacity: 0;
+		transition: opacity var(--motion-duration-rapida) var(--motion-ease-out);
+	}
+
+	.ilha[data-aberta] .ilha__links {
+		opacity: 1;
+		transition-delay: calc(var(--motion-duration-rapida) / 4);
+	}
+
+	.ilha__link {
+		color: var(--ilha-texto);
+		--focus-cor: var(--ilha-focus-cor);
+	}
+
+	.ilha__link[aria-current]::after {
+		transform: scaleX(1);
+	}
+
+	/* Teclado: nada de animação, nem para abrir nem para fechar. */
+	.ilha[data-instantaneo] .ilha__painel,
+	.ilha[data-instantaneo] .ilha__links {
+		transition-duration: 0s;
+		transition-delay: 0s;
 	}
 
 	@media (min-width: 768px) {
-		.cabecalho[data-quebra="tablet"] .cabecalho__nav {
+		.cabecalho__barra {
+			grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+		}
+
+		.cabecalho__status {
 			display: block;
 		}
 
-		.cabecalho[data-quebra="tablet"] .cabecalho__menu,
-		.cabecalho[data-quebra="tablet"] .cabecalho__painel {
-			display: none;
-		}
-	}
-
-	@media (min-width: 1200px) {
-		.cabecalho[data-quebra="computador"] .cabecalho__nav {
-			display: block;
+		.ilha {
+			justify-content: center;
 		}
 
-		.cabecalho[data-quebra="computador"] .cabecalho__menu,
-		.cabecalho[data-quebra="computador"] .cabecalho__painel {
-			display: none;
+		/* No centro, o painel cresce para os dois lados a partir da cápsula. */
+		.ilha__painel {
+			inset-inline: 50% auto;
+			margin-inline-start: calc(var(--ilha-largura-aberta) / -2);
+			inline-size: var(--ilha-largura-aberta);
+			transform-origin: top center;
 		}
 	}
 </style>

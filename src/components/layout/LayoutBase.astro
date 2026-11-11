@@ -31,6 +31,8 @@ const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- Barra de status do celular na cor do fundo da página. -->
+		<meta name="theme-color" content="#fafafa" />
 		<title>{titulo}</title>
 		<meta name="description" content={descricao} />
 		{noindex && <meta name="robots" content="noindex, nofollow" />}
@@ -50,7 +52,7 @@ const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 			Pular para o conteúdo
 		</a>
 		{secoesDoCase ? (
-			<Cabecalho links={secoesDoCase} rotulo="Neste case" quebra="computador" />
+			<Cabecalho links={secoesDoCase} rotulo="Neste case" inicio="Visão geral" />
 		) : (
 			<Cabecalho />
 		)}

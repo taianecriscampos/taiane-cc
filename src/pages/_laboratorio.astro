@@ -9,6 +9,9 @@ import { createHash } from "node:crypto";
 import Abertura from "../components/blocos/Abertura.astro";
 import CabecalhoCase from "../components/blocos/CabecalhoCase.astro";
 import ListaDeEntradas from "../components/blocos/ListaDeEntradas.astro";
+import Disponibilidade from "../components/ui/Disponibilidade.astro";
+import Selo from "../components/ui/Selo.astro";
+import Seta from "../components/ui/Seta.astro";
 import LayoutBase from "../components/layout/LayoutBase.astro";
 import { cabecalhoPiorCaso, entradasPiorCaso, perfilPiorCaso } from "../dados/pior-caso";
 import tokensCss from "../styles/tokens.css?raw";
@@ -262,6 +265,21 @@ Astro.csp?.insertStyleHash(
 			</ul>
 		</section>
 
+		<section aria-labelledby="titulo-avulsos">
+			<h2 id="titulo-avulsos">Componentes avulsos</h2>
+			<p>
+				Setas: diagonal só para links externos, reta para páginas do site, para baixo para rolar na
+				mesma página. O selo saiu do site na direção de arte v3 e fica aqui até a rodada 2.
+			</p>
+			<div class="lab__avulsos">
+				<Seta direcao="diagonal" />
+				<Seta direcao="direita" />
+				<Seta direcao="baixo" />
+				<Disponibilidade />
+				<Selo id="lab-selo" />
+			</div>
+		</section>
+
 		<section aria-labelledby="titulo-pior-caso" id="pior-caso">
 			<h2 id="titulo-pior-caso">Pior caso</h2>
 			<p>
@@ -295,6 +313,13 @@ Astro.csp?.insertStyleHash(
 </LayoutBase>
 
 <style>
+	.lab__avulsos {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-grande);
+	}
+
 	.lab {
 		display: grid;
 		gap: var(--space-secao);

@@ -1,15 +1,17 @@
 ---
 /**
- * Abertura: ocupa a altura da tela menos o cabeçalho, com topo e base afastados.
- * Topo: a frase como título e o retrato com o selo próprio sobre o canto inferior esquerdo.
- * Base: seta para Projetos e "Me encontre no LinkedIn".
+ * Abertura: ocupa a altura da tela menos o cabeçalho.
+ * No meio, centralizados na vertical: a frase em caixa alta e condensada (eixo de largura da
+ * Google Sans Flex) e o retrato grande, de cantos arredondados.
+ * Faixa de baixo: a especialidade com seta para baixo (leva a Projetos) e o LinkedIn com seta
+ * diagonal. No celular, o modelo de trabalho com o ponto verde também fica nesta faixa.
+ * A caixa alta vem do CSS: no HTML o texto continua normal, e o leitor de tela lê a frase certa.
  */
 import { Image } from "astro:assets";
 import retrato from "../../assets/taiane-retrato.png";
 import { perfil as perfilPadrao, type Perfil } from "../../dados/perfil";
+import Disponibilidade from "../ui/Disponibilidade.astro";
 import LinkComSeta from "../ui/LinkComSeta.astro";
-import Selo from "../ui/Selo.astro";
-import Seta from "../ui/Seta.astro";
 
 interface Props {
 	perfil?: Perfil;
@@ -23,30 +25,31 @@ const Titulo = `h${nivel}` as const;
 ---
 
 <section class="abertura envoltorio" aria-labelledby={`${idBase}-titulo`}>
-	<div class="abertura__topo">
+	<div class="abertura__meio">
 		<Titulo id={`${idBase}-titulo`} class="abertura__frase">
 			{perfil.frase}
 		</Titulo>
-		<div class="abertura__retrato">
-			<Image
-				src={retrato}
-				alt={`Retrato de ${perfil.nome}: cabelo escuro na altura dos ombros, com mechas grisalhas, e óculos de armação redonda e fina, sobre fundo claro.`}
-				widths={[207, 414]}
-				sizes="207px"
-				loading="eager"
-				fetchpriority="high"
-			/>
-			<div class="abertura__selo">
-				<Selo id={`${idBase}-selo`} />
-			</div>
-		</div>
+		<Image
+			class="abertura__retrato"
+			src={retrato}
+			alt={`Retrato de ${perfil.nome}: cabelo escuro na altura dos ombros, com mechas grisalhas, e óculos de armação redonda e fina, sobre fundo claro.`}
+			widths={[320, 480, 640, 960]}
+			sizes="(min-width: 1200px) 30vw, (min-width: 768px) 38vw, 70vw"
+			loading="eager"
+			fetchpriority="high"
+		/>
 	</div>
 
-	<div class="abertura__base">
-		<a class="abertura__descer" href="#projetos">
-			<Seta direcao="baixo" tamanho="grande" />
-			<span class="so-leitor-de-tela">Ir para Projetos</span>
-		</a>
+	<div class="abertura__faixa">
+		<LinkComSeta
+			href="#projetos"
+			texto={perfil.especialidade}
+			direcao="baixo"
+			complemento="ir para Projetos"
+		/>
+		<div class="abertura__status">
+			<Disponibilidade texto={perfil.modalidade} />
+		</div>
 		<LinkComSeta href={perfil.linkedin} texto="Me encontre no LinkedIn" />
 	</div>
 </section>
@@ -55,77 +58,89 @@ const Titulo = `h${nivel}` as const;
 	.abertura {
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
 		gap: var(--space-bloco);
 		min-block-size: calc(100svh - var(--cabecalho-altura));
-		padding-block: var(--space-bloco) var(--space-grande);
+		padding-block: var(--space-grande);
 	}
 
-	.abertura__topo {
+	.abertura__meio {
+		flex: 1;
 		display: grid;
+		align-content: center;
 		gap: var(--space-bloco);
 	}
 
 	.abertura__frase {
 		font-size: var(--text-abertura);
+		font-stretch: var(--fonte-largura-condensada);
 		letter-spacing: var(--tracking-abertura);
 		line-height: var(--leading-titulo);
+		text-transform: uppercase;
 	}
 
-	/* No celular, o retrato recua 32 px para o selo não sair da tela. */
 	.abertura__retrato {
-		position: relative;
-		justify-self: start;
-		margin-inline-start: var(--space-maior);
-	}
-
-	.abertura__retrato img {
-		inline-size: var(--retrato-largura);
-		block-size: var(--retrato-altura);
+		inline-size: min(100%, 70vw);
+		aspect-ratio: var(--retrato-proporcao);
 		object-fit: cover;
 		object-position: 50% 30%;
 		border-radius: var(--retrato-raio);
 	}
 
-	.abertura__selo {
-		position: absolute;
-		inset-inline-start: var(--selo-deslocamento);
-		inset-block-end: var(--selo-deslocamento);
-	}
-
-	.abertura__base {
+	/* No celular, a faixa usa o texto pequeno para a especialidade caber numa linha com a seta. */
+	.abertura__faixa {
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: var(--space-medio);
+		gap: var(--space-pequeno) var(--space-medio);
 	}
 
-	.abertura__descer {
-		border-radius: var(--radius-pilula);
+	.abertura__status {
+		flex-basis: 100%;
+		order: -1;
 	}
 
-	@media (hover: hover) {
-		.abertura__descer:hover :global(.seta__icone) {
+	@media (hover: hover) and (pointer: fine) {
+		.abertura__faixa :global(a[href="#projetos"]:hover .seta__icone) {
 			transform: translateY(var(--space-fio));
 		}
 	}
 
 	@media (min-width: 768px) {
-		.abertura__topo {
+		.abertura__meio {
 			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
 			column-gap: var(--grade-espaco);
-			align-items: start;
+			align-items: center;
 		}
 
+		.abertura__frase {
+			grid-column: 1 / span 7;
+		}
+
+		.abertura__retrato {
+			grid-column: 8 / -1;
+			inline-size: 100%;
+		}
+
+		.abertura__faixa {
+			font-size: var(--text-corpo);
+			line-height: var(--leading-corpo);
+		}
+
+		.abertura__status {
+			display: none;
+		}
+	}
+
+	@media (min-width: 1200px) {
 		.abertura__frase {
 			grid-column: 1 / span 8;
 		}
 
 		.abertura__retrato {
 			grid-column: 9 / -1;
-			justify-self: end;
-			margin-inline-start: 0;
 		}
 	}
 </style>

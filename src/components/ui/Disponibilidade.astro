@@ -1,0 +1,64 @@
+---
+/**
+ * Modelo de trabalho com o ponto verde de "online", que pulsa devagar e sem parar.
+ * O pulso é um anel que cresce e some (só transform e opacity). Com redução de movimento,
+ * o ponto fica parado. O ponto é decorativo: o texto ao lado diz o mesmo.
+ */
+import { perfil } from "../../dados/perfil";
+
+interface Props {
+	texto?: string;
+}
+
+const { texto = perfil.modalidade } = Astro.props;
+---
+
+<p class="disponibilidade">
+	<span class="disponibilidade__ponto" aria-hidden="true"></span>
+	{texto}
+</p>
+
+<style>
+	.disponibilidade {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-pequeno);
+		white-space: nowrap;
+	}
+
+	.disponibilidade__ponto {
+		position: relative;
+		flex: none;
+		inline-size: var(--status-ponto);
+		block-size: var(--status-ponto);
+		border-radius: var(--radius-pilula);
+		background: var(--status-cor);
+	}
+
+	.disponibilidade__ponto::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background: inherit;
+		animation: pulso var(--motion-duration-pulso) var(--motion-ease-out) infinite;
+	}
+
+	@keyframes pulso {
+		from {
+			opacity: 0.6;
+			transform: scale(1);
+		}
+		to {
+			opacity: 0;
+			transform: scale(2.5);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.disponibilidade__ponto::after {
+			animation: none;
+			opacity: 0;
+		}
+	}
+</style>

@@ -1,21 +1,33 @@
 ---
 /**
- * Link de texto com o círculo de seta ao lado, como "Me encontre no LinkedIn".
- * O círculo fica dentro do link: a área de toque inclui os dois.
+ * Link de texto com a seta ao lado, como "Me encontre no LinkedIn".
+ * A seta fica dentro do link: a área de toque inclui os dois.
+ * Externo: abre em nova aba e avisa o leitor de tela.
  */
 import Seta from "./Seta.astro";
 
 interface Props {
 	href: string;
 	texto: string;
+	direcao?: "diagonal" | "direita" | "baixo";
+	externo?: boolean;
+	/** Só para o leitor de tela, depois do texto: diz o destino quando o texto não diz. */
+	complemento?: string;
 }
 
-const { href, texto } = Astro.props;
+const { href, texto, direcao = "diagonal", externo = false, complemento } = Astro.props;
 ---
 
-<a class="link-com-seta" href={href}>
+<a
+	class="link-com-seta"
+	href={href}
+	target={externo ? "_blank" : undefined}
+	rel={externo ? "noopener noreferrer" : undefined}
+>
 	<span class="link link-com-seta__texto">{texto}</span>
-	<Seta />
+	{complemento && <span class="so-leitor-de-tela">, {complemento}</span>}
+	{externo && <span class="so-leitor-de-tela"> — abre em nova aba</span>}
+	<Seta direcao={direcao} />
 </a>
 
 <style>
@@ -28,8 +40,13 @@ const { href, texto } = Astro.props;
 	}
 
 	/* O sublinhado do texto acompanha o hover e o foco do link inteiro. */
-	.link-com-seta:hover .link-com-seta__texto::after,
 	.link-com-seta:focus-visible .link-com-seta__texto::after {
 		transform: scaleX(1);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.link-com-seta:hover .link-com-seta__texto::after {
+			transform: scaleX(1);
+		}
 	}
 </style>

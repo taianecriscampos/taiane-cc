@@ -57,6 +57,14 @@
 		background: var(--color-fundo);
 		/* As âncoras param abaixo do cabeçalho fixo. */
 		scroll-padding-block-start: var(--cabecalho-altura);
+		/* Sem o flash cinza do toque no celular: cada controle tem a própria resposta. */
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	/* Toque responde na hora, sem esperar um possível segundo toque de zoom. */
+	a,
+	button {
+		touch-action: manipulation;
 	}
 
 	body {
@@ -161,9 +169,15 @@
 		transition: transform var(--motion-duration-base) var(--motion-ease-out);
 	}
 
-	.link:hover::after,
 	.link:focus-visible::after {
 		transform: scaleX(1);
+	}
+
+	/* Hover só com mouse: no toque, o estado ficaria preso depois do toque. */
+	@media (hover: hover) and (pointer: fine) {
+		.link:hover::after {
+			transform: scaleX(1);
+		}
 	}
 
 	/* Seção da página inicial: rótulo pequeno e, 24 px abaixo, o conteúdo.

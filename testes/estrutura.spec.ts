@@ -1,10 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 import { paginas } from "./paginas";
 
-/** No celular, os links do cabeçalho ficam no painel do botão Menu: abre o painel se ele existir. */
-async function abrirMenuSePreciso(page: Page) {
-	const menu = page.getByRole("button", { name: "Menu" });
-	if (await menu.isVisible()) await menu.click();
+/** Os links do cabeçalho ficam na ilha: o botão "Menu, seção atual: ..." abre a lista. */
+async function abrirIlha(page: Page) {
+	const menu = page.getByRole("button", { name: /^Menu/ });
+	await menu.click();
+	await expect(menu).toHaveAttribute("aria-expanded", "true");
 }
 
 for (const pagina of paginas) {
@@ -28,7 +29,7 @@ test("os textos externos avisam a nova aba, e o texto em construção não tem l
 	page,
 }) => {
 	await page.goto("/");
-	const textos = page.getByRole("region", { name: "Textos" });
+	const textos = page.getByRole("region", { name: "Artigos" });
 	await expect(textos.getByRole("listitem")).toHaveCount(4);
 	const links = textos.getByRole("link");
 	await expect(links).toHaveCount(3);
@@ -41,21 +42,38 @@ test("os textos externos avisam a nova aba, e o texto em construção não tem l
 
 test("o cabeçalho leva às seções da página inicial e de volta ao início", async ({ page }) => {
 	await page.goto("/");
-	await abrirMenuSePreciso(page);
+	await abrirIlha(page);
 	const navegacao = page.getByRole("navigation", { name: "Principal" });
-	await expect(navegacao.getByRole("link")).toHaveText(["Projetos", "Textos", "Sobre"]);
+	await expect(navegacao.getByRole("link")).toHaveText(["Projetos", "Artigos", "Sobre"]);
 	await navegacao.getByRole("link", { name: "Sobre" }).click();
 	await expect(page).toHaveURL(/\/#sobre$/);
-	// O painel do celular fecha depois da escolha.
-	await expect(page.locator("#menu-painel")).toBeHidden();
+	// A ilha fecha depois da escolha e passa a mostrar a seção escolhida.
+	await expect(page.locator("#ilha-painel")).toBeHidden();
+	await expect(page.getByRole("button", { name: /^Menu/ })).toHaveAccessibleName(
+		"Menu, seção atual: Sobre",
+	);
 	await page.goto("/cases/funis-interativos");
 	await page.getByRole("banner").getByRole("link", { name: "Taiane Cris Campos" }).click();
 	await expect(page).toHaveURL(/\/$/);
 });
 
+test("a ilha fecha com Esc e devolve o foco ao botão", async ({ page }) => {
+	await page.goto("/");
+	const menu = page.getByRole("button", { name: /^Menu/ });
+	await menu.focus();
+	await page.keyboard.press("Enter");
+	await expect(menu).toHaveAttribute("aria-expanded", "true");
+	await page.keyboard.press("Tab");
+	await expect(page.locator("#ilha-painel a").first()).toBeFocused();
+	await page.keyboard.press("Escape");
+	await expect(menu).toHaveAttribute("aria-expanded", "false");
+	await expect(menu).toBeFocused();
+	await expect(page.locator("#ilha-painel")).toBeHidden();
+});
+
 test("no case, o cabeçalho leva a cada seção do texto", async ({ page }) => {
 	await page.goto("/cases/funis-interativos");
-	await abrirMenuSePreciso(page);
+	await abrirIlha(page);
 	const links = page.getByRole("navigation", { name: "Neste case" }).getByRole("link");
 	await expect(links).toHaveCount(6);
 	for (const link of await links.all()) {

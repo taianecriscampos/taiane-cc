@@ -2,10 +2,12 @@
 /**
  * Seta desenhada para o site, solta, sem fundo, numa área de toque redonda.
  * É decorativa: o texto do link ao lado diz para onde vai.
+ * Sistema: "diagonal" só para links externos, "direita" para páginas do site,
+ * "baixo" para rolar dentro da mesma página.
  * "grande" (48 px) para o botão da abertura; "pequeno" (40 px) para links e listas.
  */
 interface Props {
-	direcao?: "baixo" | "diagonal";
+	direcao?: "baixo" | "diagonal" | "direita";
 	tamanho?: "pequeno" | "grande";
 }
 
@@ -25,11 +27,9 @@ const { direcao = "diagonal", tamanho = "pequeno" } = Astro.props;
 		stroke-linecap="round"
 		stroke-linejoin="round"
 	>
-		{direcao === "baixo" ? (
-			<path d="M10 3.5v13M4.5 11 10 16.5 15.5 11" />
-		) : (
-			<path d="M5.5 14.5l9-9M7 5.5h7.5V13" />
-		)}
+		{direcao === "baixo" && <path d="M10 3.5v13M4.5 11 10 16.5 15.5 11" />}
+		{direcao === "direita" && <path d="M3.5 10h13M11 4.5 16.5 10 11 15.5" />}
+		{direcao === "diagonal" && <path d="M5.5 14.5l9-9M7 5.5h7.5V13" />}
 	</svg>
 </span>
 

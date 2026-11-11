@@ -10,12 +10,16 @@ export const perfilPiorCaso: Perfil = {
 	cargo: "Designer de Produto Sênior · Engenheira de Design · Pesquisadora de UX",
 	frase:
 		"Design de produto com pensamento sistêmico, inteligência artificial generativa, pesquisa contínua e código de produção.",
+	especialidade:
+		"Senior Product Designer | Design Engineering | Research Operations | Design Systems",
+	modalidade: "Remoto, híbrido ou presencial em São José do Rio Preto",
 	cidade: "São José do Rio Preto",
 	estado: "SP",
 	email: "bartholomew.fitzgerald@northwind-industries-holdings.example.com",
 	linkedin: "https://www.linkedin.com/in/exemplo/",
 	substack: "https://exemplo.example.com/",
 	github: "https://github.com/exemplo",
+	designDivergente: "https://exemplo.example.com/",
 	curriculo: { href: "/curriculo.pdf", disponivel: true },
 };
 
