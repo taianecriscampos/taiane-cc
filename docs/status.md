@@ -4,7 +4,7 @@ Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.0.0 (kit de arranque)
 **Etapa atual:** 0.1.0 Fundação
-**Fase da etapa:** 0.1.e parte 1 concluída · próxima: 0.1.e parte 2
+**Fase da etapa:** 0.1.e parte 2 em andamento (envio feito) · próximo: proteger a main e ligar a Vercel
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -44,13 +44,15 @@ Atualize este arquivo ao final de cada tarefa.
   (fica de fora só quando `VERCEL_ENV=production`); CSP do Astro e cabeçalhos de segurança no
   `vercel.json`; `npm audit` na qualidade; GitHub Actions; Dependabot semanal; `security.txt`
   com contato pelo LinkedIn, válido até 11/11/2027.
-- **Parte 2, a seguir:** criar o repositório no GitHub e enviar main e design; proteger a main
-  (só pull request com a qualidade aprovada); ligar a Vercel ao repositório.
+- **Parte 2, em andamento:** repositório público em github.com/taianecriscampos/taiane-cc,
+  com main e design enviadas e rastreadas. O primeiro GitHub Actions, na design, passou
+  (audit, check, formatação, build e 20 testes). A seguir: proteger a main (só pull request com
+  a qualidade aprovada) e ligar a Vercel ao repositório.
 
 ## Pendências anotadas
 
-- **0.1.e parte 2:** depois do primeiro envio, conferir que o GitHub Actions passou e que os
-  cabeçalhos do `vercel.json` chegam ao navegador (prévia da Vercel e securityheaders.com).
+- **0.1.e parte 2:** com a Vercel ligada, conferir que os cabeçalhos do `vercel.json` chegam
+  ao navegador (prévia da Vercel e securityheaders.com).
   Conferir também que o `/laboratorio` existe na prévia e não existe na produção.
 - **0.2.0:** tirar o `noindex` da página inicial quando ela tiver conteúdo real.
 - **11/2027:** renovar a data `Expires` do `public/.well-known/security.txt` antes de 11/11/2027.
