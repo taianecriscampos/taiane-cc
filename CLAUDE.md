@@ -35,11 +35,14 @@ evite tabelas longas e símbolos desnecessários nas respostas.
 
 - Tokens em `src/styles/tokens.css`, em três camadas: primitivos → semânticos → componentes.
 - Componentes usam SOMENTE tokens semânticos ou de componente. Nunca cor, tamanho ou espaçamento solto.
-- Paleta: fundo branco levemente quente, preto quase puro, dois cinzas de hierarquia,
-  um vermelho de destaque em menos de 5% da tela.
-- Tipografia: uma grotesca + uma mono (detalhes técnicos: datas, etiquetas, hora, rastro binário).
+- Base visual: docs/especificacao-base-debora.md (medidas, grade, hierarquia e comportamento da
+  debora.wiki, com conteúdo, selo e textos próprios). Ela substitui os briefings v1 e v2.
+  Nada de copiar arquivos, textos, imagens ou o selo da debora.wiki.
+- Paleta: fundo #fafafa, texto #1a2025, cinza secundário, borda clara, vermelho de marca só no
+  selo e azul de destaque só nos cases.
+- Tipografia: Schibsted Grotesk, pesos 400, 500 e 700. Mono do sistema só nos marcadores de rascunho.
 - A página `/laboratorio` mostra todos os tokens e componentes, com `noindex`.
-- Referência principal: debora.wiki. Demais referências em docs/referencias.md.
+- Demais referências em docs/referencias.md. Cada mudança da Taiane sobre a base vai passo a passo.
 
 ## Qualidade obrigatória
 
