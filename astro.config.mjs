@@ -27,4 +27,19 @@ function laboratorio() {
 // https://astro.build/config
 export default defineConfig({
 	integrations: [laboratorio()],
+	security: {
+		// O Astro acrescenta script-src e style-src com os hashes de cada página.
+		// frame-ancestors não funciona em <meta>: está no cabeçalho, em vercel.json.
+		csp: {
+			directives: [
+				"default-src 'self'",
+				"img-src 'self' data:",
+				"font-src 'self'",
+				"connect-src 'self'",
+				"object-src 'none'",
+				"base-uri 'self'",
+				"form-action 'self'",
+			],
+		},
+	},
 });
