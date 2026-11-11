@@ -6,7 +6,11 @@
  * pela integração `laboratorio` do astro.config.mjs, em todo ambiente menos a produção.
  */
 import { createHash } from "node:crypto";
+import Abertura from "../components/blocos/Abertura.astro";
+import CabecalhoCase from "../components/blocos/CabecalhoCase.astro";
+import Projetos from "../components/blocos/Projetos.astro";
 import LayoutBase from "../components/layout/LayoutBase.astro";
+import { cabecalhoPiorCaso, perfilPiorCaso, projetosPiorCaso } from "../dados/pior-caso";
 import tokensCss from "../styles/tokens.css?raw";
 
 type Token = { nome: string; valor: string };
@@ -222,6 +226,24 @@ Astro.csp?.insertStyleHash(
 				))}
 			</ul>
 		</section>
+
+		<section aria-labelledby="titulo-pior-caso" id="pior-caso">
+			<h2 id="titulo-pior-caso">Pior caso</h2>
+			<p>
+				Os mesmos componentes da página real, com dados extremos e realistas: nomes e títulos
+				longos, uma palavra sem espaços, e-mail enorme, textos no limite do schema e lista vazia.
+				Dados em <code>src/dados/pior-caso.ts</code>.
+			</p>
+		</section>
+	</div>
+
+	<div class="lab__pior-caso">
+		<Abertura perfil={perfilPiorCaso} idBase="pior-abertura" nivel={2} />
+		<Projetos projetos={projetosPiorCaso} idBase="pior-projetos" />
+		<Projetos projetos={[]} idBase="pior-projetos-vazio" />
+		<div class="envoltorio">
+			<CabecalhoCase {...cabecalhoPiorCaso} nivel={2} />
+		</div>
 	</div>
 </LayoutBase>
 
