@@ -192,7 +192,6 @@
 
 	--circulo-pequeno: var(--prim-size-40);
 	--circulo-grande: var(--prim-size-48);
-	--circulo-fundo: var(--color-fundo-secundario);
 	--seta-tamanho: var(--prim-size-20);
 
 	--retrato-largura: var(--prim-size-207);
@@ -203,7 +202,9 @@
 	--selo-fundo: var(--color-fundo);
 	--selo-deslocamento: -1.875rem;
 
-	--entrada-intervalo: var(--space-grande);
+	--entrada-intervalo: var(
+		--space-maior
+	); /* 32 px entre a linha e a divisória, medido na debora.wiki */
 	--etiqueta-fundo: var(--color-inverso-fundo);
 	--etiqueta-texto: var(--color-inverso-texto);
 	--etiqueta-espaco: var(--space-fio) var(--space-pequeno);

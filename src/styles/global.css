@@ -165,12 +165,13 @@
 		transform: scaleX(1);
 	}
 
-	/* Seção da página inicial: rótulo pequeno e, 24 px abaixo, o conteúdo. */
+	/* Seção da página inicial: rótulo pequeno e, 24 px abaixo, o conteúdo.
+	   Respiro em cima e embaixo, como na debora.wiki: 80 + 80 px entre seções (40 + 40 no celular). */
 	.secao {
 		display: grid;
 		align-content: start;
 		gap: var(--space-grande);
-		padding-block-start: var(--space-secao);
+		padding-block: var(--space-secao);
 	}
 
 	.secao__rotulo {

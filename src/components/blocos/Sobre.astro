@@ -6,6 +6,9 @@
 import { perfil } from "../../dados/perfil";
 import { experiencias, formacao } from "../../dados/trajetoria";
 import LinkComSeta from "../ui/LinkComSeta.astro";
+
+// Só as quatro experiências mais recentes; o histórico completo fica no currículo em PDF.
+const experienciasRecentes = experiencias.slice(0, 4);
 ---
 
 <section class="secao envoltorio" id="sobre" aria-labelledby="sobre-titulo">
@@ -33,7 +36,7 @@ import LinkComSeta from "../ui/LinkComSeta.astro";
 		<div class="sobre__grupo">
 			<h3 class="sobre__grupo-titulo">Experiência</h3>
 			<ol class="sobre__lista" role="list">
-				{experiencias.map((item) => (
+				{experienciasRecentes.map((item) => (
 					<li>
 						<p class="sobre__forte">{item.empresa ?? item.cargo}</p>
 						{item.empresa && <p>{item.cargo}</p>}

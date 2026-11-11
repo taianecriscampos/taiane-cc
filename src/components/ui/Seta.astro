@@ -1,6 +1,7 @@
 ---
 /**
- * Círculo com seta, desenhada para o site. É decorativo: o texto do link ao lado diz para onde vai.
+ * Seta desenhada para o site, solta, sem fundo, numa área de toque redonda.
+ * É decorativa: o texto do link ao lado diz para onde vai.
  * "grande" (48 px) para o botão da abertura; "pequeno" (40 px) para links e listas.
  */
 interface Props {
@@ -40,7 +41,6 @@ const { direcao = "diagonal", tamanho = "pequeno" } = Astro.props;
 		inline-size: var(--circulo-pequeno);
 		block-size: var(--circulo-pequeno);
 		border-radius: var(--radius-pilula);
-		background: var(--circulo-fundo);
 		color: var(--color-texto);
 	}
 
