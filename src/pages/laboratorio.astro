@@ -1,0 +1,369 @@
+---
+/**
+ * Laboratório: vitrine de todos os tokens.
+ * Lê src/styles/tokens.css na compilação, então nunca fica desatualizado.
+ * noindex. Deve sair da produção na fase 0.1.e (ver docs/status.md).
+ */
+import LayoutBase from "../components/layout/LayoutBase.astro";
+import tokensCss from "../styles/tokens.css?raw";
+
+type Token = { nome: string; valor: string };
+
+// O arquivo é dividido pelos três cabeçalhos de camada.
+const [, primitivosCss = "", semanticosCss = "", componentesCss = ""] =
+	tokensCss.split(/\/\* -{10} \d\. /);
+
+const lerTokens = (css: string): Token[] =>
+	[...css.matchAll(/^\s*(--[\w-]+):\s*(.+?);/gm)].map(([, nome = "", valor = ""]) => ({
+		nome,
+		valor,
+	}));
+
+const primitivos = lerTokens(primitivosCss);
+const semanticos = lerTokens(semanticosCss);
+const componentes = lerTokens(componentesCss);
+
+const valorDe = (nome: string) => primitivos.find((t) => t.nome === nome)?.valor ?? "";
+const referencia = (valor: string) => valor.match(/var\((--[\w-]+)\)/)?.[1] ?? "";
+
+// Contraste WCAG 2.2
+const luminancia = (hex: string) => {
+	const [r = 0, g = 0, b = 0] = [1, 3, 5]
+		.map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+		.map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contraste = (a: string, b: string) => {
+	const [claro, escuro] = [luminancia(a), luminancia(b)].sort((x, y) => y - x);
+	return ((claro ?? 0) + 0.05) / ((escuro ?? 0) + 0.05);
+};
+const nivel = (razao: number) =>
+	razao >= 7
+		? "AAA"
+		: razao >= 4.5
+			? "AA"
+			: razao >= 3
+				? "AA só para texto grande"
+				: "Só decorativo";
+
+const hexDoSemantico = (nome: string) =>
+	valorDe(referencia(semanticos.find((t) => t.nome === nome)?.valor ?? ""));
+const fundo = hexDoSemantico("--color-fundo");
+const destaque = hexDoSemantico("--color-destaque");
+
+const cores = semanticos
+	.filter((t) => t.nome.startsWith("--color-"))
+	.map((t) => {
+		const primitivo = referencia(t.valor);
+		const hex = valorDe(primitivo);
+		// "Sobre destaque" é medido contra o vermelho; o resto, contra o fundo.
+		const base = t.nome === "--color-sobre-destaque" ? destaque : fundo;
+		const ehFundo = t.nome === "--color-fundo";
+		const razao = contraste(hex, base);
+		return {
+			...t,
+			primitivo,
+			hex,
+			ehFundo,
+			medidoContra: base === destaque ? "o destaque" : "o fundo",
+			razao: razao.toFixed(2).replace(".", ","),
+			nivel: nivel(razao),
+		};
+	});
+
+const textos = semanticos.filter((t) => t.nome.startsWith("--text-"));
+const espacos = primitivos.filter((t) => t.nome.startsWith("--prim-space-"));
+const raios = semanticos.filter((t) => t.nome.startsWith("--radius-"));
+const duracoes = semanticos.filter((t) => t.nome.startsWith("--motion-duration-"));
+const curva = semanticos.find((t) => t.nome === "--motion-ease-out");
+const valorPrimitivo = (t: Token) => valorDe(referencia(t.valor)) || t.valor;
+---
+
+<LayoutBase
+	titulo="Laboratório · taiane.cc"
+	descricao="Tokens e componentes do design system do taiane.cc."
+	noindex
+>
+	<div class="envoltorio lab">
+		<header class="lab__topo">
+			<h1>Laboratório</h1>
+			<p>
+				Todos os tokens do site, lidos direto de <code>src/styles/tokens.css</code>. Valores
+				provisórios: os oficiais saem da direção de arte, na etapa 0.3.0.
+			</p>
+		</header>
+
+		<section aria-labelledby="titulo-cor">
+			<h2 id="titulo-cor">Cor</h2>
+			<p>
+				Contraste medido pela fórmula da WCAG 2.2. Texto comum precisa de 4,5:1 para o nível AA.
+			</p>
+			<ul class="lab__cores" role="list">
+				{cores.map((c) => (
+					<li class="lab__cor">
+						<span class="lab__amostra" style={`background: var(${c.nome})`} />
+						<code>{c.nome}</code>
+						<span class="lab__meta">
+							{c.hex} · {c.primitivo}
+						</span>
+						<span class="lab__meta">
+							{c.ehFundo
+								? "Base das medições"
+								: `${c.razao}:1 contra ${c.medidoContra} · ${c.nivel}`}
+						</span>
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<section aria-labelledby="titulo-tipo">
+			<h2 id="titulo-tipo">Tipografia</h2>
+			<p>
+				Escala fluida: cresce suavemente entre 375 e 1440 pixels de largura. Redimensione a janela
+				para ver.
+			</p>
+			<ul class="lab__lista" role="list">
+				{textos.map((t) => (
+					<li class="lab__tipo">
+						<span class="lab__especime" style={`font-size: var(${t.nome})`}>
+							Design de produto com pensamento sistêmico
+						</span>
+						<code>{t.nome}</code>
+						<span class="lab__meta">{valorPrimitivo(t)}</span>
+					</li>
+				))}
+			</ul>
+			<p class="lab__mono">
+				<code>--font-tecnica</code>: 10/11/2026 · 23:59 · 0101 0110
+			</p>
+		</section>
+
+		<section aria-labelledby="titulo-espaco">
+			<h2 id="titulo-espaco">Espaçamento</h2>
+			<p>Escala de 4 em 4 pixels. Os semânticos apontam para estes passos.</p>
+			<ul class="lab__lista" role="list">
+				{espacos.map((t) => (
+					<li class="lab__espaco">
+						<span class="lab__barra" style={`inline-size: var(${t.nome})`} />
+						<code>{t.nome}</code>
+						<span class="lab__meta">{t.valor}</span>
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<section aria-labelledby="titulo-raio">
+			<h2 id="titulo-raio">Raios</h2>
+			<ul class="lab__raios" role="list">
+				{raios.map((t) => (
+					<li class="lab__raio">
+						<span class="lab__caixa" style={`border-radius: var(${t.nome})`} />
+						<code>{t.nome}</code>
+						<span class="lab__meta">{valorPrimitivo(t)}</span>
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<section aria-labelledby="titulo-movimento" class="lab__movimento">
+			<h2 id="titulo-movimento">Movimento</h2>
+			<p>
+				Curva <code>--motion-ease-out</code>: {curva ? valorPrimitivo(curva) : ""}. Só
+				<code>transform</code> e <code>opacity</code>. Com redução de movimento ativada no sistema,
+				as amostras saltam direto para o fim.
+			</p>
+			<label class="lab__controle">
+				<input type="checkbox" />
+				Mover as amostras
+			</label>
+			<ul class="lab__lista" role="list">
+				{duracoes.map((t) => (
+					<li class="lab__duracao">
+						<span class="lab__trilho" aria-hidden="true">
+							<span class="lab__ponto" style={`transition-duration: var(${t.nome})`} />
+						</span>
+						<code>{t.nome}</code>
+						<span class="lab__meta">{valorPrimitivo(t)}</span>
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<section aria-labelledby="titulo-componentes">
+			<h2 id="titulo-componentes">Tokens de componente</h2>
+			<p>
+				Para ver o link de pular, recarregue a página e aperte Tab. Para ver o foco, navegue com Tab
+				até <a href="#conteudo">este link</a>.
+			</p>
+			<ul class="lab__lista" role="list">
+				{componentes.map((t) => (
+					<li class="lab__linha">
+						<code>{t.nome}</code>
+						<span class="lab__meta">{t.valor}</span>
+					</li>
+				))}
+			</ul>
+		</section>
+	</div>
+</LayoutBase>
+
+<style>
+	.lab {
+		display: grid;
+		gap: var(--space-secao);
+		padding-block: var(--space-bloco) var(--space-secao);
+	}
+
+	.lab section {
+		display: grid;
+		gap: var(--space-medio);
+		align-content: start;
+	}
+
+	.lab__topo {
+		display: grid;
+		gap: var(--space-medio);
+	}
+
+	.lab__topo p,
+	.lab section > p {
+		color: var(--color-texto-secundario);
+	}
+
+	.lab code {
+		font-size: var(--text-pequeno);
+	}
+
+	.lab__meta {
+		font-family: var(--font-tecnica);
+		font-size: var(--text-pequeno);
+		color: var(--color-texto-terciario);
+	}
+
+	.lab__lista,
+	.lab__cores,
+	.lab__raios {
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: var(--space-grande);
+	}
+
+	/* Cor */
+	.lab__cores {
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+		gap: var(--space-grande) var(--space-medio);
+	}
+
+	.lab__cor {
+		display: grid;
+		gap: var(--space-minimo);
+	}
+
+	.lab__amostra {
+		block-size: var(--space-secao);
+		margin-block-end: var(--space-pequeno);
+		border-radius: var(--radius-sutil);
+		box-shadow: inset 0 0 0 1px var(--color-linha);
+	}
+
+	/* Tipografia, espaçamento e componentes */
+	.lab__tipo,
+	.lab__espaco,
+	.lab__linha,
+	.lab__duracao {
+		display: grid;
+		gap: var(--space-minimo) var(--space-medio);
+		padding-block-end: var(--space-medio);
+		border-block-end: 1px solid var(--color-linha);
+	}
+
+	.lab__especime {
+		line-height: var(--leading-titulo);
+		font-weight: var(--peso-titulo);
+	}
+
+	.lab__mono {
+		font-family: var(--font-tecnica);
+	}
+
+	.lab__barra {
+		block-size: var(--space-medio);
+		background: var(--color-destaque);
+	}
+
+	@media (min-width: 48rem) {
+		.lab__espaco,
+		.lab__linha,
+		.lab__duracao {
+			grid-template-columns: minmax(0, 1fr) 16rem 10rem;
+			align-items: center;
+		}
+
+		.lab__tipo {
+			grid-template-columns: minmax(0, 1fr) 12rem;
+			align-items: baseline;
+		}
+
+		.lab__tipo .lab__meta {
+			grid-column: 2;
+		}
+
+		.lab__linha {
+			grid-template-columns: 20rem minmax(0, 1fr);
+		}
+	}
+
+	/* Raios */
+	.lab__raios {
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+		gap: var(--space-medio);
+	}
+
+	.lab__raio {
+		display: grid;
+		gap: var(--space-minimo);
+	}
+
+	.lab__caixa {
+		block-size: var(--space-secao);
+		margin-block-end: var(--space-pequeno);
+		background: var(--color-texto);
+	}
+
+	/* Movimento */
+	.lab__controle {
+		display: inline-flex;
+		gap: var(--space-pequeno);
+		align-items: center;
+		justify-self: start;
+		cursor: pointer;
+	}
+
+	.lab__controle input {
+		inline-size: var(--space-medio);
+		block-size: var(--space-medio);
+		accent-color: var(--color-destaque);
+	}
+
+	.lab__trilho {
+		container-type: inline-size;
+		display: block;
+		block-size: var(--space-medio);
+		border-block-end: 1px solid var(--color-linha);
+	}
+
+	.lab__ponto {
+		display: block;
+		inline-size: var(--space-medio);
+		block-size: var(--space-medio);
+		border-radius: var(--radius-pilula);
+		background: var(--color-destaque);
+		transition-property: transform;
+		transition-timing-function: var(--motion-ease-out);
+	}
+
+	.lab__movimento:has(.lab__controle input:checked) .lab__ponto {
+		transform: translateX(calc(100cqi - var(--space-medio)));
+	}
+</style>

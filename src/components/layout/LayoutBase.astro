@@ -1,0 +1,38 @@
+---
+/**
+ * Layout base de todas as páginas.
+ * Idioma pt-BR, título, descrição, opção de noindex e link "Pular para o conteúdo".
+ */
+import "../../styles/global.css";
+
+interface Props {
+	titulo: string;
+	descricao: string;
+	/** true para páginas que não devem aparecer em buscadores (ex.: /laboratorio). */
+	noindex?: boolean;
+}
+
+const { titulo, descricao, noindex = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{titulo}</title>
+		<meta name="description" content={descricao} />
+		{noindex && <meta name="robots" content="noindex, nofollow" />}
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+	</head>
+	<body>
+		<a class="pular-conteudo" href="#conteudo">
+			Pular para o conteúdo
+		</a>
+		<main id="conteudo" tabindex="-1">
+			<slot />
+		</main>
+	</body>
+</html>

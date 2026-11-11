@@ -1,0 +1,9 @@
+# Quebra de linha LF em todos os arquivos de texto, inclusive no Windows.
+* text=auto eol=lf
+
+*.ico binary
+*.png binary
+*.jpg binary
+*.webp binary
+*.avif binary
+*.woff2 binary

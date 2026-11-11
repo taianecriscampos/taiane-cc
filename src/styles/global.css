@@ -1,0 +1,180 @@
+/*
+ * Estilo global, em camadas. A ordem abaixo define a prioridade:
+ * quem vem depois vence, sem brigar por especificidade de seletor.
+ */
+@layer reset, tokens, base, componentes, utilitarios;
+
+@import "./tokens.css" layer(tokens);
+
+/* ---------- reset ---------- */
+@layer reset {
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	* {
+		margin: 0;
+	}
+
+	html {
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+	}
+
+	img,
+	picture,
+	svg,
+	video {
+		display: block;
+		max-width: 100%;
+		height: auto;
+	}
+
+	input,
+	button,
+	textarea,
+	select {
+		font: inherit;
+		color: inherit;
+	}
+
+	p,
+	h1,
+	h2,
+	h3,
+	h4 {
+		overflow-wrap: break-word;
+	}
+}
+
+/* ---------- base ---------- */
+@layer base {
+	html {
+		color-scheme: light;
+		background: var(--color-fundo);
+	}
+
+	body {
+		min-height: 100dvh;
+		background: var(--color-fundo);
+		color: var(--color-texto);
+		font-family: var(--font-texto);
+		font-size: var(--text-corpo);
+		font-weight: var(--peso-corpo);
+		line-height: var(--leading-corpo);
+		-webkit-font-smoothing: antialiased;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4 {
+		font-weight: var(--peso-titulo);
+		line-height: var(--leading-titulo);
+		text-wrap: balance;
+	}
+
+	h1 {
+		font-size: var(--text-titulo-1);
+	}
+
+	h2 {
+		font-size: var(--text-titulo-2);
+	}
+
+	h3 {
+		font-size: var(--text-titulo-3);
+	}
+
+	p {
+		max-width: var(--largura-leitura);
+		text-wrap: pretty;
+	}
+
+	a {
+		color: var(--link-cor);
+		text-decoration-thickness: var(--link-sublinhado);
+		text-underline-offset: var(--link-sublinhado-afastamento);
+	}
+
+	a:hover {
+		color: var(--link-cor-hover);
+	}
+
+	code,
+	kbd,
+	samp,
+	time {
+		font-family: var(--font-tecnica);
+	}
+
+	:focus-visible {
+		outline: var(--focus-espessura) solid var(--focus-cor);
+		outline-offset: var(--focus-afastamento);
+	}
+
+	::selection {
+		background: var(--color-destaque);
+		color: var(--color-sobre-destaque);
+	}
+
+	/* Quem pede menos movimento não recebe animação nenhuma. */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+			scroll-behavior: auto !important;
+		}
+	}
+}
+
+/* ---------- componentes ---------- */
+@layer componentes {
+	.pular-conteudo {
+		position: absolute;
+		top: var(--space-medio);
+		left: var(--space-medio);
+		z-index: 100;
+		padding: var(--skip-link-espaco);
+		border-radius: var(--skip-link-raio);
+		background: var(--skip-link-fundo);
+		color: var(--skip-link-texto);
+		text-decoration: none;
+		transform: translateY(calc(-100% - var(--space-grande)));
+	}
+
+	.pular-conteudo:focus-visible {
+		transform: none;
+	}
+
+	.pular-conteudo:hover {
+		color: var(--skip-link-texto);
+	}
+}
+
+/* ---------- utilitários ---------- */
+@layer utilitarios {
+	.so-leitor-de-tela {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.envoltorio {
+		width: 100%;
+		max-width: var(--largura-pagina);
+		margin-inline: auto;
+		padding-inline: var(--space-margem-pagina);
+	}
+}

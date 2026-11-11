@@ -1,0 +1,13 @@
+# Pastas de terceiros: não formatar.
+.agents/
+.claude/skills/
+skills-lock.json
+
+# Gerados automaticamente.
+dist/
+.astro/
+node_modules/
+package-lock.json
+playwright-report/
+test-results/
+.revisao/

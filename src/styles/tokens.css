@@ -1,0 +1,136 @@
+/*
+ * Tokens do design system — valores PROVISÓRIOS (fase 0.1.c).
+ * Os oficiais saem da direção de arte, na etapa 0.3.0.
+ *
+ * Três camadas:
+ *   1. Primitivos  (--prim-*)  valores brutos. Só os semânticos leem estes.
+ *   2. Semânticos  (--color-*, --space-*, --text-*...)  o nome diz a função.
+ *   3. Componentes (--skip-link-*, --link-*, --focus-*)  decisões de um componente.
+ * Componentes usam SOMENTE as camadas 2 e 3.
+ *
+ * O /laboratorio lê este arquivo na compilação: mantenha um token por linha.
+ */
+
+/* ---------- 1. Primitivos ---------- */
+:root {
+	/* Cor. Contraste medido sobre --prim-color-branco-quente. */
+	--prim-color-branco-quente: #fbfaf7;
+	--prim-color-preto: #141414; /* 17,65:1 */
+	--prim-color-cinza-700: #55534e; /* 7,36:1 */
+	--prim-color-cinza-600: #6e6b65; /* 5,09:1 */
+	--prim-color-cinza-200: #e4e1da; /* 1,25:1, só decorativo */
+	--prim-color-vermelho: #c8201a; /* 5,47:1 */
+	--prim-color-branco: #ffffff;
+
+	/* Fonte provisória: a do sistema. As reais entram na 0.3.0. */
+	--prim-font-grotesca:
+		system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--prim-font-mono:
+		ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+
+	/* Escala tipográfica fluida: razão 1,2 em 375px até 1,25 em 1440px, corpo de 16 a 18px. */
+	--prim-text--1: clamp(0.8333rem, 0.8099rem + 0.1002vw, 0.9rem);
+	--prim-text-0: clamp(1rem, 0.956rem + 0.1878vw, 1.125rem);
+	--prim-text-1: clamp(1.2rem, 1.1274rem + 0.3099vw, 1.4063rem);
+	--prim-text-2: clamp(1.44rem, 1.3281rem + 0.4775vw, 1.7578rem);
+	--prim-text-3: clamp(1.728rem, 1.5628rem + 0.705vw, 2.1973rem);
+	--prim-text-4: clamp(2.0736rem, 1.8366rem + 1.0111vw, 2.7466rem);
+	--prim-text-5: clamp(2.4883rem, 2.1556rem + 1.4196vw, 3.4332rem);
+	--prim-text-6: clamp(2.986rem, 2.5263rem + 1.9614vw, 4.2915rem);
+
+	--prim-leading-justo: 1.1;
+	--prim-leading-base: 1.55;
+	--prim-peso-regular: 400;
+	--prim-peso-medio: 500;
+	--prim-peso-forte: 700;
+
+	/* Espaçamento: base de 4px. */
+	--prim-space-1: 0.25rem;
+	--prim-space-2: 0.5rem;
+	--prim-space-3: 0.75rem;
+	--prim-space-4: 1rem;
+	--prim-space-6: 1.5rem;
+	--prim-space-8: 2rem;
+	--prim-space-12: 3rem;
+	--prim-space-16: 4rem;
+	--prim-space-24: 6rem;
+	--prim-space-32: 8rem;
+
+	/* Raios: pequenos de propósito. */
+	--prim-radius-0: 0;
+	--prim-radius-1: 2px;
+	--prim-radius-2: 4px;
+	--prim-radius-pilula: 999px;
+
+	/* Movimento (skill movimento). O JavaScript lê estes valores. */
+	--prim-duration-fast: 0.2s;
+	--prim-duration-base: 0.4s;
+	--prim-duration-slow: 0.8s;
+	--prim-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- 2. Semânticos ---------- */
+:root {
+	--color-fundo: var(--prim-color-branco-quente);
+	--color-texto: var(--prim-color-preto);
+	--color-texto-secundario: var(--prim-color-cinza-700);
+	--color-texto-terciario: var(--prim-color-cinza-600);
+	--color-destaque: var(--prim-color-vermelho);
+	--color-linha: var(--prim-color-cinza-200);
+	--color-sobre-destaque: var(--prim-color-branco);
+
+	--font-texto: var(--prim-font-grotesca);
+	--font-tecnica: var(--prim-font-mono);
+
+	--text-pequeno: var(--prim-text--1);
+	--text-corpo: var(--prim-text-0);
+	--text-subtitulo: var(--prim-text-1);
+	--text-titulo-3: var(--prim-text-2);
+	--text-titulo-2: var(--prim-text-3);
+	--text-titulo-1: var(--prim-text-4);
+	--text-display: var(--prim-text-6);
+
+	--leading-titulo: var(--prim-leading-justo);
+	--leading-corpo: var(--prim-leading-base);
+	--peso-corpo: var(--prim-peso-regular);
+	--peso-titulo: var(--prim-peso-medio);
+	--peso-forte: var(--prim-peso-forte);
+
+	--space-minimo: var(--prim-space-1);
+	--space-pequeno: var(--prim-space-2);
+	--space-medio: var(--prim-space-4);
+	--space-grande: var(--prim-space-8);
+	--space-bloco: var(--prim-space-12);
+	--space-secao: var(--prim-space-24);
+	--space-margem-pagina: clamp(var(--prim-space-4), 5vw, var(--prim-space-16));
+
+	--largura-leitura: 68ch;
+	--largura-pagina: 90rem;
+
+	--radius-nenhum: var(--prim-radius-0);
+	--radius-sutil: var(--prim-radius-1);
+	--radius-controle: var(--prim-radius-2);
+	--radius-pilula: var(--prim-radius-pilula);
+
+	--motion-duration-fast: var(--prim-duration-fast);
+	--motion-duration-base: var(--prim-duration-base);
+	--motion-duration-slow: var(--prim-duration-slow);
+	--motion-ease-out: var(--prim-ease-out);
+}
+
+/* ---------- 3. Componentes ---------- */
+:root {
+	--focus-cor: var(--color-destaque);
+	--focus-espessura: 2px;
+	--focus-afastamento: 3px;
+
+	--link-cor: var(--color-texto);
+	--link-cor-hover: var(--color-destaque);
+	--link-sublinhado: 1px;
+	--link-sublinhado-afastamento: 0.2em;
+
+	--skip-link-fundo: var(--color-texto);
+	--skip-link-texto: var(--color-fundo);
+	--skip-link-espaco: var(--space-pequeno) var(--space-medio);
+	--skip-link-raio: var(--radius-controle);
+}
