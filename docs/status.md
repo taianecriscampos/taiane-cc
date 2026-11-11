@@ -4,7 +4,7 @@ Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.1.1 (Fundação, com redirecionamento temporário do domínio)
 **Etapa atual:** 0.2.0 Estrutura
-**Fase da etapa:** não iniciada · etapa 0.1.0 concluída em 11/11/2026
+**Fase da etapa:** 0.2.a Mapa do site e páginas com conteúdo real · em revisão pela Taiane
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -21,7 +21,7 @@ Atualize este arquivo ao final de cada tarefa.
 | ------ | -------------------------------------------------------------------------------------- | ------------ |
 | 0.1.0  | Fundação: Astro, Git, tokens provisórios, Laboratório, qualidade automatizada          | Concluída    |
 | 0.1.1  | Ajuste: taiane.cc redireciona para o Linktree até a 1.0.0; briefing de design          | Concluída    |
-| 0.2.0  | Estrutura: mapa do site, páginas com conteúdo real sem estilo, 3 larguras              | Não iniciada |
+| 0.2.0  | Estrutura: mapa do site, páginas com conteúdo real sem estilo, 3 larguras              | Em andamento |
 | 0.3.0  | Direção de arte: 3 propostas no Laboratório, escolha, tokens oficiais                  | Não iniciada |
 | 0.4.0  | Páginas e conteúdo: abertura em blocos, case de funis, cases do Azul GPT e da Luft     | Não iniciada |
 | 0.5.0  | Movimento: Lenis, títulos revelados, lista com imagem, nuvem de skills, rastro binário | Não iniciada |
@@ -64,6 +64,19 @@ Atualize este arquivo ao final de cada tarefa.
 - Redirecionamento temporário 307 da rota `/` dos dois domínios para o Linktree.
 - Briefing de design registrado em `docs/briefing-design.md`.
 
+## Fase 0.2.a
+
+- Mapa do site: `/` (abertura em blocos, projetos, sobre, experiência e formação, ferramentas,
+  contato) e `/cases/<nome>` com índice lateral e fechamento padrão. Rodapé em todas as páginas.
+- Dados de perfil e contato num único lugar: `src/dados/perfil.ts`. Trajetória em
+  `src/dados/trajetoria.ts`, a partir de `docs/curriculo.md`.
+- Cases: Funis interativos (Inlead, público, do Substack) e, sob sigilo, Azul GPT (2024) e
+  Operação logística (Luft, 2023) só com estrutura e "[TEXTO DA TAIANE]".
+- Textos marcados com "[RASCUNHO]": sobre, contato e fechamento do case.
+- Pior caso (break-ui) no Laboratório, em `src/dados/pior-caso.ts`.
+- Qualidade: 50 testes aprovados (acessibilidade, CSP, movimento reduzido, noindex, índice do case).
+- Aguardando revisão da estrutura antes do pull request.
+
 ## Pendências anotadas
 
 - **1.0.0:** remover do `vercel.json` o redirecionamento temporário (307) de taiane.cc e
@@ -71,5 +84,10 @@ Atualize este arquivo ao final de cada tarefa.
 - **0.3.0:** o Laboratório usa larguras de coluna em `rem` e linhas de `1px` soltas. Criar
   tokens para elas quando os tokens oficiais forem definidos.
 - **0.9.0:** nota A+ no Mozilla Observatory e checagem em securityheaders.com.
-- **0.2.0:** tirar o `noindex` da página inicial quando ela tiver conteúdo real.
+- **1.0.0:** liberar os buscadores: trocar `indexacaoLiberada` para `true` em
+  `src/components/layout/LayoutBase.astro`. O Laboratório continua com `noindex`.
+- **0.4.0:** responder as perguntas em aberto do case de funis (método de medição, 20% ou 25%,
+  decisões da Taiane e do time, ano, equipe, imagens, agradecimento) e trocar todos os
+  "[RASCUNHO]" e "[TEXTO DA TAIANE]".
+- **0.3.0:** a foto tem 512 px; trocar por uma maior para telas de alta densidade.
 - **11/2027:** renovar a data `Expires` do `public/.well-known/security.txt` antes de 11/11/2027.
