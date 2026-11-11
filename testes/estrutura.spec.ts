@@ -31,3 +31,22 @@ test("a hora local aparece no formato 00:00", async ({ page }) => {
 	await page.goto("/");
 	await expect(page.locator("time[data-hora-fuso]")).toHaveText(/^\d{2}:\d{2}$/);
 });
+
+test("o cabeçalho leva ao início e às seções da página inicial", async ({ page }) => {
+	await page.goto("/cases/funis-interativos");
+	const cabecalho = page.getByRole("banner");
+	const navegacao = cabecalho.getByRole("navigation", { name: "Principal" });
+	await expect(navegacao.getByRole("link")).toHaveText(["Projetos", "Sobre", "Contato"]);
+	await navegacao.getByRole("link", { name: "Sobre" }).click();
+	await expect(page).toHaveURL(/\/#sobre$/);
+	await cabecalho.getByRole("link", { name: "Taiane Cris Campos" }).click();
+	await expect(page).toHaveURL(/\/$/);
+});
+
+test("só o case confidencial avisa que está sob sigilo", async ({ page }) => {
+	await page.goto("/cases/azul-gpt");
+	await expect(page.getByText("Case sob sigilo", { exact: true })).toHaveCount(1);
+	await page.goto("/cases/funis-interativos");
+	await expect(page.getByText("Case sob sigilo", { exact: true })).toHaveCount(0);
+	await expect(page.getByText("Sigilo", { exact: true })).toHaveCount(0);
+});
