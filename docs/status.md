@@ -3,8 +3,8 @@
 Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.1.1 (Fundação, com redirecionamento temporário do domínio)
-**Etapa atual:** 0.3.0 Direção de arte, junto com a estrutura da 0.2.0 (briefing de design v2)
-**Fase da etapa:** 0.3.a Tokens oficiais e protótipos no Laboratório · aguardando a escolha da Taiane
+**Etapa atual:** 0.3.0 Direção de arte, junto com a estrutura da 0.2.0 (especificação base)
+**Fase da etapa:** 0.3.b Base fiel à debora.wiki · aguardando a revisão da Taiane
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -85,12 +85,13 @@ Atualize este arquivo ao final de cada tarefa.
 
 A revisão da 0.2.a não foi aprovada ("cara de documento, poluído, cheio de linhas").
 Estrutura e visual seguem juntos nesta etapa, na ramificação design, sem pull request da 0.2.0.
-Referência: `docs/briefing-design-v2.md`, que substitui as decisões visuais do briefing v1.
+Referência: `docs/especificacao-base-debora.md` (11/11/2026), que substitui os briefings v1 e v2
+e os protótipos da 0.3.a na parte visual.
 
-| Fase  | Descrição                                                                    | Status               |
-| ----- | ---------------------------------------------------------------------------- | -------------------- |
-| 0.3.a | Tokens oficiais, fontes, textura, blocos bento e protótipos no Laboratório   | Aguardando a escolha |
-| 0.3.b | Aplicar a abertura e o menu escolhidos no site inteiro, na ordem do briefing | Não iniciada         |
+| Fase  | Descrição                                                                   | Status             |
+| ----- | --------------------------------------------------------------------------- | ------------------ |
+| 0.3.a | Tokens oficiais, fontes, textura, blocos bento e protótipos no Laboratório  | Substituída        |
+| 0.3.b | Base fiel à debora.wiki: tokens, cabeçalho, página inicial e página de case | Aguardando revisão |
 
 ## Fase 0.3.a
 
@@ -105,23 +106,41 @@ Referência: `docs/briefing-design-v2.md`, que substitui as decisões visuais do
   desenhados para o site. Saem do projeto depois da escolha.
 - Qualidade: 74 testes aprovados, incluindo acessibilidade e CSP nas páginas de protótipo.
 
+## Fase 0.3.b
+
+- Tokens trocados pelos da especificação, nas três camadas, com ajustes em 768 e 1200 px.
+  Fonte Schibsted Grotesk variável auto-hospedada, com a licença SIL OFL 1.1 ao lado. Archivo e
+  Geist Mono ficam em `public/fontes`, sem declaração, então não são baixadas.
+- Saíram: protótipos da 0.3.a e suas rotas, blocos bento, etiqueta, textura, menu ilha, hora
+  local, status com ponto verde, seção Ferramentas e cursos livres.
+- Cabeçalho fixo e translúcido. No celular, botão Menu com painel nativo (popover). Nos cases,
+  as seções do case no lugar das seções da página inicial, com painel até 1200 px.
+- Página inicial: abertura com a frase, o retrato e o selo próprio; Projetos com "Novo" no case
+  mais recente; Textos com os quatro textos; Sobre com Experiência e Educação; "Vamos conversar?";
+  rodapé com nome, ano e cidade.
+- Página de case: topo central com ano, cliente e tempo de leitura; três cartões de resumo
+  (rascunho no case de funis, "[TEXTO DA TAIANE]" nos sigilosos); seções com título fixo à
+  esquerda; frase-chave em azul; fechamento com o LinkedIn e a nota de confidencialidade.
+- Schema: campos `cliente` (até 24 caracteres) e `cartoes`.
+- CLAUDE.md atualizado para apontar o design system para a especificação base.
+- Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 56 testes aprovados.
+- Comparação com a debora.wiki em 375, 768 e 1440 px, em `.revisao/lado-a-lado-*.png`.
+
 ## Pendências anotadas
 
 - **1.0.0:** remover do `vercel.json` o redirecionamento temporário (307) de taiane.cc e
   www.taiane.cc para o Linktree. Ele vale só na rota `/`, para o `security.txt` continuar acessível.
 - **0.3.0:** o Laboratório usa larguras de coluna em `rem` e linhas de `1px` soltas. Criar
-  tokens para elas quando os tokens oficiais forem definidos.
+  tokens para elas.
 - **0.9.0:** nota A+ no Mozilla Observatory e checagem em securityheaders.com.
 - **1.0.0:** liberar os buscadores: trocar `indexacaoLiberada` para `true` em
   `src/components/layout/LayoutBase.astro`. O Laboratório continua com `noindex`.
 - **0.4.0:** imagens do case de funis, com texto alternativo; trocar todos os "[RASCUNHO]",
   "[TEXTO DA TAIANE]" e "[A DEFINIR]".
-- **0.3.b:** seção Textos com os dois textos do designDivergente (2026), o post do Substack
-  `ux-e-dev-reconectando-o-elo-perdido` (ler o post para pegar o título exato e o ano) e
-  "Como construí meu portfólio com Claude Code" com a etiqueta "em produção".
-  O case de funis não entra, porque já está em Projetos.
-- **0.3.b:** remover os nomes de transição de tamanho de texto em `tokens.css` e o cabeçalho de
-  texto, substituído pelo menu flutuante.
+- **0.3.0:** decidir se o e-mail volta a aparecer no site; a especificação base mostra só o LinkedIn.
+- **0.3.0:** descrições curtas para os quatro textos (a lista mostra só título e metadados).
+- **0.4.0:** chamadas dos cases do Azul GPT e da Luft; enquanto forem "[TEXTO DA TAIANE]", a
+  lista de projetos mostra só o título.
 - **Ambiente:** com pouca memória livre no computador, rodar os testes com `--workers=1`.
 - **0.3.0:** a foto tem 512 px; trocar por uma maior para telas de alta densidade.
 - **11/2027:** renovar a data `Expires` do `public/.well-known/security.txt` antes de 11/11/2027.
