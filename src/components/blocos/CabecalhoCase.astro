@@ -1,6 +1,7 @@
 ---
 /**
  * Abertura do case: título, resumo de até 3 frases (ADR 0002), ficha e principais resultados.
+ * "Case sob sigilo" aparece só nos confidenciais; nos públicos, nada é dito sobre sigilo.
  */
 interface Props {
 	titulo: string;
@@ -36,11 +37,9 @@ const Titulo = `h${nivel}` as const;
 			<dt>Papel</dt>
 			<dd>{papel}</dd>
 		</div>
-		<div>
-			<dt>Sigilo</dt>
-			<dd>{sigilo === "confidencial" ? "Confidencial" : "Público"}</dd>
-		</div>
 	</dl>
+
+	{sigilo === "confidencial" && <p class="cabecalho-case__sigilo">Case sob sigilo</p>}
 
 	<ul class="cabecalho-case__resultados" role="list" aria-label="Principais resultados">
 		{resultados.map((r) => (
@@ -93,6 +92,12 @@ const Titulo = `h${nivel}` as const;
 
 	.cabecalho-case__ficha dd {
 		margin: 0;
+	}
+
+	.cabecalho-case__sigilo {
+		font-family: var(--font-tecnica);
+		font-size: var(--text-pequeno);
+		color: var(--color-texto-secundario);
 	}
 
 	.cabecalho-case__valor {
