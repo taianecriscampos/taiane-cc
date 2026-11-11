@@ -18,9 +18,11 @@ interface Props {
 	descricao: string;
 	/** true para páginas que nunca devem aparecer em buscadores (ex.: /laboratorio). */
 	noindex?: boolean;
+	/** false nos protótipos do Laboratório, que testam a navegação nova. */
+	cabecalho?: boolean;
 }
 
-const { titulo, descricao } = Astro.props;
+const { titulo, descricao, cabecalho = true } = Astro.props;
 const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 ---
 
@@ -32,6 +34,13 @@ const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 		<title>{titulo}</title>
 		<meta name="description" content={descricao} />
 		{noindex && <meta name="robots" content="noindex, nofollow" />}
+		<link
+			rel="preload"
+			href="/fontes/archivo-variavel-latin.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
@@ -40,7 +49,7 @@ const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 		<a class="pular-conteudo" href="#conteudo">
 			Pular para o conteúdo
 		</a>
-		<Cabecalho />
+		{cabecalho && <Cabecalho />}
 		<main id="conteudo" tabindex="-1">
 			<slot />
 		</main>

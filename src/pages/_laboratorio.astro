@@ -56,22 +56,32 @@ const hexDoSemantico = (nome: string) =>
 	valorDe(referencia(semanticos.find((t) => t.nome === nome)?.valor ?? ""));
 const fundo = hexDoSemantico("--color-fundo");
 const destaque = hexDoSemantico("--color-destaque");
+const inverso = hexDoSemantico("--color-inverso-fundo");
 
 const cores = semanticos
 	.filter((t) => t.nome.startsWith("--color-"))
 	.map((t) => {
 		const primitivo = referencia(t.valor);
 		const hex = valorDe(primitivo);
-		// "Sobre destaque" é medido contra o vermelho; o resto, contra o fundo.
-		const base = t.nome === "--color-sobre-destaque" ? destaque : fundo;
+		// "Sobre destaque" é medido contra o vermelho; os textos inversos, contra o fundo escuro;
+		// o resto, contra o fundo da página.
+		const base =
+			t.nome === "--color-sobre-destaque"
+				? destaque
+				: t.nome.startsWith("--color-inverso-") && t.nome !== "--color-inverso-fundo"
+					? inverso
+					: fundo;
 		const ehFundo = t.nome === "--color-fundo";
+		const ehTranslucida = !hex.startsWith("#");
 		const razao = contraste(hex, base);
 		return {
 			...t,
 			primitivo,
 			hex,
 			ehFundo,
-			medidoContra: base === destaque ? "o destaque" : "o fundo",
+			ehTranslucida,
+			medidoContra:
+				base === destaque ? "o destaque" : base === inverso ? "o fundo inverso" : "o fundo",
 			razao: razao.toFixed(2).replace(".", ","),
 			nivel: nivel(razao),
 		};
@@ -110,8 +120,12 @@ Astro.csp?.insertStyleHash(
 		<header class="lab__topo">
 			<h1>Laboratório</h1>
 			<p>
-				Todos os tokens do site, lidos direto de <code>src/styles/tokens.css</code>. Valores
-				provisórios: os oficiais saem da direção de arte, na etapa 0.3.0.
+				Todos os tokens do site, lidos direto de <code>src/styles/tokens.css</code>. Direção visual
+				oficial da etapa 0.3.0, conforme o briefing de design v2.
+			</p>
+			<p>
+				Protótipos para escolher: <a href="/laboratorio/abertura">três aberturas</a> e
+				<a href="/laboratorio/menu">dois menus flutuantes</a>.
 			</p>
 		</header>
 
@@ -131,7 +145,9 @@ Astro.csp?.insertStyleHash(
 						<span class="lab__meta">
 							{c.ehFundo
 								? "Base das medições"
-								: `${c.razao}:1 contra ${c.medidoContra} · ${c.nivel}`}
+								: c.ehTranslucida
+									? "Translúcida: realce de fundo, sem texto"
+									: `${c.razao}:1 contra ${c.medidoContra} · ${c.nivel}`}
 						</span>
 					</li>
 				))}
@@ -155,6 +171,12 @@ Astro.csp?.insertStyleHash(
 					</li>
 				))}
 			</ul>
+			<p class="lab__largura-normal">
+				Archivo na largura normal: Design de produto com pensamento sistêmico
+			</p>
+			<p class="lab__largura-estreita">
+				Archivo na largura estreita dos títulos: Design de produto com pensamento sistêmico
+			</p>
 			<p class="lab__mono">
 				<code>--font-tecnica</code>: 10/11/2026 · 23:59 · 0101 0110
 			</p>
@@ -303,7 +325,7 @@ Astro.csp?.insertStyleHash(
 	.lab__amostra {
 		block-size: var(--space-secao);
 		margin-block-end: var(--space-pequeno);
-		border-radius: var(--radius-sutil);
+		border-radius: var(--radius-medio);
 		box-shadow: inset 0 0 0 1px var(--color-linha);
 	}
 
@@ -325,6 +347,23 @@ Astro.csp?.insertStyleHash(
 
 	.lab__mono {
 		font-family: var(--font-tecnica);
+	}
+
+	.lab__largura-normal,
+	.lab__largura-estreita {
+		font-size: var(--text-titulo);
+		font-weight: var(--peso-titulo);
+		line-height: var(--leading-titulo);
+		max-inline-size: none;
+		color: var(--color-texto);
+	}
+
+	.lab__largura-normal {
+		font-stretch: var(--largura-fonte-texto);
+	}
+
+	.lab__largura-estreita {
+		font-stretch: var(--largura-fonte-titulo);
 	}
 
 	.lab__barra {

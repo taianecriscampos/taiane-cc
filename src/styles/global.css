@@ -5,6 +5,7 @@
 @layer reset, tokens, base, componentes, utilitarios;
 
 @import "./tokens.css" layer(tokens);
+@import "./fontes.css";
 
 /* ---------- reset ---------- */
 @layer reset {
@@ -56,9 +57,11 @@
 		background: var(--color-fundo);
 	}
 
+	/* Fundo com ruído leve, em vez de branco chapado (briefing v2). */
 	body {
 		min-height: 100dvh;
-		background: var(--color-fundo);
+		background-color: var(--color-fundo);
+		background-image: var(--textura-fundo);
 		color: var(--color-texto);
 		font-family: var(--font-texto);
 		font-size: var(--text-corpo);
@@ -72,7 +75,9 @@
 	h3,
 	h4 {
 		font-weight: var(--peso-titulo);
+		font-stretch: var(--largura-fonte-titulo);
 		line-height: var(--leading-titulo);
+		letter-spacing: var(--tracking-titulo);
 		text-wrap: balance;
 	}
 
@@ -169,6 +174,29 @@
 		font-family: var(--font-tecnica);
 		font-size: var(--text-pequeno);
 		color: var(--color-texto-terciario);
+	}
+
+	/* Bloco bento: agrupa informação com fundo sutil e cantos arredondados, no lugar de linhas. */
+	.bento {
+		padding: var(--bento-espaco);
+		border-radius: var(--bento-raio);
+		background: var(--bento-fundo);
+	}
+
+	/* Etiqueta: ano, plataforma, "em produção". */
+	.etiqueta {
+		display: inline-block;
+		padding: var(--etiqueta-espaco);
+		border-radius: var(--etiqueta-raio);
+		background: var(--etiqueta-fundo);
+		color: var(--etiqueta-texto);
+		font-family: var(--font-tecnica);
+		font-size: var(--text-pequeno);
+		font-weight: var(--peso-corpo);
+		font-stretch: normal;
+		letter-spacing: normal;
+		line-height: var(--leading-corpo);
+		white-space: nowrap;
 	}
 
 	/* Junta o marcador ao parágrafo a que ele se refere. */

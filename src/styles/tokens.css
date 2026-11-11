@@ -1,11 +1,10 @@
 /*
- * Tokens do design system — valores PROVISÓRIOS (fase 0.1.c).
- * Os oficiais saem da direção de arte, na etapa 0.3.0.
+ * Tokens do design system — direção visual oficial (etapa 0.3.0, briefing de design v2).
  *
  * Três camadas:
  *   1. Primitivos  (--prim-*)  valores brutos. Só os semânticos leem estes.
  *   2. Semânticos  (--color-*, --space-*, --text-*...)  o nome diz a função.
- *   3. Componentes (--skip-link-*, --link-*, --focus-*)  decisões de um componente.
+ *   3. Componentes (--bento-*, --menu-*, --etiqueta-*...)  decisões de um componente.
  * Componentes usam SOMENTE as camadas 2 e 3.
  *
  * O /laboratorio lê este arquivo na compilação: mantenha um token por linha.
@@ -15,40 +14,44 @@
 :root {
 	/* Cor. Contraste medido sobre --prim-color-branco-quente. */
 	--prim-color-branco-quente: #fbfaf7;
+	--prim-color-areia: #f2efe9; /* fundo dos blocos; cinza-600 sobre ele: 4,63:1 */
 	--prim-color-preto: #141414; /* 17,65:1 */
 	--prim-color-cinza-700: #55534e; /* 7,36:1 */
 	--prim-color-cinza-600: #6e6b65; /* 5,09:1 */
+	--prim-color-cinza-400: #a8a49c; /* só sobre o preto: 7,42:1 */
 	--prim-color-cinza-200: #e4e1da; /* 1,25:1, só decorativo */
 	--prim-color-vermelho: #c8201a; /* 5,47:1 */
+	--prim-color-verde: #1e9e5a; /* 3,30:1, só o ponto de status, ao lado do texto */
 	--prim-color-branco: #ffffff;
+	--prim-color-areia-translucida: rgb(242 239 233 / 0.86);
+	--prim-color-realce-escuro: rgb(251 250 247 / 0.12);
 
-	/* Fonte provisória: a do sistema. As reais entram na 0.3.0. */
-	--prim-font-grotesca:
-		system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-	--prim-font-mono:
-		ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+	/* Fontes auto-hospedadas em public/fontes (licença SIL OFL 1.1, arquivos ao lado). */
+	--prim-font-archivo: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+	--prim-font-geist-mono: "Geist Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 
-	/* Escala tipográfica fluida: razão 1,2 em 375px até 1,25 em 1440px, corpo de 16 a 18px. */
-	--prim-text--1: clamp(0.8333rem, 0.8099rem + 0.1002vw, 0.9rem);
-	--prim-text-0: clamp(1rem, 0.956rem + 0.1878vw, 1.125rem);
-	--prim-text-1: clamp(1.2rem, 1.1274rem + 0.3099vw, 1.4063rem);
-	--prim-text-2: clamp(1.44rem, 1.3281rem + 0.4775vw, 1.7578rem);
-	--prim-text-3: clamp(1.728rem, 1.5628rem + 0.705vw, 2.1973rem);
-	--prim-text-4: clamp(2.0736rem, 1.8366rem + 1.0111vw, 2.7466rem);
-	--prim-text-5: clamp(2.4883rem, 2.1556rem + 1.4196vw, 3.4332rem);
-	--prim-text-6: clamp(2.986rem, 2.5263rem + 1.9614vw, 4.2915rem);
+	/* Escala inspirada na debora.wiki: poucos tamanhos, contraste forte entre eles. */
+	--prim-text-pequeno: clamp(0.8125rem, 0.7905rem + 0.0939vw, 0.875rem);
+	--prim-text-corpo: clamp(1rem, 0.956rem + 0.1878vw, 1.125rem);
+	--prim-text-titulo: clamp(2rem, 1.2958rem + 3.0047vw, 4rem);
 
-	--prim-leading-justo: 1.1;
+	--prim-leading-justo: 1.04;
 	--prim-leading-base: 1.55;
+	--prim-tracking-justo: -0.025em;
 	--prim-peso-regular: 400;
 	--prim-peso-medio: 500;
-	--prim-peso-forte: 700;
+	--prim-peso-forte: 650;
+	/* Eixo de largura da Archivo: 100% é a largura normal; menos é mais estreito. */
+	--prim-largura-normal: 100%;
+	--prim-largura-estreita: 84%;
+	--prim-largura-condensada: 72%;
 
 	/* Espaçamento: base de 4px. */
 	--prim-space-1: 0.25rem;
 	--prim-space-2: 0.5rem;
 	--prim-space-3: 0.75rem;
 	--prim-space-4: 1rem;
+	--prim-space-5: 1.25rem;
 	--prim-space-6: 1.5rem;
 	--prim-space-8: 2rem;
 	--prim-space-12: 3rem;
@@ -58,14 +61,26 @@
 
 	/* Medidas de estrutura. */
 	--prim-borda-fina: 1px;
+	--prim-size-2: 0.5rem;
+	--prim-size-11: 2.75rem;
+	--prim-size-32: 8rem;
 	--prim-size-48: 12rem;
 	--prim-size-60: 15rem;
+	--prim-size-104: 26rem;
 
-	/* Raios: pequenos de propósito. */
+	/* Raios: cantos arredondados de aplicativo. */
 	--prim-radius-0: 0;
-	--prim-radius-1: 2px;
 	--prim-radius-2: 4px;
+	--prim-radius-3: 0.75rem;
+	--prim-radius-5: 1.25rem;
 	--prim-radius-pilula: 999px;
+
+	/* Sombra só para o que flutua sobre o conteúdo (menu). */
+	--prim-sombra-flutuante:
+		0 0.5rem 1.5rem rgb(20 20 20 / 0.14), 0 0.125rem 0.375rem rgb(20 20 20 / 0.08);
+
+	/* Ruído leve do fundo: SVG embutido, permitido pela CSP (img-src data:). */
+	--prim-textura-ruido: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)' opacity='.07'/%3E%3C/svg%3E");
 
 	/* Movimento (skill movimento). O JavaScript lê estes valores. */
 	--prim-duration-fast: 0.2s;
@@ -77,29 +92,47 @@
 /* ---------- 2. Semânticos ---------- */
 :root {
 	--color-fundo: var(--prim-color-branco-quente);
+	--color-superficie: var(--prim-color-areia);
 	--color-texto: var(--prim-color-preto);
 	--color-texto-secundario: var(--prim-color-cinza-700);
 	--color-texto-terciario: var(--prim-color-cinza-600);
 	--color-destaque: var(--prim-color-vermelho);
+	--color-disponivel: var(--prim-color-verde);
 	--color-linha: var(--prim-color-cinza-200);
 	--color-sobre-destaque: var(--prim-color-branco);
+	--color-inverso-fundo: var(--prim-color-preto);
+	--color-inverso-texto: var(--prim-color-branco-quente);
+	--color-inverso-secundario: var(--prim-color-cinza-400);
+	--color-inverso-realce: var(--prim-color-realce-escuro);
+	--color-superficie-translucida: var(--prim-color-areia-translucida);
 
-	--font-texto: var(--prim-font-grotesca);
-	--font-tecnica: var(--prim-font-mono);
+	--textura-fundo: var(--prim-textura-ruido);
 
-	--text-pequeno: var(--prim-text--1);
-	--text-corpo: var(--prim-text-0);
-	--text-subtitulo: var(--prim-text-1);
-	--text-titulo-3: var(--prim-text-2);
-	--text-titulo-2: var(--prim-text-3);
-	--text-titulo-1: var(--prim-text-4);
-	--text-display: var(--prim-text-6);
+	--font-texto: var(--prim-font-archivo);
+	--font-tecnica: var(--prim-font-geist-mono);
+
+	/* Três tamanhos. Todo título de seção usa --text-titulo, como na debora.wiki. */
+	--text-pequeno: var(--prim-text-pequeno);
+	--text-corpo: var(--prim-text-corpo);
+	--text-titulo: var(--prim-text-titulo);
+
+	/* Transição: nomes antigos apontam para a escala nova até a fase 0.3.b. */
+	--text-subtitulo: var(--prim-text-corpo);
+	--text-titulo-3: var(--prim-text-corpo);
+	--text-titulo-2: var(--prim-text-titulo);
+	--text-titulo-1: var(--prim-text-titulo);
+	--text-display: var(--prim-text-titulo);
 
 	--leading-titulo: var(--prim-leading-justo);
 	--leading-corpo: var(--prim-leading-base);
+	--tracking-titulo: var(--prim-tracking-justo);
 	--peso-corpo: var(--prim-peso-regular);
-	--peso-titulo: var(--prim-peso-medio);
+	--peso-titulo: var(--prim-peso-forte);
 	--peso-forte: var(--prim-peso-forte);
+	--peso-rotulo: var(--prim-peso-medio);
+	--largura-fonte-titulo: var(--prim-largura-estreita);
+	--largura-fonte-texto: var(--prim-largura-normal);
+	--largura-fonte-condensada: var(--prim-largura-condensada);
 
 	--space-minimo: var(--prim-space-1);
 	--space-pequeno: var(--prim-space-2);
@@ -108,17 +141,24 @@
 	--space-bloco: var(--prim-space-12);
 	--space-secao: var(--prim-space-24);
 	--space-margem-pagina: clamp(var(--prim-space-4), 5vw, var(--prim-space-16));
+	--space-interno: clamp(var(--prim-space-4), 3vw, var(--prim-space-6));
 
 	--linha-espessura: var(--prim-borda-fina);
 	--largura-indice: var(--prim-size-60);
 	--largura-coluna-minima: var(--prim-size-48);
 	--largura-leitura: 68ch;
 	--largura-pagina: 90rem;
+	--alvo-toque: var(--prim-size-11);
+	--largura-foto-pequena: var(--prim-size-32);
+	--largura-menu: var(--prim-size-104);
 
 	--radius-nenhum: var(--prim-radius-0);
-	--radius-sutil: var(--prim-radius-1);
 	--radius-controle: var(--prim-radius-2);
+	--radius-medio: var(--prim-radius-3);
+	--radius-bloco: var(--prim-radius-5);
 	--radius-pilula: var(--prim-radius-pilula);
+
+	--sombra-flutuante: var(--prim-sombra-flutuante);
 
 	--motion-duration-fast: var(--prim-duration-fast);
 	--motion-duration-base: var(--prim-duration-base);
@@ -142,8 +182,43 @@
 	--skip-link-espaco: var(--space-pequeno) var(--space-medio);
 	--skip-link-raio: var(--radius-controle);
 
-	--bloco-separador: var(--linha-espessura) solid var(--color-linha);
+	/* Linha só entre itens de uma lista (briefing v2). */
+	--lista-separador: var(--linha-espessura) solid var(--color-linha);
+	--bloco-separador: var(--lista-separador);
 	--bloco-espaco: var(--space-medio);
 	--grade-espaco: var(--space-grande);
 	--indice-topo: var(--space-grande);
+
+	/* Bloco bento: agrupa informação no lugar das linhas. */
+	--bento-fundo: var(--color-superficie);
+	--bento-raio: var(--radius-bloco);
+	--bento-espaco: var(--space-interno);
+	--bento-intervalo: var(--space-pequeno);
+
+	--foto-raio: var(--radius-bloco);
+	--seta-fundo: var(--bento-fundo);
+
+	--etiqueta-fundo: var(--color-superficie);
+	--etiqueta-texto: var(--color-texto-secundario);
+	--etiqueta-raio: var(--radius-pilula);
+	--etiqueta-espaco: var(--space-minimo) var(--space-pequeno);
+
+	--status-ponto-cor: var(--color-disponivel);
+	--status-ponto-tamanho: var(--prim-size-2);
+
+	--menu-raio: var(--radius-pilula);
+	--menu-sombra: var(--sombra-flutuante);
+	--menu-afastamento: var(--space-medio);
+	--menu-item-altura: var(--alvo-toque);
+	--menu-largura: var(--largura-menu);
+	--menu-escuro-fundo: var(--color-inverso-fundo);
+	--menu-escuro-texto: var(--color-inverso-secundario);
+	--menu-escuro-ativo: var(--color-inverso-texto);
+	--menu-escuro-realce: var(--color-inverso-realce);
+	--menu-claro-fundo: var(--color-superficie-translucida);
+	--menu-claro-texto: var(--color-texto-secundario);
+	--menu-claro-ativo: var(--color-texto);
+	--menu-claro-realce: var(--color-fundo);
+	--menu-desfoque: blur(0.75rem) saturate(1.2);
+	--menu-camada: 100;
 }
