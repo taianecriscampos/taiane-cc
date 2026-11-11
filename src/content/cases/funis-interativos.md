@@ -1,7 +1,7 @@
 ---
 titulo: "Funis interativos"
 chamada: "Modelos prontos para criar funis em formato de quiz sem depender do suporte técnico."
-resumo: "Na Inlead, reorganizei a criação de funis interativos em formato de quiz, a etapa que mais gerava frustração e chamados ao suporte. Sem mexer no back-end, transformei um benchmarking de 15 funis de alta conversão em modelos estruturais prontos na interface. Resultado: 40% menos ajustes manuais e funis criados em cerca de 45 minutos, contra 1 hora antes."
+resumo: "Na Inlead, propus e liderei a reorganização da criação de funis interativos em formato de quiz, a etapa que mais gerava frustração e chamados ao suporte. Sem mexer no back-end, transformei um benchmarking de 15 funis de alta conversão em modelos estruturais prontos na interface. Resultado: 40% menos ajustes manuais e cerca de 25% menos tempo para criar um funil."
 empresa: "Inlead"
 ano: 2025
 papel: "Senior Product Designer"
@@ -10,21 +10,17 @@ ordem: 1
 resultados:
   - valor: "40%"
     descricao: "menos ajustes manuais na criação de funis"
-  - valor: "45 min"
-    descricao: "para criar um funil, contra cerca de 1 hora antes"
-  - valor: "+5% a +15%"
-    descricao: "na conversão final dos funis"
+  - valor: "~25%"
+    descricao: "menos tempo para criar um funil, de 15% a 30% conforme a experiência do usuário"
+  - valor: "3x"
+    descricao: "mais rápido para criar variações de campanha, com a duplicação de etapas"
 ---
 
 <!--
-Fonte: https://taianecriscampos.substack.com/p/case-study-benchmarking-de-funil (30/01/2026).
-Perguntas em aberto para a Taiane:
-1. Método de medição de cada número: quem mediu, como, em que período e com quantos funis ou clientes.
-2. O "+20% de rapidez" e o "de ~1h para ~45min" não batem (1h para 45min é 25%). Qual vale?
-3. O que foi decisão sua e o que foi do time (o texto usa "optamos" e "a hipótese mais votada").
-4. Ano do projeto: 2025 ou 2026? Tamanho e composição da equipe.
-5. As imagens do artigo entram na 0.4.0, com texto alternativo.
-6. O agradecimento ao Carlos Giachetto continua no site?
+Fonte do texto: https://taianecriscampos.substack.com/p/case-study-benchmarking-de-funil (30/01/2026).
+Fonte dos números: relatório do time de Customer Experience da Inlead, 2026.
+Projeto em 2025; resultados percebidos em 2026.
+Pendente para a 0.4.0: as imagens do artigo, com texto alternativo.
 -->
 
 ## Contexto
@@ -54,9 +50,11 @@ A promessa de "alta conversão via quiz" não se concretizava sem orientação e
 
 ## Processo e decisões
 
+A iniciativa foi minha. Liderei e executei o projeto do início ao fim, do diagnóstico ao handoff para o front-end.
+
 ### Diagnóstico
 
-Usamos os três pilares de produto do Design Thinking (desejável para o usuário, viável para o negócio e factível para a tecnologia), com base no Design Process in Agile Context, de Fares Farhan.
+Usei os três pilares de produto do Design Thinking (desejável para o usuário, viável para o negócio e factível para a tecnologia), com base no Design Process in Agile Context, de Fares Farhan.
 
 O diagnóstico principal: a funcionalidade de pontuação, responsável pela gamificação, era confusa até para usuários avançados. Configurar a lógica do quiz era o ponto mais sensível da experiência. Ali se definia o sucesso ou o fracasso da conversão.
 
@@ -72,21 +70,21 @@ A hipótese mais votada foi gamificar a própria configuração da gamificação
 
 ### Decisão de design
 
-Atuar no front-end, com foco em reduzir a carga cognitiva, padronizar boas práticas, organizar a estrutura dos funis e preparar a interface para a aplicação estratégica da gamificação. A pergunta que guiou o trabalho:
+Numa startup com pouca abertura para mudanças estruturais, escolhi atuar só no front-end, sem mexer no back-end, justamente para viabilizar a entrega. O foco foi reduzir a carga cognitiva, padronizar boas práticas, organizar a estrutura dos funis e preparar a interface para a aplicação estratégica da gamificação. A pergunta que guiou o trabalho:
 
 > Como podemos orientar o usuário sem alterar drasticamente o back-end?
 
 ### Benchmarking
 
-Analisamos 15 funis de alta conversão, de clientes da startup e de clientes de concorrentes diretos. Mapeamos padrões de layout, fases recorrentes (início, meio e fim), a ordem ideal das etapas, os componentes mais usados, os tipos de pergunta mais frequentes e as estratégias de storytelling. Essa pesquisa foi determinante para identificar padrões replicáveis.
+Analisei 15 funis de alta conversão, de clientes da startup e de clientes de concorrentes diretos. Mapeei padrões de layout, fases recorrentes (início, meio e fim), a ordem ideal das etapas, os componentes mais usados, os tipos de pergunta mais frequentes e as estratégias de storytelling. Essa pesquisa foi determinante para identificar padrões replicáveis.
 
 ### Arquitetura da informação
 
-No FigJam, organizamos os fluxos em macroestruturas e classificamos as etapas do quiz em três tipos: entrada (ações do usuário), processamento (carregamentos e transições) e saída (retorno e resultado). Também mapeamos a estrutura da landing page depois do quiz, os gatilhos mais usados e os componentes de conversão.
+No FigJam, organizei os fluxos em macroestruturas e classifiquei as etapas do quiz em três tipos: entrada (ações do usuário), processamento (carregamentos e transições) e saída (retorno e resultado). Também mapeei a estrutura da landing page depois do quiz, os gatilhos mais usados e os componentes de conversão.
 
 ## Solução
 
-Como não era possível alterar a lógica da ferramenta, decidimos:
+Como não era possível alterar a lógica da ferramenta, decidi:
 
 - criar padrões estruturais replicáveis;
 - organizar templates com base nos "funis campeões";
@@ -99,17 +97,17 @@ Antes, o usuário precisava decidir espaçamentos, hierarquia tipográfica, orga
 
 ## Resultados
 
-<p class="marcador">[MÉTODO DA MEDIÇÃO: TEXTO DA TAIANE]</p>
+Resultados levantados pelo time de Customer Experience da Inlead, com avaliação qualitativa e quantitativa após a entrega, em 2026. Não tive acesso aos dados brutos; os intervalos refletem a diferença entre usuários iniciantes e avançados.
 
 Mesmo sem alterar a arquitetura de back-end, a solução gerou:
 
 - 40% menos ajustes manuais;
-- criação de funis cerca de 20% mais rápida, de aproximadamente 1 hora para 45 minutos por funil;
-- de 10% a 25% a mais na taxa de conclusão do funil;
-- de 5% a 15% a mais na conversão final;
-- variações de funil criadas até 3 vezes mais rápido, com testes A/B de menos risco estrutural.
+- cerca de 25% menos tempo para criar um funil, de 15% a 30% conforme a experiência do usuário: por exemplo, de 1 hora para 45 minutos;
+- variações de campanha criadas até 3 vezes mais rápido, com a duplicação de etapas, e testes A/B com menos risco estrutural.
 
-Segundo a análise do time de CX, houve redução significativa de chamados sobre configuração, melhor entendimento da lógica de pontuação, mais autonomia do usuário e mais alinhamento entre expectativa e entrega. O aumento não veio de mudança de tráfego, mas de organização estrutural.
+Como estimativa, o time de CX aponta +10% a +25% na conclusão do funil e +5% a +15% na conversão final.
+
+Segundo a análise do CX, houve redução significativa de chamados sobre configuração, melhor entendimento da lógica de pontuação, mais autonomia do usuário e mais alinhamento entre expectativa e entrega. O ganho veio da organização estrutural, não de mudança de tráfego.
 
 Essa foi a primeira entrega de um plano maior de melhoria contínua da experiência.
 
