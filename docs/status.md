@@ -59,6 +59,8 @@ Atualize este arquivo ao final de cada tarefa.
 
 ## Pendências anotadas
 
+- **1.0.0:** remover do `vercel.json` o redirecionamento temporário (307) de taiane.cc e
+  www.taiane.cc para o Linktree. Ele vale só na rota `/`, para o `security.txt` continuar acessível.
 - **0.3.0:** o Laboratório usa larguras de coluna em `rem` e linhas de `1px` soltas. Criar
   tokens para elas quando os tokens oficiais forem definidos.
 - **0.9.0:** nota A+ no Mozilla Observatory e checagem em securityheaders.com.
