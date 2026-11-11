@@ -1,0 +1,61 @@
+---
+/**
+ * Cabeçalho de todas as páginas: o nome leva ao início, e três links levam às seções da página inicial.
+ */
+import { perfil } from "../../dados/perfil";
+
+const links = [
+	{ texto: "Projetos", href: "/#projetos" },
+	{ texto: "Sobre", href: "/#sobre" },
+	{ texto: "Contato", href: "/#contato" },
+];
+---
+
+<header class="cabecalho envoltorio">
+	<a class="cabecalho__nome" href="/">
+		{perfil.nome}
+	</a>
+	<nav aria-label="Principal">
+		<ul class="cabecalho__links" role="list">
+			{links.map((link) => (
+				<li>
+					<a href={link.href}>{link.texto}</a>
+				</li>
+			))}
+		</ul>
+	</nav>
+</header>
+
+<style>
+	.cabecalho {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--space-pequeno) var(--space-grande);
+		padding-block: var(--space-medio);
+		border-block-end: var(--bloco-separador);
+	}
+
+	.cabecalho__nome {
+		font-weight: var(--peso-titulo);
+		text-decoration: none;
+	}
+
+	.cabecalho__links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-pequeno) var(--space-medio);
+		padding: 0;
+		list-style: none;
+	}
+
+	.cabecalho__links a {
+		text-decoration: none;
+	}
+
+	.cabecalho a:hover,
+	.cabecalho a:focus-visible {
+		text-decoration: underline;
+	}
+</style>

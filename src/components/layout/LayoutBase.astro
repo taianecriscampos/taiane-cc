@@ -1,9 +1,10 @@
 ---
 /**
  * Layout base de todas as páginas.
- * Idioma pt-BR, título, descrição, opção de noindex e link "Pular para o conteúdo".
+ * Idioma pt-BR, título, descrição, opção de noindex, link "Pular para o conteúdo", cabeçalho e rodapé.
  */
 import "../../styles/global.css";
+import Cabecalho from "./Cabecalho.astro";
 import Rodape from "./Rodape.astro";
 
 /**
@@ -39,6 +40,7 @@ const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 		<a class="pular-conteudo" href="#conteudo">
 			Pular para o conteúdo
 		</a>
+		<Cabecalho />
 		<main id="conteudo" tabindex="-1">
 			<slot />
 		</main>
