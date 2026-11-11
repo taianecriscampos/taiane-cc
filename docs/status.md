@@ -4,7 +4,7 @@ Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.0.0 (kit de arranque)
 **Etapa atual:** 0.1.0 Fundação
-**Fase da etapa:** 0.1.e parte 2 em andamento (envio feito) · próximo: proteger a main e ligar a Vercel
+**Fase da etapa:** 0.1.e parte 2 em andamento (envio e proteção da main feitos) · próximo: ligar a Vercel
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -46,8 +46,9 @@ Atualize este arquivo ao final de cada tarefa.
   com contato pelo LinkedIn, válido até 11/11/2027.
 - **Parte 2, em andamento:** repositório público em github.com/taianecriscampos/taiane-cc,
   com main e design enviadas e rastreadas. O primeiro GitHub Actions, na design, passou
-  (audit, check, formatação, build e 20 testes). A seguir: proteger a main (só pull request com
-  a qualidade aprovada) e ligar a Vercel ao repositório.
+  (audit, check, formatação, build e 20 testes). A main está protegida pela regra "proteger-main":
+  só pull request, sem aprovação de outra pessoa, verificação `qualidade` obrigatória, sem force
+  push e sem apagar. A seguir: ligar a Vercel ao repositório.
 
 ## Pendências anotadas
 
