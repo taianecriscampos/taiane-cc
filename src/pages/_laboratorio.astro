@@ -13,7 +13,12 @@ import Disponibilidade from "../components/ui/Disponibilidade.astro";
 import Selo from "../components/ui/Selo.astro";
 import Seta from "../components/ui/Seta.astro";
 import LayoutBase from "../components/layout/LayoutBase.astro";
-import { cabecalhoPiorCaso, entradasPiorCaso, perfilPiorCaso } from "../dados/pior-caso";
+import {
+	artigosPiorCaso,
+	cabecalhoPiorCaso,
+	entradasPiorCaso,
+	perfilPiorCaso,
+} from "../dados/pior-caso";
 import tokensCss from "../styles/tokens.css?raw";
 
 type Token = { nome: string; valor: string };
@@ -297,6 +302,13 @@ Astro.csp?.insertStyleHash(
 			rotulo="Entradas no limite"
 			entradas={entradasPiorCaso}
 			vazio="Lista vazia."
+		/>
+		<ListaDeEntradas
+			id="pior-artigos"
+			rotulo="Artigos no limite"
+			entradas={artigosPiorCaso}
+			vazio="Lista vazia."
+			resumirTitulos
 		/>
 		<ListaDeEntradas
 			id="pior-vazia"

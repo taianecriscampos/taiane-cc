@@ -1,6 +1,6 @@
 ---
 /**
- * Seção da página inicial com rótulo e lista de entradas: Projetos e Textos usam esta peça.
+ * Seção da página inicial com rótulo e lista de entradas: Projetos e Artigos usam esta peça.
  */
 import EntradaDaLista, { type Entrada } from "../ui/Entrada.astro";
 
@@ -10,9 +10,11 @@ interface Props {
 	entradas: Entrada[];
 	/** Texto mostrado quando a lista está vazia. */
 	vazio: string;
+	/** Títulos em até 2 linhas, revelados inteiros no hover e no foco (Artigos). */
+	resumirTitulos?: boolean;
 }
 
-const { id, rotulo, entradas, vazio } = Astro.props;
+const { id, rotulo, entradas, vazio, resumirTitulos = false } = Astro.props;
 ---
 
 <section class="secao envoltorio" id={id} aria-labelledby={`${id}-titulo`}>
@@ -22,7 +24,7 @@ const { id, rotulo, entradas, vazio } = Astro.props;
 	{entradas.length > 0 ? (
 		<ul class="lista" role="list">
 			{entradas.map((entrada) => (
-				<EntradaDaLista {...entrada} />
+				<EntradaDaLista {...entrada} resumirTitulo={resumirTitulos} />
 			))}
 		</ul>
 	) : (

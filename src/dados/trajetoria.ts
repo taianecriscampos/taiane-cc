@@ -99,3 +99,34 @@ export const ferramentas = [
 	"CSS",
 	"JavaScript",
 ];
+
+/**
+ * O que a seção Sobre mostra, na ordem e com os nomes da direção de arte v3.
+ * O histórico completo fica no currículo em PDF.
+ */
+export const experienciasDoSobre = [
+	{ empresa: "Inlead", cargo: "Senior Product Designer", periodo: "2025–2026" },
+	{ empresa: "WeFit", cargo: "Senior Product Designer", periodo: "2023–2025" },
+	{ empresa: "Grupo Sifra", cargo: "Design System Lead", periodo: "2021–2023" },
+];
+
+export const formacaoDoSobre = [
+	{
+		instituicao: "IDI",
+		curso: "Pós-graduação em Ciências Cognitivas e Design de Interação",
+		periodo: "2020",
+		concluida: true,
+	},
+	{
+		instituicao: "PUCRS",
+		curso: "Pós-graduação User Experience Design and Beyond",
+		periodo: "2021–2022",
+		concluida: true,
+	},
+	{
+		instituicao: "PUCRS",
+		curso: "Pós-graduação em Desenvolvimento Full Stack",
+		periodo: "2023",
+		concluida: false,
+	},
+];

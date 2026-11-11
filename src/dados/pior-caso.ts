@@ -37,7 +37,6 @@ export const entradasPiorCaso: Entrada[] = [
 		ano: 2026,
 		descricao: chamadaNoLimite,
 		href: "#",
-		novo: true,
 	},
 	{ titulo: "IA", onde: "Jo", ano: 2000, descricao: "Ok.", href: "#" },
 	{
@@ -68,3 +67,32 @@ export const cabecalhoPiorCaso = {
 	sigilo: "confidencial" as const,
 	cartoes: { atuacao: cartaoNoLimite, desafio: "Ok.", solucao: cartaoNoLimite, rascunho: true },
 };
+
+/**
+ * Artigos no pior caso: título de uma palavra, título longo e realista, uma palavra comprida
+ * sem espaço e plataforma de nome longo. O título de artigo não tem limite de caracteres.
+ */
+export const artigosPiorCaso: Entrada[] = [
+	{
+		titulo: "IA",
+		ano: 2026,
+		onde: "Substack",
+		href: "https://exemplo.example.com/ia",
+		externo: true,
+	},
+	{
+		titulo:
+			"Design Engineering na prática: como reorganizamos o handoff entre design, produto e engenharia numa plataforma SaaS com 1.284 clientes ativos",
+		ano: 2026,
+		onde: "designDivergente",
+		href: "https://exemplo.example.com/handoff",
+		externo: true,
+	},
+	{
+		titulo: "Pré-requisitos-de-acessibilidade-para-formulários-multietapas",
+		ano: 2025,
+		onde: "Medium · Publicação Coletiva de Design Brasileiro",
+		href: "https://exemplo.example.com/acessibilidade",
+		externo: true,
+	},
+];

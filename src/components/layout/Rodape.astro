@@ -1,44 +1,214 @@
 ---
 /**
- * Rodapé de todas as páginas: nome e ano numa ponta, cidade na outra. Sem linha.
+ * Rodapé de todas as páginas, em fundo preto. Faz também o papel de "Vamos conversar?".
+ * Título; navegação; contato (e-mail e LinkedIn); redes; e, na base, "© ano nome" e a cidade
+ * com a hora local de Ribeirão Preto, atualizada por um script pequeno, sem serviço de fora.
+ * Sem script, a hora não aparece e o resto continua igual.
  */
 import { perfil } from "../../dados/perfil";
 
 const ano = new Date().getFullYear();
+
+const navegacao = [
+	{ texto: "Início", href: "/" },
+	{ texto: "Projetos", href: "/#projetos" },
+	{ texto: "Artigos", href: "/#artigos" },
+	{ texto: "Sobre", href: "/#sobre" },
+];
+
+const redes = [
+	{ texto: "LinkedIn", href: perfil.linkedin },
+	{ texto: "Substack", href: perfil.substack },
+	{ texto: "GitHub", href: perfil.github },
+	{ texto: "designDivergente", href: perfil.designDivergente },
+];
 ---
 
-<footer class="rodape envoltorio">
-	<p>
-		{perfil.nome} @ <time datetime={String(ano)}>{ano}</time>
-	</p>
-	<p class="rodape__local">
-		{perfil.cidade}
-		<span class="rodape__ponto" aria-hidden="true"></span>
-		<span class="so-leitor-de-tela">,</span>
-		{perfil.estado}
-	</p>
+<footer class="rodape">
+	<div class="rodape__grade envoltorio">
+		<h2 class="rodape__titulo">Vamos conversar?</h2>
+
+		<nav class="rodape__grupo" aria-labelledby="rodape-navegacao">
+			<h3 id="rodape-navegacao" class="rodape__grupo-titulo">
+				Navegação
+			</h3>
+			<ul class="rodape__lista" role="list">
+				{navegacao.map((item) => (
+					<li>
+						<a class="link" href={item.href}>
+							{item.texto}
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+
+		<div class="rodape__grupo rodape__grupo--contato">
+			<h3 class="rodape__grupo-titulo">Contato</h3>
+			<ul class="rodape__lista" role="list">
+				<li>
+					<a class="link rodape__email" href={`mailto:${perfil.email}`}>
+						{perfil.email}
+					</a>
+				</li>
+				<li>
+					<a class="link" href={perfil.linkedin} target="_blank" rel="noopener noreferrer">
+						LinkedIn<span class="so-leitor-de-tela"> — abre em nova aba</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="rodape__grupo">
+			<h3 class="rodape__grupo-titulo">Redes</h3>
+			<ul class="rodape__lista" role="list">
+				{redes.map((item) => (
+					<li>
+						<a class="link" href={item.href} target="_blank" rel="noopener noreferrer">
+							{item.texto}
+							<span class="so-leitor-de-tela"> — abre em nova aba</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		</div>
+
+		<div class="rodape__base">
+			<p>
+				© <time datetime={String(ano)}>{ano}</time> {perfil.nome}
+			</p>
+			<p class="rodape__local">
+				<span>
+					{perfil.cidade}, {perfil.estado}
+				</span>
+				<span class="rodape__hora" data-hora hidden>
+					<span class="so-leitor-de-tela">Hora local: </span>
+					<time data-hora-valor></time>
+				</span>
+			</p>
+		</div>
+	</div>
 </footer>
+
+<script>
+	const caixa = document.querySelector<HTMLElement>("[data-hora]");
+	const valor = caixa?.querySelector<HTMLTimeElement>("[data-hora-valor]");
+	if (caixa && valor) {
+		const formato = new Intl.DateTimeFormat("pt-BR", {
+			timeZone: "America/Sao_Paulo",
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+		const atualizar = () => {
+			const agora = new Date();
+			valor.textContent = formato.format(agora);
+			valor.dateTime = agora.toISOString();
+			// Próxima troca na virada do minuto.
+			setTimeout(atualizar, 60_000 - (agora.getTime() % 60_000));
+		};
+		atualizar();
+		caixa.hidden = false;
+	}
+</script>
 
 <style>
 	.rodape {
+		background: var(--rodape-fundo);
+		color: var(--rodape-texto);
+		--link-cor: var(--rodape-texto);
+		--focus-cor: var(--rodape-focus-cor);
+	}
+
+	.rodape__grade {
+		display: grid;
+		gap: var(--space-bloco) var(--grade-espaco);
+		padding-block: var(--space-secao) var(--space-bloco);
+	}
+
+	.rodape__titulo {
+		font-size: var(--text-entrada);
+		letter-spacing: var(--tracking-entrada);
+		line-height: var(--leading-titulo);
+	}
+
+	.rodape__grupo {
+		display: grid;
+		align-content: start;
+		gap: var(--space-pequeno);
+	}
+
+	.rodape__grupo-titulo {
+		font-weight: var(--peso-corpo);
+		line-height: var(--leading-corpo);
+		color: var(--rodape-texto-secundario);
+	}
+
+	.rodape__lista {
+		display: grid;
+		justify-items: start;
+		gap: var(--space-minimo);
+		padding: 0;
+		list-style: none;
+	}
+
+	/* O e-mail pode quebrar em qualquer ponto numa tela estreita. */
+	.rodape__email {
+		overflow-wrap: anywhere;
+	}
+
+	.rodape__base {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
 		justify-content: space-between;
 		gap: var(--space-pequeno) var(--space-medio);
-		min-block-size: var(--rodape-altura);
+		padding-block-start: var(--space-bloco);
+		color: var(--rodape-texto-secundario);
 	}
 
 	.rodape__local {
 		display: inline-flex;
-		align-items: center;
-		gap: var(--space-pequeno);
+		flex-wrap: wrap;
+		gap: var(--space-medio);
 	}
 
-	.rodape__ponto {
-		inline-size: var(--ponto-pequeno);
-		block-size: var(--ponto-pequeno);
-		border-radius: var(--radius-pilula);
-		background: currentColor;
+	.rodape__hora {
+		font-variant-numeric: tabular-nums;
+	}
+
+	.rodape__hora[hidden] {
+		display: none;
+	}
+
+	@media (min-width: 768px) {
+		.rodape__grade {
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+		}
+
+		.rodape__titulo {
+			grid-column: 1 / -1;
+		}
+
+		.rodape__grupo {
+			grid-column: span 4;
+		}
+
+		.rodape__base {
+			grid-column: 1 / -1;
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.rodape__titulo {
+			grid-column: 1 / span 5;
+		}
+
+		/* O e-mail precisa de uma coluna a mais para caber numa linha. */
+		.rodape__grupo.rodape__grupo--contato {
+			grid-column: span 3;
+		}
+
+		.rodape__grupo {
+			grid-column: span 2;
+		}
 	}
 </style>

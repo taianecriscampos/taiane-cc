@@ -19,25 +19,41 @@ test("a página inicial lista os três cases, com link para cada um", async ({ p
 	await page.goto("/");
 	const projetos = page.getByRole("region", { name: "Projetos" });
 	await expect(projetos.getByRole("listitem")).toHaveCount(3);
-	await expect(projetos.getByText("Novo", { exact: true })).toHaveCount(1);
+	await expect(projetos.getByText("Novo", { exact: true })).toHaveCount(0);
 	await projetos.getByRole("link", { name: "Funis interativos" }).click();
 	await expect(page).toHaveURL(/\/cases\/funis-interativos$/);
 	await expect(page.getByRole("heading", { level: 1 })).toHaveText("Funis interativos");
 });
 
-test("os textos externos avisam a nova aba, e o texto em construção não tem link", async ({
+test("os artigos abrem em nova aba e avisam o leitor de tela, com o título inteiro", async ({
 	page,
 }) => {
 	await page.goto("/");
-	const textos = page.getByRole("region", { name: "Artigos" });
-	await expect(textos.getByRole("listitem")).toHaveCount(4);
-	const links = textos.getByRole("link");
+	const artigos = page.getByRole("region", { name: "Artigos" });
+	await expect(artigos.getByRole("listitem")).toHaveCount(3);
+	const links = artigos.getByRole("link");
 	await expect(links).toHaveCount(3);
 	for (const link of await links.all()) {
 		await expect(link).toHaveAttribute("target", "_blank");
 		await expect(link).toHaveAccessibleName(/abre em nova aba$/);
 	}
-	await expect(textos.getByText("Em construção")).toHaveCount(1);
+	// O título resumido na tela continua inteiro para o leitor de tela.
+	await expect(
+		artigos.getByRole("link", {
+			name: /^Design Engineering começa antes do código: o que aprendi construindo o designDivergente/,
+		}),
+	).toHaveCount(1);
+});
+
+test("o rodapé traz o convite, o e-mail e a hora local", async ({ page }) => {
+	await page.goto("/");
+	const rodape = page.getByRole("contentinfo");
+	await expect(rodape.getByRole("heading", { name: "Vamos conversar?" })).toBeVisible();
+	await expect(rodape.getByRole("link", { name: "taianecriscampos@gmail.com" })).toHaveAttribute(
+		"href",
+		"mailto:taianecriscampos@gmail.com",
+	);
+	await expect(rodape.locator("[data-hora-valor]")).toHaveText(/^\d{2}:\d{2}$/);
 });
 
 test("o cabeçalho leva às seções da página inicial e de volta ao início", async ({ page }) => {

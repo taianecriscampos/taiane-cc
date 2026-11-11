@@ -1,22 +1,18 @@
 ---
 /**
- * Página inicial. Ordem de leitura: abertura, projetos, artigos, sobre e "Vamos conversar?".
- * O rodapé vem do LayoutBase.
+ * Página inicial. Ordem de leitura: abertura, projetos, artigos e sobre.
+ * O rodapé, com "Vamos conversar?", vem do LayoutBase.
  */
 import { getCollection } from "astro:content";
 import Abertura from "../components/blocos/Abertura.astro";
-import Contato from "../components/blocos/Contato.astro";
 import ListaDeEntradas from "../components/blocos/ListaDeEntradas.astro";
 import Sobre from "../components/blocos/Sobre.astro";
 import LayoutBase from "../components/layout/LayoutBase.astro";
 import type { Entrada } from "../components/ui/Entrada.astro";
 import { perfil } from "../dados/perfil";
-import { textos } from "../dados/textos";
+import { artigos } from "../dados/artigos";
 
-// "Novo" vai para o case mais recente; no empate, o primeiro da ordem.
 const cases = (await getCollection("cases")).sort((a, b) => a.data.ordem - b.data.ordem);
-const anoMaisRecente = Math.max(...cases.map((c) => c.data.ano));
-const idDoNovo = cases.find((c) => c.data.ano === anoMaisRecente)?.id;
 
 const projetos: Entrada[] = cases.map(({ id, data }) => ({
 	titulo: data.titulo,
@@ -24,7 +20,6 @@ const projetos: Entrada[] = cases.map(({ id, data }) => ({
 	onde: data.cliente,
 	descricao: data.chamada.startsWith("[") ? undefined : data.chamada,
 	href: `/cases/${id}`,
-	novo: id === idDoNovo,
 }));
 ---
 
@@ -42,9 +37,9 @@ const projetos: Entrada[] = cases.map(({ id, data }) => ({
 	<ListaDeEntradas
 		id="artigos"
 		rotulo="Artigos"
-		entradas={textos}
+		entradas={artigos}
+		resumirTitulos
 		vazio="Os artigos entram aqui em breve."
 	/>
 	<Sobre />
-	<Contato />
 </LayoutBase>
