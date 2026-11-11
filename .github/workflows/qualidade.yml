@@ -1,0 +1,42 @@
+# Roda a mesma qualidade do computador local em todo push e pull request.
+name: Qualidade
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qualidade-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Instalar o Chromium do Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Qualidade (audit, check, formatação, build e testes)
+        run: npm run qualidade
+
+      - name: Guardar o relatório dos testes se algo falhar
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: relatorio-playwright
+          path: playwright-report/
+          retention-days: 14
