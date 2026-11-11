@@ -7,8 +7,10 @@ import { perfil } from "../../dados/perfil";
 
 <section class="secao envoltorio" id="contato" aria-labelledby="contato-titulo">
 	<h2 id="contato-titulo">Contato</h2>
-	<p class="marcador">[RASCUNHO]</p>
-	<p>Quer conversar sobre um projeto ou uma vaga? Me escreva por e-mail ou pelo LinkedIn.</p>
+	<div class="rascunho">
+		<p class="marcador">[RASCUNHO]</p>
+		<p>Quer conversar sobre um projeto ou uma vaga? Me escreva por e-mail ou pelo LinkedIn.</p>
+	</div>
 	<ul class="contato" role="list">
 		<li>
 			<a href={`mailto:${perfil.email}`}>{perfil.email}</a>

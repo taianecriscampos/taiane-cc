@@ -170,6 +170,12 @@
 		font-size: var(--text-pequeno);
 		color: var(--color-texto-terciario);
 	}
+
+	/* Junta o marcador ao parágrafo a que ele se refere. */
+	.rascunho {
+		display: grid;
+		gap: var(--space-minimo);
+	}
 }
 
 /* ---------- utilitários ---------- */
