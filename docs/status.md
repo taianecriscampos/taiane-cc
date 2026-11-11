@@ -4,7 +4,7 @@ Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.0.0 (kit de arranque)
 **Etapa atual:** 0.1.0 Fundação
-**Fase da etapa:** 0.1.d concluída · próxima: 0.1.e
+**Fase da etapa:** 0.1.e parte 1 concluída · próxima: 0.1.e parte 2
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -35,14 +35,22 @@ Atualize este arquivo ao final de cada tarefa.
 | 0.1.b | Projeto Astro criado e rodando no navegador (Astro 7.4.10, TypeScript strict) | Concluída    |
 | 0.1.c | Arquitetura de pastas, tokens provisórios e Laboratório                       | Concluída    |
 | 0.1.d | Qualidade automatizada: TypeScript, formatação, testes de acessibilidade      | Concluída    |
-| 0.1.e | Git, GitHub, ramificações main e design, Vercel                               | Não iniciada |
+| 0.1.e | Git, GitHub, ramificações main e design, Vercel                               | Em andamento |
 | 0.1.f | Revisão e versão 0.1.0                                                        | Não iniciada |
+
+## Fase 0.1.e
+
+- **Parte 1, concluída:** Git com as ramificações main e design; Laboratório fora da produção
+  (fica de fora só quando `VERCEL_ENV=production`); CSP do Astro e cabeçalhos de segurança no
+  `vercel.json`; `npm audit` na qualidade; GitHub Actions; Dependabot semanal; `security.txt`
+  com contato pelo LinkedIn, válido até 11/11/2027.
+- **Parte 2, a seguir:** criar o repositório no GitHub e enviar main e design; proteger a main
+  (só pull request com a qualidade aprovada); ligar a Vercel ao repositório.
 
 ## Pendências anotadas
 
-- **0.1.e:** tirar o `/laboratorio` da produção. Ele deve existir só no servidor local e nas
-  prévias da Vercel, não no taiane.cc (por exemplo, gerando a página apenas fora do ambiente de produção).
-  Atenção: os testes do Playwright abrem o `/laboratorio` na versão compilada. A solução precisa
-  manter a página na compilação usada pelos testes.
-- **0.1.e:** o CLAUDE.md pede `npm audit` na qualidade. Decidir se ele entra no script `qualidade`.
+- **0.1.e parte 2:** depois do primeiro envio, conferir que o GitHub Actions passou e que os
+  cabeçalhos do `vercel.json` chegam ao navegador (prévia da Vercel e securityheaders.com).
+  Conferir também que o `/laboratorio` existe na prévia e não existe na produção.
 - **0.2.0:** tirar o `noindex` da página inicial quando ela tiver conteúdo real.
+- **11/2027:** renovar a data `Expires` do `public/.well-known/security.txt` antes de 11/11/2027.
