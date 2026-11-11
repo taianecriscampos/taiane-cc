@@ -105,6 +105,14 @@ const regra = (classe: string, propriedade: string, lista: Token[]) =>
 const cssDasAmostras = [
 	regra("lab__amostra", "background", cores),
 	regra("lab__especime", "font-size", textos),
+	// Espaço entre letras de cada nível: os títulos têm token próprio; do rótulo para baixo, o do texto.
+	textos
+		.map((t) => {
+			const nivel = t.nome.replace("--text-", "");
+			const proprio = semanticos.some((x) => x.nome === `--tracking-${nivel}`);
+			return `.lab__especime[data-token="${t.nome}"]{letter-spacing:var(--tracking-${proprio ? nivel : "texto"})}`;
+		})
+		.join(""),
 	regra("lab__barra", "inline-size", espacos),
 	regra("lab__caixa", "border-radius", raios),
 	regra("lab__ponto", "transition-duration", duracoes),
@@ -157,9 +165,9 @@ Astro.csp?.insertStyleHash(
 		<section aria-labelledby="titulo-tipo">
 			<h2 id="titulo-tipo">Tipografia</h2>
 			<p>
-				Schibsted Grotesk, pesos 400, 500 e 700. Os tamanhos de título de entrada, título do case,
-				espaço entre seções e margem da página mudam em 768 e 1200 pixels: aqui aparece o valor do
-				celular.
+				Google Sans Flex, pesos 400, 500 e 700, com espaço entre letras mais fechado nos tamanhos
+				maiores. Os tamanhos de título de entrada, título do case, espaço entre seções e margem da
+				página mudam em 768 e 1200 pixels: aqui aparece o valor do celular.
 			</p>
 			<ul class="lab__lista" role="list">
 				{textos.map((t) => (
@@ -368,6 +376,7 @@ Astro.csp?.insertStyleHash(
 
 	.lab__peso {
 		font-size: var(--text-subtitulo);
+		letter-spacing: var(--tracking-subtitulo);
 		line-height: var(--leading-subtitulo);
 		color: var(--color-texto);
 	}

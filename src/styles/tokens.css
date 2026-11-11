@@ -25,9 +25,10 @@
 	--prim-color-branco: #ffffff;
 	--prim-color-cinza-50-translucido: rgb(250 250 250 / 0.1);
 
-	/* Fonte auto-hospedada em public/fontes (licença SIL OFL 1.1, arquivo ao lado). */
-	--prim-font-schibsted:
-		"Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+	/* Fonte auto-hospedada em public/fontes (licença SIL OFL 1.1, arquivo ao lado).
+	   Google Sans Flex variável, com os eixos de peso (1 a 1000) e largura (25 a 151). */
+	--prim-font-google-sans-flex:
+		"Google Sans Flex", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 	--prim-font-mono-sistema: ui-monospace, "Cascadia Mono", Consolas, monospace;
 
 	/* Tamanhos de texto, em px de referência. */
@@ -56,6 +57,16 @@
 	--prim-peso-400: 400;
 	--prim-peso-500: 500;
 	--prim-peso-700: 700;
+
+	/* Espaço entre letras, apertado como na hugeinc.com: quanto maior o texto, mais fechado. */
+	--prim-tracking-4: -0.04em;
+	--prim-tracking-3: -0.03em;
+	--prim-tracking-2: -0.02em;
+	--prim-tracking-1: -0.01em;
+
+	/* Eixo de largura da fonte: 100 é o normal; abaixo disso, condensada. */
+	--prim-largura-100: 100;
+	--prim-largura-60: 60;
 
 	/* Espaço: escala da especificação. */
 	--prim-space-0: 0;
@@ -112,7 +123,7 @@
 	--color-sobre-destaque-case: var(--prim-color-branco);
 	--color-fundo-translucido: var(--prim-color-cinza-50-translucido);
 
-	--font-texto: var(--prim-font-schibsted);
+	--font-texto: var(--prim-font-google-sans-flex);
 	--font-tecnica: var(--prim-font-mono-sistema);
 
 	--text-abertura: var(--prim-text-80);
@@ -138,6 +149,16 @@
 	--peso-corpo: var(--prim-peso-400);
 	--peso-titulo: var(--prim-peso-500);
 	--peso-forte: var(--prim-peso-700);
+
+	--tracking-abertura: var(--prim-tracking-4); /* 80 px */
+	--tracking-entrada: var(--prim-tracking-3); /* 56 px */
+	--tracking-titulo-case: var(--prim-tracking-3); /* 48 px */
+	--tracking-secao-case: var(--prim-tracking-2); /* 32 px */
+	--tracking-subtitulo: var(--prim-tracking-2); /* 24 px */
+	--tracking-texto: var(--prim-tracking-1); /* 20 px para baixo */
+
+	--fonte-largura-normal: var(--prim-largura-100);
+	--fonte-largura-condensada: var(--prim-largura-60);
 
 	--space-nenhum: var(--prim-space-0);
 	--space-fio: var(--prim-space-2);

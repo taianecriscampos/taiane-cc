@@ -67,6 +67,7 @@
 		font-size: var(--text-corpo);
 		font-weight: var(--peso-corpo);
 		line-height: var(--leading-corpo);
+		letter-spacing: var(--tracking-texto);
 		-webkit-font-smoothing: antialiased;
 	}
 
