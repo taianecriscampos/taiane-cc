@@ -75,7 +75,11 @@ Atualize este arquivo ao final de cada tarefa.
 - Textos marcados com "[RASCUNHO]": sobre, contato e fechamento do case.
 - Pior caso (break-ui) no Laboratório, em `src/dados/pior-caso.ts`.
 - Qualidade: 50 testes aprovados (acessibilidade, CSP, movimento reduzido, noindex, índice do case).
-- Aguardando revisão da estrutura antes do pull request.
+- Primeira revisão da Taiane aplicada: cabeçalho com nome e links Projetos, Sobre e Contato;
+  experiência com cargo, empresa, anos e uma linha; "Case sob sigilo" só nos confidenciais;
+  limites do schema (título até 60, valor até 16, no máximo 3 resultados); "[RASCUNHO]" colado
+  ao parágrafo; case de funis com os resultados e o método do time de CX da Inlead.
+- Aguardando a segunda revisão, com os prints, antes do pull request.
 
 ## Pendências anotadas
 
@@ -86,8 +90,9 @@ Atualize este arquivo ao final de cada tarefa.
 - **0.9.0:** nota A+ no Mozilla Observatory e checagem em securityheaders.com.
 - **1.0.0:** liberar os buscadores: trocar `indexacaoLiberada` para `true` em
   `src/components/layout/LayoutBase.astro`. O Laboratório continua com `noindex`.
-- **0.4.0:** responder as perguntas em aberto do case de funis (método de medição, 20% ou 25%,
-  decisões da Taiane e do time, ano, equipe, imagens, agradecimento) e trocar todos os
-  "[RASCUNHO]" e "[TEXTO DA TAIANE]".
+- **0.4.0:** imagens do case de funis, com texto alternativo; trocar todos os "[RASCUNHO]",
+  "[TEXTO DA TAIANE]" e "[A DEFINIR]".
+- **0.3.0:** testar a frase de posicionamento como destaque principal da abertura, no lugar
+  do nome.
 - **0.3.0:** a foto tem 512 px; trocar por uma maior para telas de alta densidade.
 - **11/2027:** renovar a data `Expires` do `public/.well-known/security.txt` antes de 11/11/2027.
