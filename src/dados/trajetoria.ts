@@ -1,15 +1,14 @@
 /**
  * Experiência, formação e ferramentas. Fonte: docs/curriculo.md.
- * Clientes da WeFit aparecem em texto, dentro da experiência (briefing de design).
+ * Clientes da WeFit aparecem em texto, na linha da experiência (briefing de design).
  */
 export interface Experiencia {
 	inicio: number;
 	fim: number;
 	cargo: string;
 	empresa?: string;
-	modalidade?: string;
-	descricao?: string;
-	clientes?: string;
+	/** Uma linha só: o que foi feito ou para quem. */
+	linha: string;
 }
 
 export interface Formacao {
@@ -25,50 +24,42 @@ export const experiencias: Experiencia[] = [
 		fim: 2026,
 		cargo: "Senior Product Designer | Design Engineering",
 		empresa: "Inlead",
-		modalidade: "Remoto",
-		descricao:
-			"Evolução de plataforma SaaS e reestruturação dos fluxos de criação e gestão de funis de marketing e vendas. Resultado: 40% menos ajustes manuais operacionais.",
+		linha: "Plataforma SaaS de funis de marketing e vendas: 40% menos ajustes manuais.",
 	},
 	{
 		inicio: 2023,
 		fim: 2025,
 		cargo: "Senior Product Designer | UX Strategy, Service Design e IA",
 		empresa: "WeFit",
-		modalidade: "Híbrido, São Paulo",
-		clientes:
-			"Clientes atendidos pela WeFit: Azul Linhas Aéreas, com produtos internos para tripulantes e o Azul GPT, feito com a OpenAI; Luft Logistics, com mapeamento sistêmico e service blueprint da operação; Hapvida, com experiência white label para várias operadoras; e emDia, do Grupo Santander, com otimização de fluxos transacionais.",
+		linha:
+			"Clientes atendidos: Azul Linhas Aéreas, Luft Logistics, Hapvida e emDia, do Grupo Santander.",
 	},
 	{
 		inicio: 2021,
 		fim: 2023,
 		cargo: "UX/UI Designer | Design System Lead",
 		empresa: "Grupo Sifra",
-		modalidade: "Remoto",
-		descricao:
-			"Redesenho de produto financeiro e primeiro design system da empresa, no Figma e no código, com governança entre produto e tecnologia.",
+		linha: "Redesenho de produto financeiro e primeiro design system da empresa.",
 	},
 	{
 		inicio: 2020,
 		fim: 2021,
 		cargo: "UX/UI Designer | Sistemas regulatórios e compliance",
 		empresa: "Gedanken (GCertifica)",
-		modalidade: "Remoto",
-		descricao:
-			"Interfaces para sistema de alta complexidade regulatória, com personas, jornadas e fluxos.",
+		linha: "Interfaces para um sistema de alta complexidade regulatória.",
 	},
 	{
 		inicio: 2018,
 		fim: 2020,
 		cargo: "UX/UI Designer | Produtos de ponta a ponta",
 		empresa: "8P dev studio",
-		modalidade: "Remoto",
-		descricao: "Aplicativos e web do zero: pesquisa, arquitetura, wireframes e design visual.",
+		linha: "Aplicativos e web do zero, da pesquisa ao design visual.",
 	},
 	{
 		inicio: 2011,
 		fim: 2018,
 		cargo: "Comunicação, marketing e direção de arte",
-		descricao: "Liderança criativa, branding, inbound marketing e campanhas multicanal.",
+		linha: "Liderança criativa, branding e campanhas multicanal.",
 	},
 ];
 

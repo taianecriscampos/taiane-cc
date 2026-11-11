@@ -1,6 +1,7 @@
 ---
 /**
  * Experiência e formação em linha do tempo enxuta, da mais recente para a mais antiga.
+ * Cada experiência: cargo, empresa, anos e uma linha só.
  */
 import { cursosLivres, experiencias, formacao } from "../../dados/trajetoria";
 ---
@@ -13,22 +14,16 @@ import { cursosLivres, experiencias, formacao } from "../../dados/trajetoria";
 			<h3>Experiência</h3>
 			<ol class="trajetoria__lista" role="list">
 				{experiencias.map((item) => (
-					<li class="trajetoria__item">
+					<li class="trajetoria__item trajetoria__item--experiencia">
+						<h4 class="trajetoria__cargo">{item.cargo}</h4>
+						{item.empresa && <p class="trajetoria__empresa">{item.empresa}</p>}
 						<p class="trajetoria__periodo">
 							<time datetime={String(item.inicio)}>{item.inicio}</time>
 							<span aria-hidden="true">–</span>
 							<span class="so-leitor-de-tela">até</span>
 							<time datetime={String(item.fim)}>{item.fim}</time>
 						</p>
-						<div class="trajetoria__conteudo">
-							<h4>
-								{item.cargo}
-								{item.empresa && <span class="trajetoria__empresa">{item.empresa}</span>}
-							</h4>
-							{item.modalidade && <p class="trajetoria__secundario">{item.modalidade}</p>}
-							{item.descricao && <p>{item.descricao}</p>}
-							{item.clientes && <p>{item.clientes}</p>}
-						</div>
+						<p class="trajetoria__linha">{item.linha}</p>
 					</li>
 				))}
 			</ol>
@@ -80,6 +75,27 @@ import { cursosLivres, experiencias, formacao } from "../../dados/trajetoria";
 		border-block-start: var(--bloco-separador);
 	}
 
+	/* Experiência: cargo e anos na primeira linha; empresa e a linha de texto embaixo. */
+	.trajetoria__item--experiencia {
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: baseline;
+	}
+
+	.trajetoria__item--experiencia .trajetoria__cargo {
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	.trajetoria__item--experiencia .trajetoria__periodo {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.trajetoria__item--experiencia .trajetoria__empresa,
+	.trajetoria__linha {
+		grid-column: 1 / -1;
+	}
+
 	.trajetoria__periodo {
 		font-family: var(--font-tecnica);
 		font-size: var(--text-pequeno);
@@ -111,7 +127,7 @@ import { cursosLivres, experiencias, formacao } from "../../dados/trajetoria";
 	}
 
 	@media (min-width: 48rem) {
-		.trajetoria__item {
+		.trajetoria__item:not(.trajetoria__item--experiencia) {
 			grid-template-columns: minmax(0, 1fr) minmax(0, 4fr);
 		}
 	}
@@ -122,7 +138,7 @@ import { cursosLivres, experiencias, formacao } from "../../dados/trajetoria";
 			gap: var(--grade-espaco);
 		}
 
-		.trajetoria__item {
+		.trajetoria__item:not(.trajetoria__item--experiencia) {
 			grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
 		}
 	}
