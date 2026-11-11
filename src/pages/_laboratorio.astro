@@ -2,7 +2,8 @@
 /**
  * Laboratório: vitrine de todos os tokens.
  * Lê src/styles/tokens.css na compilação, então nunca fica desatualizado.
- * noindex. Deve sair da produção na fase 0.1.e (ver docs/status.md).
+ * noindex. O sublinhado no nome tira a página das rotas automáticas: ela é incluída
+ * pela integração `laboratorio` do astro.config.mjs, em todo ambiente menos a produção.
  */
 import LayoutBase from "../components/layout/LayoutBase.astro";
 import tokensCss from "../styles/tokens.css?raw";
