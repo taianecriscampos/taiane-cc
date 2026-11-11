@@ -14,7 +14,7 @@
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"test": "playwright test",
-		"qualidade": "npm run check && npm run format:check && npm run build && npm run test"
+		"qualidade": "npm audit --audit-level=high && npm run check && npm run format:check && npm run build && npm run test"
 	},
 	"dependencies": {
 		"astro": "^7.4.10"
