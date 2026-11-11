@@ -1,0 +1,46 @@
+---
+/**
+ * Lista de projetos. Recebe os cases já ordenados.
+ */
+import ItemProjeto from "../ui/ItemProjeto.astro";
+
+export interface ProjetoDaLista {
+	titulo: string;
+	empresa: string;
+	ano: number;
+	chamada: string;
+	href: string;
+}
+
+interface Props {
+	projetos: ProjetoDaLista[];
+	idBase?: string;
+}
+
+const { projetos, idBase = "projetos" } = Astro.props;
+---
+
+<section class="secao envoltorio" id={idBase} aria-labelledby={`${idBase}-titulo`}>
+	<h2 id={`${idBase}-titulo`}>Projetos</h2>
+	{projetos.length > 0 ? (
+		<ul class="projetos" role="list">
+			{projetos.map((projeto) => (
+				<ItemProjeto {...projeto} />
+			))}
+		</ul>
+	) : (
+		<p class="projetos__vazio">Os projetos entram aqui em breve.</p>
+	)}
+</section>
+
+<style>
+	.projetos {
+		padding: 0;
+		list-style: none;
+		border-block-end: var(--bloco-separador);
+	}
+
+	.projetos__vazio {
+		color: var(--color-texto-secundario);
+	}
+</style>

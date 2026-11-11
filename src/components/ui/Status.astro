@@ -1,0 +1,18 @@
+---
+/**
+ * Status profissional. Na 0.3.0 ganha o ponto aceso do crachá (briefing de design).
+ */
+interface Props {
+	texto: string;
+}
+
+const { texto } = Astro.props;
+---
+
+<p class="status">{texto}</p>
+
+<style>
+	.status {
+		font-weight: var(--peso-titulo);
+	}
+</style>

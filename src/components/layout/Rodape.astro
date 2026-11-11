@@ -1,0 +1,67 @@
+---
+/**
+ * Rodapé de todas as páginas.
+ */
+import { perfil } from "../../dados/perfil";
+
+const ano = new Date().getFullYear();
+---
+
+<footer class="rodape envoltorio">
+	<p>
+		<span>{perfil.nome}</span>
+		<span class="rodape__secundario">{perfil.cargo}</span>
+	</p>
+	<nav aria-label="Perfis e contato">
+		<ul class="rodape__links" role="list">
+			<li>
+				<a href={perfil.linkedin}>LinkedIn</a>
+			</li>
+			<li>
+				<a href={perfil.substack}>Substack</a>
+			</li>
+			<li>
+				<a href={perfil.github}>GitHub</a>
+			</li>
+			<li>
+				<a href={`mailto:${perfil.email}`}>E-mail</a>
+			</li>
+		</ul>
+	</nav>
+	<p class="rodape__secundario">
+		© <time datetime={String(ano)}>{ano}</time> {perfil.nome}
+	</p>
+</footer>
+
+<style>
+	.rodape {
+		display: grid;
+		gap: var(--space-medio);
+		margin-block-start: var(--space-secao);
+		padding-block: var(--space-grande) var(--space-bloco);
+		border-block-start: var(--bloco-separador);
+	}
+
+	.rodape p span {
+		display: block;
+	}
+
+	.rodape__secundario {
+		color: var(--color-texto-secundario);
+	}
+
+	.rodape__links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-pequeno) var(--space-grande);
+		padding: 0;
+		list-style: none;
+	}
+
+	@media (min-width: 64rem) {
+		.rodape {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			align-items: start;
+		}
+	}
+</style>

@@ -4,15 +4,23 @@
  * Idioma pt-BR, título, descrição, opção de noindex e link "Pular para o conteúdo".
  */
 import "../../styles/global.css";
+import Rodape from "./Rodape.astro";
+
+/**
+ * Até o lançamento (1.0.0), nenhuma página entra nos buscadores.
+ * Na 1.0.0, troque para true: só as páginas com `noindex` explícito continuam de fora.
+ */
+const indexacaoLiberada = false;
 
 interface Props {
 	titulo: string;
 	descricao: string;
-	/** true para páginas que não devem aparecer em buscadores (ex.: /laboratorio). */
+	/** true para páginas que nunca devem aparecer em buscadores (ex.: /laboratorio). */
 	noindex?: boolean;
 }
 
-const { titulo, descricao, noindex = false } = Astro.props;
+const { titulo, descricao } = Astro.props;
+const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 ---
 
 <!doctype html>
@@ -34,5 +42,6 @@ const { titulo, descricao, noindex = false } = Astro.props;
 		<main id="conteudo" tabindex="-1">
 			<slot />
 		</main>
+		<Rodape />
 	</body>
 </html>

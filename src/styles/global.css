@@ -155,6 +155,21 @@
 	.pular-conteudo:hover {
 		color: var(--skip-link-texto);
 	}
+
+	/* Seção da página: título e conteúdo com o mesmo ritmo vertical. */
+	.secao {
+		display: grid;
+		align-content: start;
+		gap: var(--space-grande);
+		padding-block-start: var(--space-secao);
+	}
+
+	/* Marca texto provisório: [RASCUNHO] e [TEXTO DA TAIANE]. Sai antes da 1.0.0. */
+	.marcador {
+		font-family: var(--font-tecnica);
+		font-size: var(--text-pequeno);
+		color: var(--color-texto-terciario);
+	}
 }
 
 /* ---------- utilitários ---------- */

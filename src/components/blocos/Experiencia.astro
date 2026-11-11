@@ -1,0 +1,129 @@
+---
+/**
+ * Experiência e formação em linha do tempo enxuta, da mais recente para a mais antiga.
+ */
+import { cursosLivres, experiencias, formacao } from "../../dados/trajetoria";
+---
+
+<section class="secao envoltorio" id="experiencia" aria-labelledby="experiencia-titulo">
+	<h2 id="experiencia-titulo">Experiência e formação</h2>
+
+	<div class="trajetoria">
+		<div class="trajetoria__grupo">
+			<h3>Experiência</h3>
+			<ol class="trajetoria__lista" role="list">
+				{experiencias.map((item) => (
+					<li class="trajetoria__item">
+						<p class="trajetoria__periodo">
+							<time datetime={String(item.inicio)}>{item.inicio}</time>
+							<span aria-hidden="true">–</span>
+							<span class="so-leitor-de-tela">até</span>
+							<time datetime={String(item.fim)}>{item.fim}</time>
+						</p>
+						<div class="trajetoria__conteudo">
+							<h4>
+								{item.cargo}
+								{item.empresa && <span class="trajetoria__empresa">{item.empresa}</span>}
+							</h4>
+							{item.modalidade && <p class="trajetoria__secundario">{item.modalidade}</p>}
+							{item.descricao && <p>{item.descricao}</p>}
+							{item.clientes && <p>{item.clientes}</p>}
+						</div>
+					</li>
+				))}
+			</ol>
+		</div>
+
+		<div class="trajetoria__grupo">
+			<h3>Formação</h3>
+			<ol class="trajetoria__lista" role="list">
+				{formacao.map((item) => (
+					<li class="trajetoria__item">
+						<p class="trajetoria__periodo">{item.periodo}</p>
+						<div class="trajetoria__conteudo">
+							<h4>
+								{item.curso}
+								<span class="trajetoria__empresa">{item.instituicao}</span>
+							</h4>
+							{item.situacao && <p class="trajetoria__secundario">{item.situacao}</p>}
+						</div>
+					</li>
+				))}
+			</ol>
+			<h4 class="trajetoria__cursos-titulo">Cursos livres</h4>
+			<p class="trajetoria__secundario">{cursosLivres}</p>
+		</div>
+	</div>
+</section>
+
+<style>
+	.trajetoria {
+		display: grid;
+		gap: var(--space-bloco);
+	}
+
+	.trajetoria__grupo {
+		display: grid;
+		align-content: start;
+		gap: var(--space-medio);
+	}
+
+	.trajetoria__lista {
+		padding: 0;
+		list-style: none;
+	}
+
+	.trajetoria__item {
+		display: grid;
+		gap: var(--space-minimo) var(--space-medio);
+		padding-block: var(--bloco-espaco);
+		border-block-start: var(--bloco-separador);
+	}
+
+	.trajetoria__periodo {
+		font-family: var(--font-tecnica);
+		font-size: var(--text-pequeno);
+		color: var(--color-texto-terciario);
+	}
+
+	.trajetoria__conteudo {
+		display: grid;
+		gap: var(--space-minimo);
+	}
+
+	.trajetoria h4 {
+		font-size: var(--text-corpo);
+	}
+
+	.trajetoria__empresa {
+		display: block;
+		font-weight: var(--peso-corpo);
+		color: var(--color-texto-secundario);
+	}
+
+	.trajetoria__secundario {
+		color: var(--color-texto-secundario);
+	}
+
+	.trajetoria__cursos-titulo {
+		padding-block-start: var(--bloco-espaco);
+		border-block-start: var(--bloco-separador);
+	}
+
+	@media (min-width: 48rem) {
+		.trajetoria__item {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 4fr);
+		}
+	}
+
+	@media (min-width: 64rem) {
+		.trajetoria {
+			grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+			gap: var(--grade-espaco);
+		}
+
+		.trajetoria__item {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+		}
+	}
+</style>

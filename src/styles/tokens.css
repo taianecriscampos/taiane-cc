@@ -56,6 +56,11 @@
 	--prim-space-24: 6rem;
 	--prim-space-32: 8rem;
 
+	/* Medidas de estrutura. */
+	--prim-borda-fina: 1px;
+	--prim-size-48: 12rem;
+	--prim-size-60: 15rem;
+
 	/* Raios: pequenos de propósito. */
 	--prim-radius-0: 0;
 	--prim-radius-1: 2px;
@@ -104,6 +109,9 @@
 	--space-secao: var(--prim-space-24);
 	--space-margem-pagina: clamp(var(--prim-space-4), 5vw, var(--prim-space-16));
 
+	--linha-espessura: var(--prim-borda-fina);
+	--largura-indice: var(--prim-size-60);
+	--largura-coluna-minima: var(--prim-size-48);
 	--largura-leitura: 68ch;
 	--largura-pagina: 90rem;
 
@@ -133,4 +141,9 @@
 	--skip-link-texto: var(--color-fundo);
 	--skip-link-espaco: var(--space-pequeno) var(--space-medio);
 	--skip-link-raio: var(--radius-controle);
+
+	--bloco-separador: var(--linha-espessura) solid var(--color-linha);
+	--bloco-espaco: var(--space-medio);
+	--grade-espaco: var(--space-grande);
+	--indice-topo: var(--space-grande);
 }
