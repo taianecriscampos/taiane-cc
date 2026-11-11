@@ -17,6 +17,6 @@ Estrutura do texto:
 
 Regras:
 - Sem emojis; a hierarquia vem dos títulos.
-- Case sob sigilo (`sigilo: true`): sem telas, números internos ou documentos; mostre processo e papel.
+- Case sob sigilo (`sigilo: "confidencial"`; o padrão é `"publico"`): sem telas, números internos ou documentos; mostre processo e papel.
 - Mantenha a voz da Taiane; não invente dados. Liste as perguntas em aberto no fim da resposta.
 - Imagens em `src/assets/cases/<slug>/`, com texto alternativo descritivo.
