@@ -1,0 +1,23 @@
+---
+/**
+ * Página de cada case da coleção "cases": /cases/<nome-do-arquivo>.
+ */
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import LayoutCase from "../../components/layout/LayoutCase.astro";
+
+export async function getStaticPaths() {
+	const cases = await getCollection("cases");
+	return cases.map((entrada) => ({ params: { slug: entrada.id }, props: { entrada } }));
+}
+
+interface Props {
+	entrada: CollectionEntry<"cases">;
+}
+
+const { entrada } = Astro.props;
+const { Content, headings } = await render(entrada);
+---
+
+<LayoutCase entrada={entrada} headings={headings}>
+	<Content />
+</LayoutCase>

@@ -1,0 +1,43 @@
+---
+/**
+ * Fechamento padrão de todo case: convite para conversar no LinkedIn e nota de confidencialidade.
+ * Textos em RASCUNHO, para a Taiane trocar pelas palavras dela (briefing de design).
+ */
+import { perfil } from "../../dados/perfil";
+
+interface Props {
+	sigilo: "publico" | "confidencial";
+}
+
+const { sigilo } = Astro.props;
+
+const nota =
+	sigilo === "confidencial"
+		? "Este projeto está sob acordo de confidencialidade. Telas, números internos e documentos ficaram de fora; o texto mostra o processo e o meu papel."
+		: "Informações internas e dados de clientes foram omitidos ou generalizados.";
+---
+
+<section class="fechamento" aria-labelledby="fechamento-titulo">
+	<h2 id="fechamento-titulo">Vamos conversar?</h2>
+	<p class="marcador">[RASCUNHO]</p>
+	<p>Se quiser saber mais sobre este projeto ou sobre como eu trabalho, me chame no LinkedIn.</p>
+	<p>
+		<a href={perfil.linkedin}>Conversar no LinkedIn</a>
+	</p>
+	<p class="fechamento__nota">{nota}</p>
+</section>
+
+<style>
+	.fechamento {
+		display: grid;
+		gap: var(--space-medio);
+		margin-block-start: var(--space-secao);
+		padding-block-start: var(--space-grande);
+		border-block-start: var(--bloco-separador);
+	}
+
+	.fechamento__nota {
+		color: var(--color-texto-secundario);
+		font-size: var(--text-pequeno);
+	}
+</style>

@@ -1,0 +1,103 @@
+---
+/**
+ * Abertura do case: título, resumo de até 3 frases (ADR 0002), ficha e principais resultados.
+ */
+interface Props {
+	titulo: string;
+	resumo: string;
+	empresa: string;
+	ano: number;
+	papel: string;
+	sigilo: "publico" | "confidencial";
+	resultados: { valor: string; descricao: string }[];
+	nivel?: 1 | 2;
+}
+
+const { titulo, resumo, empresa, ano, papel, sigilo, resultados, nivel = 1 } = Astro.props;
+const Titulo = `h${nivel}` as const;
+---
+
+<header class="cabecalho-case">
+	<Titulo class="cabecalho-case__titulo">{titulo}</Titulo>
+	<p class="cabecalho-case__resumo">{resumo}</p>
+
+	<dl class="cabecalho-case__ficha">
+		<div>
+			<dt>Empresa</dt>
+			<dd>{empresa}</dd>
+		</div>
+		<div>
+			<dt>Ano</dt>
+			<dd>
+				<time datetime={String(ano)}>{ano}</time>
+			</dd>
+		</div>
+		<div>
+			<dt>Papel</dt>
+			<dd>{papel}</dd>
+		</div>
+		<div>
+			<dt>Sigilo</dt>
+			<dd>{sigilo === "confidencial" ? "Confidencial" : "Público"}</dd>
+		</div>
+	</dl>
+
+	<ul class="cabecalho-case__resultados" role="list" aria-label="Principais resultados">
+		{resultados.map((r) => (
+			<li>
+				<span class="cabecalho-case__valor">{r.valor}</span>
+				<span class="cabecalho-case__descricao">{r.descricao}</span>
+			</li>
+		))}
+	</ul>
+</header>
+
+<style>
+	.cabecalho-case {
+		display: grid;
+		gap: var(--space-grande);
+		padding-block: var(--space-bloco);
+	}
+
+	.cabecalho-case__titulo {
+		font-size: var(--text-display);
+	}
+
+	.cabecalho-case__resumo {
+		font-size: var(--text-subtitulo);
+	}
+
+	.cabecalho-case__ficha,
+	.cabecalho-case__resultados {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--largura-coluna-minima)), 1fr));
+		gap: var(--space-medio) var(--grade-espaco);
+		padding: 0;
+		list-style: none;
+	}
+
+	.cabecalho-case__ficha div,
+	.cabecalho-case__resultados li {
+		display: grid;
+		align-content: start;
+		gap: var(--space-minimo);
+		padding-block-start: var(--bloco-espaco);
+		border-block-start: var(--bloco-separador);
+		min-inline-size: 0;
+	}
+
+	.cabecalho-case__ficha dt,
+	.cabecalho-case__descricao {
+		color: var(--color-texto-secundario);
+	}
+
+	.cabecalho-case__ficha dd {
+		margin: 0;
+	}
+
+	.cabecalho-case__valor {
+		font-size: var(--text-titulo-2);
+		font-weight: var(--peso-titulo);
+		line-height: var(--leading-titulo);
+	}
+</style>

@@ -1,0 +1,148 @@
+---
+/**
+ * Layout da página de case: cabeçalho, índice lateral fixo e texto, e fechamento padrão.
+ * No celular e no tablet, o índice fica acima do texto.
+ */
+import type { MarkdownHeading } from "astro";
+import type { CollectionEntry } from "astro:content";
+import { perfil } from "../../dados/perfil";
+import CabecalhoCase from "../blocos/CabecalhoCase.astro";
+import FechamentoCase from "../blocos/FechamentoCase.astro";
+import LayoutBase from "./LayoutBase.astro";
+
+interface Props {
+	entrada: CollectionEntry<"cases">;
+	headings: MarkdownHeading[];
+}
+
+const { entrada, headings } = Astro.props;
+const dados = entrada.data;
+const secoes = headings.filter((h) => h.depth === 2);
+---
+
+<LayoutBase titulo={`${dados.titulo} · ${perfil.nome}`} descricao={dados.resumo}>
+	<article class="case envoltorio">
+		<p class="case__voltar">
+			<a href="/#projetos">Todos os projetos</a>
+		</p>
+
+		<CabecalhoCase
+			titulo={dados.titulo}
+			resumo={dados.resumo}
+			empresa={dados.empresa}
+			ano={dados.ano}
+			papel={dados.papel}
+			sigilo={dados.sigilo}
+			resultados={dados.resultados}
+		/>
+
+		<div class="case__corpo">
+			<nav class="case__indice" aria-labelledby="indice-titulo">
+				<h2 id="indice-titulo" class="case__indice-titulo">
+					Neste case
+				</h2>
+				<ol role="list">
+					{secoes.map((s) => (
+						<li>
+							<a href={`#${s.slug}`}>{s.text}</a>
+						</li>
+					))}
+				</ol>
+			</nav>
+
+			<div class="case__texto">
+				<slot />
+			</div>
+		</div>
+
+		<FechamentoCase sigilo={dados.sigilo} />
+	</article>
+</LayoutBase>
+
+<style>
+	.case {
+		padding-block-start: var(--space-grande);
+	}
+
+	.case__corpo {
+		display: grid;
+		gap: var(--space-bloco);
+		padding-block-start: var(--space-grande);
+		border-block-start: var(--bloco-separador);
+	}
+
+	.case__indice {
+		display: grid;
+		align-content: start;
+		gap: var(--space-pequeno);
+	}
+
+	.case__indice-titulo {
+		font-size: var(--text-corpo);
+		color: var(--color-texto-secundario);
+	}
+
+	.case__indice ol {
+		display: grid;
+		gap: var(--space-minimo);
+		padding: 0;
+		list-style: none;
+	}
+
+	.case__indice a {
+		text-decoration: none;
+	}
+
+	.case__indice a:hover,
+	.case__indice a:focus-visible {
+		text-decoration: underline;
+	}
+
+	/* Texto corrido do Markdown. :global porque o HTML vem do conteúdo, não deste arquivo. */
+	.case__texto {
+		display: grid;
+		gap: var(--space-medio);
+		min-inline-size: 0;
+	}
+
+	.case__texto :global(h2) {
+		margin-block-start: var(--space-bloco);
+		scroll-margin-block-start: var(--indice-topo);
+	}
+
+	.case__texto :global(h2:first-child) {
+		margin-block-start: 0;
+	}
+
+	.case__texto :global(h3) {
+		margin-block-start: var(--space-grande);
+		font-size: var(--text-subtitulo);
+	}
+
+	.case__texto :global(ul),
+	.case__texto :global(ol) {
+		display: grid;
+		gap: var(--space-minimo);
+		max-inline-size: var(--largura-leitura);
+		padding-inline-start: var(--space-grande);
+	}
+
+	.case__texto :global(blockquote) {
+		max-inline-size: var(--largura-leitura);
+		padding-inline-start: var(--space-medio);
+		border-inline-start: var(--bloco-separador);
+		font-size: var(--text-subtitulo);
+	}
+
+	@media (min-width: 64rem) {
+		.case__corpo {
+			grid-template-columns: var(--largura-indice) minmax(0, 1fr);
+			gap: var(--grade-espaco);
+		}
+
+		.case__indice {
+			position: sticky;
+			top: var(--indice-topo);
+		}
+	}
+</style>
