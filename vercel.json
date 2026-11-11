@@ -1,5 +1,19 @@
 {
 	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"redirects": [
+		{
+			"source": "/",
+			"has": [{ "type": "host", "value": "taiane.cc" }],
+			"destination": "https://linktr.ee/taianecriscampos",
+			"permanent": false
+		},
+		{
+			"source": "/",
+			"has": [{ "type": "host", "value": "www.taiane.cc" }],
+			"destination": "https://linktr.ee/taianecriscampos",
+			"permanent": false
+		}
+	],
 	"headers": [
 		{
 			"source": "/(.*)",

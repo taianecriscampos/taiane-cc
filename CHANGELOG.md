@@ -6,6 +6,17 @@ e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+## [0.1.1] - 2026-11-11
+
+Ajuste: o domínio taiane.cc fica apontando para o Linktree até o lançamento.
+
+### Adicionado
+
+- Redirecionamento temporário (307) da rota `/` de taiane.cc e www.taiane.cc para
+  https://linktr.ee/taianecriscampos, no `vercel.json`. O taiane-cc.vercel.app, as prévias e as
+  demais rotas, como o `security.txt`, não mudam. Será removido na versão 1.0.0.
+- Briefing de design (`docs/briefing-design.md`), base para as etapas 0.2.0 e 0.3.0.
+
 ## [0.1.0] - 2026-11-11
 
 Etapa Fundação: a base técnica do portfólio, sem conteúdo real ainda.
@@ -28,5 +39,6 @@ Etapa Fundação: a base técnica do portfólio, sem conteúdo real ainda.
 - GitHub Actions rodando a qualidade em todo envio e pull request; Dependabot semanal.
 - Publicação na Vercel: produção em taiane-cc.vercel.app e prévias da ramificação design.
 
-[Não publicado]: https://github.com/taianecriscampos/taiane-cc/compare/v0.1.0...HEAD
+[Não publicado]: https://github.com/taianecriscampos/taiane-cc/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/taianecriscampos/taiane-cc/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/taianecriscampos/taiane-cc/releases/tag/v0.1.0
