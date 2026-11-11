@@ -1,0 +1,66 @@
+---
+/**
+ * Protótipo do menu flutuante (etapa 0.3.0, skill prototype): duas versões atrás do seletor.
+ * Rota /laboratorio/menu, incluída pela integração `laboratorio`, fora da produção.
+ * As seções são as reais da página inicial, para o item atual mudar com a rolagem.
+ */
+import { getCollection } from "astro:content";
+import Contato from "../components/blocos/Contato.astro";
+import Projetos from "../components/blocos/Projetos.astro";
+import Sobre from "../components/blocos/Sobre.astro";
+import LayoutBase from "../components/layout/LayoutBase.astro";
+import { perfil } from "../dados/perfil";
+import Barra from "../prototipos/menu/Barra.astro";
+import Ilha from "../prototipos/menu/Ilha.astro";
+import Seletor from "../prototipos/Seletor.astro";
+
+const projetos = (await getCollection("cases"))
+	.sort((a, b) => a.data.ordem - b.data.ordem)
+	.map(({ id, data }) => ({
+		titulo: data.titulo,
+		empresa: data.empresa,
+		ano: data.ano,
+		chamada: data.chamada,
+		href: `/cases/${id}`,
+	}));
+---
+
+<LayoutBase
+	titulo="Protótipo do menu · Laboratório"
+	descricao="Duas versões do menu flutuante do taiane.cc para comparar."
+	noindex
+	cabecalho={false}
+>
+	<template data-variante data-seletor="top">
+		<Barra />
+	</template>
+	<template data-variante data-seletor="top-no-celular">
+		<Ilha />
+	</template>
+
+	<section id="inicio" class="inicio envoltorio" aria-labelledby="inicio-titulo">
+		<h1 id="inicio-titulo">{perfil.frase}</h1>
+	</section>
+	<Projetos projetos={projetos} />
+	<Sobre />
+	<Contato />
+
+	<div id="palco"></div>
+	<Seletor nomes={["Barra de aplicativo", "Ilha"]} />
+</LayoutBase>
+
+<script>
+	import { iniciarMenuAtivo } from "../prototipos/menu/menu-ativo";
+	document.addEventListener("prototipo:montado", iniciarMenuAtivo);
+</script>
+
+<style>
+	.inicio {
+		padding-block: var(--space-secao);
+	}
+
+	/* Espaço no fim da página para o menu da base não cobrir o rodapé. */
+	:global(body) {
+		padding-block-end: calc(var(--menu-item-altura) + var(--space-secao));
+	}
+</style>

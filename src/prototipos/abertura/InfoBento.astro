@@ -1,0 +1,58 @@
+---
+/**
+ * Bloco bento pequeno da abertura (briefing v2): cargo curto, cidade, hora local
+ * e status com ponto verde aceso. O ponto é reforço visual: a palavra continua escrita.
+ */
+import HoraLocal from "../../components/ui/HoraLocal.astro";
+import { perfil } from "../../dados/perfil";
+
+interface Props {
+	class?: string;
+}
+
+const { class: classe } = Astro.props;
+---
+
+<div class:list={["bento", "info", classe]}>
+	<p class="info__status">
+		<span class="info__ponto" aria-hidden="true"></span>
+		{perfil.status}
+	</p>
+	<p class="info__cargo">Design Engineer</p>
+	<p class="info__secundario">{perfil.cidade}</p>
+	<HoraLocal fuso={perfil.fuso} nomeDoFuso={perfil.nomeDoFuso} />
+</div>
+
+<style>
+	.info {
+		display: grid;
+		align-content: start;
+		gap: var(--space-minimo);
+		font-size: var(--text-pequeno);
+	}
+
+	.info__status {
+		display: flex;
+		align-items: center;
+		gap: var(--space-pequeno);
+		margin-block-end: var(--space-pequeno);
+		font-weight: var(--peso-rotulo);
+	}
+
+	.info__ponto {
+		inline-size: var(--status-ponto-tamanho);
+		block-size: var(--status-ponto-tamanho);
+		border-radius: var(--radius-pilula);
+		background: var(--status-ponto-cor);
+	}
+
+	.info__cargo {
+		font-size: var(--text-corpo);
+		font-weight: var(--peso-titulo);
+		font-stretch: var(--largura-fonte-titulo);
+	}
+
+	.info__secundario {
+		color: var(--color-texto-secundario);
+	}
+</style>

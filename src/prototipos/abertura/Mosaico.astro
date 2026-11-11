@@ -1,0 +1,77 @@
+---
+/**
+ * Versão 2, "Mosaico". Eixo: grade densa de aplicativo.
+ * Frase, foto e bloco de informações formam um painel bento, como na vexoo.framer.website.
+ */
+import { Image } from "astro:assets";
+import retrato from "../../assets/taiane-retrato.png";
+import { perfil } from "../../dados/perfil";
+import Acoes from "./Acoes.astro";
+import InfoBento from "./InfoBento.astro";
+---
+
+<section class="mosaico envoltorio" aria-labelledby="abertura-titulo">
+	<div class="bento mosaico__principal">
+		<h1 id="abertura-titulo">{perfil.frase}</h1>
+		<Acoes />
+	</div>
+	<div class="mosaico__foto">
+		<Image
+			src={retrato}
+			alt={`Retrato de ${perfil.nome}: cabelo escuro na altura dos ombros, com mechas grisalhas, e óculos de armação redonda e fina, sobre fundo claro.`}
+			widths={[360, 512]}
+			sizes="(min-width: 48rem) 33vw, 90vw"
+			loading="eager"
+			fetchpriority="high"
+		/>
+	</div>
+	<div class="mosaico__info">
+		<InfoBento />
+	</div>
+</section>
+
+<style>
+	.mosaico {
+		display: grid;
+		gap: var(--bento-intervalo);
+		padding-block: var(--space-bloco) var(--space-grande);
+	}
+
+	/* Dentro do bloco, o círculo da seta usa o fundo da página para continuar visível. */
+	.mosaico__principal {
+		--seta-fundo: var(--color-fundo);
+		display: grid;
+		align-content: space-between;
+		gap: var(--space-bloco);
+		padding: var(--space-grande) var(--bento-espaco);
+	}
+
+	.mosaico__foto img {
+		inline-size: 100%;
+		block-size: 100%;
+		aspect-ratio: 4 / 3;
+		object-fit: cover;
+		object-position: 50% 30%;
+		border-radius: var(--foto-raio);
+	}
+
+	.mosaico__info {
+		display: grid;
+	}
+
+	@media (min-width: 48rem) {
+		.mosaico {
+			grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+			min-block-size: 80svh;
+		}
+
+		.mosaico__principal {
+			grid-row: 1 / span 2;
+			padding: var(--space-bloco) var(--space-grande);
+		}
+
+		.mosaico__foto img {
+			aspect-ratio: auto;
+		}
+	}
+</style>
