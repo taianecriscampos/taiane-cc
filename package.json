@@ -1,7 +1,7 @@
 {
 	"name": "taiane-cc",
 	"type": "module",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"engines": {
 		"node": ">=22.23.4"
 	},
@@ -14,7 +14,7 @@
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"test": "playwright test",
-		"qualidade": "npm run check && npm run format:check && npm run build && npm run test"
+		"qualidade": "npm audit --audit-level=high && npm run check && npm run format:check && npm run build && npm run test"
 	},
 	"dependencies": {
 		"astro": "^7.4.10"
