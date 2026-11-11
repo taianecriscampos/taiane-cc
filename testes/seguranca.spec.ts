@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
+import { paginas } from "./paginas";
 
-for (const pagina of ["/", "/laboratorio"]) {
+for (const pagina of paginas) {
 	test(`${pagina} tem a política de segurança de conteúdo do Astro`, async ({ page }) => {
 		await page.goto(pagina);
 		const politica = await page

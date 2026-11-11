@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { paginas } from "./paginas";
 
 test.use({ contextOptions: { reducedMotion: "reduce" } });
 
-for (const pagina of ["/", "/laboratorio"]) {
+for (const pagina of paginas) {
 	test(`${pagina} funciona com prefers-reduced-motion`, async ({ page }) => {
 		const erros: string[] = [];
 		page.on("pageerror", (erro) => erros.push(erro.message));
