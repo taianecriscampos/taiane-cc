@@ -8,7 +8,7 @@ papel: "Senior Product Designer pela WeFit"
 sigilo: "confidencial"
 ordem: 2
 resultados:
-  - valor: "[TEXTO DA TAIANE]"
+  - valor: "[A DEFINIR]"
     descricao: "[TEXTO DA TAIANE]"
 ---
 

@@ -10,7 +10,8 @@ const cases = defineCollection({
 	// Arquivos que começam com "_" são rascunhos e ficam de fora.
 	loader: glob({ base: "./src/content/cases", pattern: "**/[^_]*.{md,mdx}" }),
 	schema: z.object({
-		titulo: z.string().min(1),
+		/** Até 60 caracteres: acima disso, o título ocupa linhas demais no celular (break-ui). */
+		titulo: z.string().min(1).max(60),
 		/** Uma linha para a lista de projetos da página inicial. */
 		chamada: z.string().min(1).max(120),
 		/** Até 3 frases: quem, o quê, resultado (ADR 0002). */
@@ -25,11 +26,13 @@ const cases = defineCollection({
 		resultados: z
 			.array(
 				z.object({
-					valor: z.string().min(1),
+					/** Até 16 caracteres, para caber na faixa de resultados sem quebrar. */
+					valor: z.string().min(1).max(16),
 					descricao: z.string().min(1),
 				}),
 			)
-			.min(1),
+			.min(1)
+			.max(3),
 	}),
 });
 

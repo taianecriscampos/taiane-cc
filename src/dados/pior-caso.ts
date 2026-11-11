@@ -22,9 +22,8 @@ export const perfilPiorCaso: Perfil = {
 	curriculo: { href: "/curriculo.pdf", disponivel: true },
 };
 
-/** Título sem limite no schema: testa um título descritivo longo. */
-const tituloLongo =
-	"Redesenho do fluxo de contestação de cobranças indevidas em operações logísticas multimodais";
+/** Exatamente 60 caracteres, o limite de `titulo`. */
+const tituloLongo = "Redesenho do fluxo de contestação das cobranças na logística";
 
 /** Exatamente 120 caracteres, o limite de `chamada`. */
 const chamadaNoLimite =
@@ -60,10 +59,8 @@ export const cabecalhoPiorCaso = {
 	papel: "Senior Product Designer | UX Strategy, Service Design e IA pela WeFit",
 	sigilo: "confidencial" as const,
 	resultados: [
-		{ valor: "+10% a +25%", descricao: "na taxa de conclusão" },
 		{ valor: "R$ 12.345.678,90", descricao: "em custo operacional evitado no primeiro ano" },
 		{ valor: "3x", descricao: "mais rápido" },
-		{ valor: "1", descricao: "processo" },
 		{
 			valor: "Superintendência",
 			descricao:
