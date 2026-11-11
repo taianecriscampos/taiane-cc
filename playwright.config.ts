@@ -4,8 +4,9 @@ import { defineConfig, devices } from "@playwright/test";
  * Testes de navegador. Só Chromium, em dois perfis: celular e desktop.
  * Testa a versão compilada (dist/), a mesma que vai para o ar.
  * Rode `npm run build` antes, ou use `npm run qualidade`.
+ * Porta própria (4322) para não confundir com o `npm run dev`, que usa a 4321.
  */
-const porta = 4321;
+const porta = 4322;
 
 export default defineConfig({
 	testDir: "./testes",
@@ -24,6 +25,7 @@ export default defineConfig({
 	webServer: {
 		command: `npx astro preview --port ${porta}`,
 		url: `http://localhost:${porta}`,
-		reuseExistingServer: !process.env.CI,
+		// Sempre um servidor novo, com a compilação mais recente.
+		reuseExistingServer: false,
 	},
 });
