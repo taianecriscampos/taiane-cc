@@ -12,6 +12,21 @@ for (const pagina of ["/", "/laboratorio"]) {
 		expect(politica).toContain("style-src 'self'");
 		expect(politica).not.toContain("unsafe-inline");
 	});
+
+	test(`${pagina} não tem nada bloqueado pela CSP`, async ({ page }) => {
+		await page.addInitScript(() => {
+			const janela = window as Window & { bloqueios?: string[] };
+			janela.bloqueios = [];
+			document.addEventListener("securitypolicyviolation", (e) => {
+				janela.bloqueios?.push(`${e.violatedDirective}: ${e.sample || e.blockedURI}`);
+			});
+		});
+		await page.goto(pagina, { waitUntil: "load" });
+		const bloqueios = await page.evaluate(
+			() => (window as Window & { bloqueios?: string[] }).bloqueios,
+		);
+		expect(bloqueios).toEqual([]);
+	});
 }
 
 test("o security.txt está publicado", async ({ request }) => {

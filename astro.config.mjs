@@ -27,6 +27,8 @@ function laboratorio() {
 // https://astro.build/config
 export default defineConfig({
 	integrations: [laboratorio()],
+	// O Shiki colore código com atributos style, que a CSP bloqueia. Se precisar, usar "prism".
+	markdown: { syntaxHighlight: false },
 	security: {
 		// O Astro acrescenta script-src e style-src com os hashes de cada página.
 		// frame-ancestors não funciona em <meta>: está no cabeçalho, em vercel.json.

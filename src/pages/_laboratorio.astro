@@ -5,6 +5,7 @@
  * noindex. O sublinhado no nome tira a página das rotas automáticas: ela é incluída
  * pela integração `laboratorio` do astro.config.mjs, em todo ambiente menos a produção.
  */
+import { createHash } from "node:crypto";
 import LayoutBase from "../components/layout/LayoutBase.astro";
 import tokensCss from "../styles/tokens.css?raw";
 
@@ -78,6 +79,21 @@ const raios = semanticos.filter((t) => t.nome.startsWith("--radius-"));
 const duracoes = semanticos.filter((t) => t.nome.startsWith("--motion-duration-"));
 const curva = semanticos.find((t) => t.nome === "--motion-ease-out");
 const valorPrimitivo = (t: Token) => valorDe(referencia(t.valor)) || t.valor;
+
+// Cada amostra aplica o próprio token. Um atributo style seria bloqueado pela CSP,
+// então as regras viram um único bloco <style>, liberado pelo hash dele.
+const regra = (classe: string, propriedade: string, lista: Token[]) =>
+	lista.map((t) => `.${classe}[data-token="${t.nome}"]{${propriedade}:var(${t.nome})}`).join("");
+const cssDasAmostras = [
+	regra("lab__amostra", "background", cores),
+	regra("lab__especime", "font-size", textos),
+	regra("lab__barra", "inline-size", espacos),
+	regra("lab__caixa", "border-radius", raios),
+	regra("lab__ponto", "transition-duration", duracoes),
+].join("");
+Astro.csp?.insertStyleHash(
+	`sha256-${createHash("sha256").update(cssDasAmostras).digest("base64")}`,
+);
 ---
 
 <LayoutBase
@@ -85,6 +101,7 @@ const valorPrimitivo = (t: Token) => valorDe(referencia(t.valor)) || t.valor;
 	descricao="Tokens e componentes do design system do taiane.cc."
 	noindex
 >
+	<style is:inline set:html={cssDasAmostras} />
 	<div class="envoltorio lab">
 		<header class="lab__topo">
 			<h1>Laboratório</h1>
@@ -102,7 +119,7 @@ const valorPrimitivo = (t: Token) => valorDe(referencia(t.valor)) || t.valor;
 			<ul class="lab__cores" role="list">
 				{cores.map((c) => (
 					<li class="lab__cor">
-						<span class="lab__amostra" style={`background: var(${c.nome})`} />
+						<span class="lab__amostra" data-token={c.nome} />
 						<code>{c.nome}</code>
 						<span class="lab__meta">
 							{c.hex} · {c.primitivo}
@@ -126,7 +143,7 @@ const valorPrimitivo = (t: Token) => valorDe(referencia(t.valor)) || t.valor;
 			<ul class="lab__lista" role="list">
 				{textos.map((t) => (
 					<li class="lab__tipo">
-						<span class="lab__especime" style={`font-size: var(${t.nome})`}>
+						<span class="lab__especime" data-token={t.nome}>
 							Design de produto com pensamento sistêmico
 						</span>
 						<code>{t.nome}</code>
@@ -145,7 +162,7 @@ const valorPrimitivo = (t: Token) => valorDe(referencia(t.valor)) || t.valor;
 			<ul class="lab__lista" role="list">
 				{espacos.map((t) => (
 					<li class="lab__espaco">
-						<span class="lab__barra" style={`inline-size: var(${t.nome})`} />
+						<span class="lab__barra" data-token={t.nome} />
 						<code>{t.nome}</code>
 						<span class="lab__meta">{t.valor}</span>
 					</li>
@@ -158,7 +175,7 @@ const valorPrimitivo = (t: Token) => valorDe(referencia(t.valor)) || t.valor;
 			<ul class="lab__raios" role="list">
 				{raios.map((t) => (
 					<li class="lab__raio">
-						<span class="lab__caixa" style={`border-radius: var(${t.nome})`} />
+						<span class="lab__caixa" data-token={t.nome} />
 						<code>{t.nome}</code>
 						<span class="lab__meta">{valorPrimitivo(t)}</span>
 					</li>
@@ -181,7 +198,7 @@ const valorPrimitivo = (t: Token) => valorDe(referencia(t.valor)) || t.valor;
 				{duracoes.map((t) => (
 					<li class="lab__duracao">
 						<span class="lab__trilho" aria-hidden="true">
-							<span class="lab__ponto" style={`transition-duration: var(${t.nome})`} />
+							<span class="lab__ponto" data-token={t.nome} />
 						</span>
 						<code>{t.nome}</code>
 						<span class="lab__meta">{valorPrimitivo(t)}</span>
