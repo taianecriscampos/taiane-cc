@@ -1,61 +1,182 @@
 ---
 /**
- * Cabeçalho de todas as páginas: o nome leva ao início, e três links levam às seções da página inicial.
+ * Cabeçalho de todas as páginas: fixo no topo, translúcido, sem linha embaixo.
+ * À esquerda, o nome leva ao início. À direita, os links: as seções da página inicial,
+ * ou, nos cases, as seções do próprio case.
+ * Em telas estreitas, os links ficam num painel aberto pelo botão de menu. O painel usa o
+ * recurso nativo de popover do navegador: abre e fecha com teclado, toque e Esc, sem script.
+ * O único script fecha o painel quando a pessoa escolhe um link.
  */
 import { perfil } from "../../dados/perfil";
 
-const links = [
-	{ texto: "Projetos", href: "/#projetos" },
-	{ texto: "Sobre", href: "/#sobre" },
-	{ texto: "Contato", href: "/#contato" },
-];
+export interface LinkDoCabecalho {
+	texto: string;
+	href: string;
+}
+
+interface Props {
+	links?: LinkDoCabecalho[];
+	/** Nome da navegação para o leitor de tela. */
+	rotulo?: string;
+	/** "computador" troca o painel pelos links só a partir de 1200 px, para listas longas. */
+	quebra?: "tablet" | "computador";
+}
+
+const {
+	links = [
+		{ texto: "Projetos", href: "/#projetos" },
+		{ texto: "Textos", href: "/#textos" },
+		{ texto: "Sobre", href: "/#sobre" },
+	],
+	rotulo = "Principal",
+	quebra = "tablet",
+} = Astro.props;
 ---
 
-<header class="cabecalho envoltorio">
-	<a class="cabecalho__nome" href="/">
-		{perfil.nome}
-	</a>
-	<nav aria-label="Principal">
-		<ul class="cabecalho__links" role="list">
+<header class="cabecalho" data-quebra={quebra}>
+	<div class="cabecalho__barra envoltorio">
+		<a class="link cabecalho__nome" href="/">
+			{perfil.nome}
+		</a>
+
+		<nav class="cabecalho__nav" aria-label={rotulo}>
+			<ul class="cabecalho__links" role="list">
+				{links.map((link) => (
+					<li>
+						<a class="link" href={link.href}>
+							{link.texto}
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+
+		<button class="cabecalho__menu" type="button" popovertarget="menu-painel" aria-label="Menu">
+			<svg
+				viewBox="0 0 20 20"
+				width="20"
+				height="20"
+				aria-hidden="true"
+				focusable="false"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+			>
+				<path d="M3.5 7h13M3.5 13h13"></path>
+			</svg>
+		</button>
+	</div>
+
+	<nav id="menu-painel" class="cabecalho__painel envoltorio" popover aria-label={rotulo}>
+		<ul class="cabecalho__painel-links" role="list">
 			{links.map((link) => (
 				<li>
-					<a href={link.href}>{link.texto}</a>
+					<a class="link" href={link.href}>
+						{link.texto}
+					</a>
 				</li>
 			))}
 		</ul>
 	</nav>
 </header>
 
+<script>
+	const painel = document.getElementById("menu-painel");
+	painel?.addEventListener("click", (evento) => {
+		if ((evento.target as HTMLElement).closest("a")) painel.hidePopover();
+	});
+</script>
+
 <style>
 	.cabecalho {
+		position: sticky;
+		inset-block-start: 0;
+		z-index: var(--cabecalho-camada);
+		background: var(--cabecalho-fundo);
+		-webkit-backdrop-filter: var(--cabecalho-desfoque);
+		backdrop-filter: var(--cabecalho-desfoque);
+	}
+
+	.cabecalho__barra {
 		display: flex;
-		flex-wrap: wrap;
-		align-items: baseline;
+		align-items: center;
 		justify-content: space-between;
-		gap: var(--space-pequeno) var(--space-grande);
-		padding-block: var(--space-medio);
-		border-block-end: var(--bloco-separador);
+		gap: var(--space-medio);
+		block-size: var(--cabecalho-altura);
 	}
 
 	.cabecalho__nome {
-		font-weight: var(--peso-titulo);
-		text-decoration: none;
+		white-space: nowrap;
 	}
 
-	.cabecalho__links {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-pequeno) var(--space-medio);
+	.cabecalho__links,
+	.cabecalho__painel-links {
 		padding: 0;
 		list-style: none;
 	}
 
-	.cabecalho__links a {
-		text-decoration: none;
+	.cabecalho__links {
+		display: flex;
+		gap: var(--space-medio);
 	}
 
-	.cabecalho a:hover,
-	.cabecalho a:focus-visible {
-		text-decoration: underline;
+	.cabecalho__nav {
+		display: none;
+	}
+
+	.cabecalho__menu {
+		display: grid;
+		place-items: center;
+		inline-size: var(--alvo-toque);
+		block-size: var(--alvo-toque);
+		padding: 0;
+		border: 0;
+		border-radius: var(--radius-pilula);
+		background: transparent;
+		color: var(--color-texto);
+		cursor: pointer;
+	}
+
+	/* Painel: logo abaixo do cabeçalho, na largura da tela. */
+	.cabecalho__painel {
+		position: fixed;
+		inset: var(--cabecalho-altura) 0 auto;
+		margin: 0;
+		max-width: none;
+		padding-block: var(--space-medio) var(--space-grande);
+		border: 0;
+		background: var(--painel-fundo);
+		color: var(--color-texto);
+	}
+
+	.cabecalho__painel-links {
+		display: grid;
+		gap: var(--space-medio);
+		justify-items: start;
+		font-size: var(--text-subtitulo);
+		line-height: var(--leading-subtitulo);
+	}
+
+	@media (min-width: 768px) {
+		.cabecalho[data-quebra="tablet"] .cabecalho__nav {
+			display: block;
+		}
+
+		.cabecalho[data-quebra="tablet"] .cabecalho__menu,
+		.cabecalho[data-quebra="tablet"] .cabecalho__painel {
+			display: none;
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.cabecalho[data-quebra="computador"] .cabecalho__nav {
+			display: block;
+		}
+
+		.cabecalho[data-quebra="computador"] .cabecalho__menu,
+		.cabecalho[data-quebra="computador"] .cabecalho__painel {
+			display: none;
+		}
 	}
 </style>

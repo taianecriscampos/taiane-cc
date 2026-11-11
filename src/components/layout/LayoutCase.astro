@@ -1,7 +1,10 @@
 ---
 /**
- * Layout da página de case: cabeçalho, índice lateral fixo e texto, e fechamento padrão.
- * No celular e no tablet, o índice fica acima do texto.
+ * Layout da página de case.
+ * Topo e fechamento na coluna central (colunas 4 a 9 a partir de 1200 px).
+ * Corpo em linhas de 3, 6 e 3 colunas: o título de cada seção fica à esquerda, fixo ao rolar
+ * até a próxima seção, e o texto na coluna central. No celular, uma coluna, sem fixar.
+ * O cabeçalho do site mostra as seções do case.
  */
 import type { MarkdownHeading } from "astro";
 import type { CollectionEntry } from "astro:content";
@@ -17,132 +20,157 @@ interface Props {
 
 const { entrada, headings } = Astro.props;
 const dados = entrada.data;
-const secoes = headings.filter((h) => h.depth === 2);
+const secoes = headings
+	.filter((h) => h.depth === 2)
+	.map((h) => ({ texto: h.text, href: `#${h.slug}` }));
+
+// Tempo de leitura: 200 palavras por minuto, sem contar marcação e comentários.
+const palavras = (entrada.body ?? "")
+	.replace(/<!--[\s\S]*?-->/g, " ")
+	.replace(/<[^>]+>/g, " ")
+	.split(/\s+/)
+	.filter((p) => /[\p{L}\p{N}]/u.test(p)).length;
+const minutos = Math.max(1, Math.ceil(palavras / 200));
+
+/*
+ * O Markdown chega como HTML corrido. Cada título de nível 2 abre uma seção:
+ * <section> com o título e um bloco com o texto, para o título poder ficar fixo na coluna.
+ * O que vem antes do primeiro título (só comentários) fica de fora.
+ */
+const html = await Astro.slots.render("default");
+const corpo = html
+	.split(/(?=<h2[\s>])/)
+	.filter((parte) => parte.startsWith("<h2"))
+	.map((parte) => {
+		const fim = parte.indexOf("</h2>") + "</h2>".length;
+		return `<section class="case-secao">${parte.slice(0, fim)}<div class="case-secao__texto">${parte.slice(fim)}</div></section>`;
+	})
+	.join("");
 ---
 
-<LayoutBase titulo={`${dados.titulo} · ${perfil.nome}`} descricao={dados.resumo}>
+<LayoutBase
+	titulo={`${dados.titulo} · ${perfil.nome}`}
+	descricao={dados.resumo}
+	secoesDoCase={secoes}
+>
 	<article class="case envoltorio">
-		<p class="case__voltar">
-			<a href="/#projetos">Todos os projetos</a>
-		</p>
-
-		<CabecalhoCase
-			titulo={dados.titulo}
-			resumo={dados.resumo}
-			empresa={dados.empresa}
-			ano={dados.ano}
-			papel={dados.papel}
-			sigilo={dados.sigilo}
-			resultados={dados.resultados}
-		/>
-
-		<div class="case__corpo">
-			<nav class="case__indice" aria-labelledby="indice-titulo">
-				<h2 id="indice-titulo" class="case__indice-titulo">
-					Neste case
-				</h2>
-				<ol role="list">
-					{secoes.map((s) => (
-						<li>
-							<a href={`#${s.slug}`}>{s.text}</a>
-						</li>
-					))}
-				</ol>
-			</nav>
-
-			<div class="case__texto">
-				<slot />
-			</div>
+		<div class="case__central">
+			<CabecalhoCase
+				titulo={dados.titulo}
+				resumo={dados.resumo}
+				cliente={dados.cliente}
+				ano={dados.ano}
+				minutos={minutos}
+				sigilo={dados.sigilo}
+				cartoes={dados.cartoes}
+			/>
 		</div>
 
-		<FechamentoCase sigilo={dados.sigilo} />
+		<div class="case__corpo" set:html={corpo} />
+
+		<div class="case__central case__fim">
+			<FechamentoCase sigilo={dados.sigilo} />
+		</div>
 	</article>
 </LayoutBase>
 
 <style>
 	.case {
-		padding-block-start: var(--space-grande);
-	}
-
-	.case__corpo {
 		display: grid;
-		gap: var(--space-bloco);
-		padding-block-start: var(--space-grande);
-		border-block-start: var(--bloco-separador);
+		grid-template-columns: minmax(0, 1fr);
+		column-gap: var(--grade-espaco);
+		padding-block-start: var(--space-bloco);
 	}
 
-	.case__indice {
+	/* Entre as seções do case: uma divisória com 48 px acima e abaixo. */
+	.case__corpo :global(.case-secao),
+	.case__fim {
+		margin-block-start: var(--space-largo);
+		padding-block-start: var(--space-largo);
+		border-block-start: var(--divisoria);
+	}
+
+	.case__corpo :global(.case-secao) {
 		display: grid;
-		align-content: start;
-		gap: var(--space-pequeno);
+		gap: var(--space-grande);
 	}
 
-	.case__indice-titulo {
-		font-size: var(--text-corpo);
-		color: var(--color-texto-secundario);
-	}
-
-	.case__indice ol {
-		display: grid;
-		gap: var(--space-minimo);
-		padding: 0;
-		list-style: none;
-	}
-
-	.case__indice a {
-		text-decoration: none;
-	}
-
-	.case__indice a:hover,
-	.case__indice a:focus-visible {
-		text-decoration: underline;
+	.case__corpo :global(h2) {
+		font-size: var(--text-secao-case);
+		font-weight: var(--peso-corpo);
+		line-height: var(--leading-secao-case);
 	}
 
 	/* Texto corrido do Markdown. :global porque o HTML vem do conteúdo, não deste arquivo. */
-	.case__texto {
+	.case__corpo :global(.case-secao__texto) {
 		display: grid;
+		align-content: start;
 		gap: var(--space-medio);
 		min-inline-size: 0;
 	}
 
-	.case__texto :global(h2) {
-		margin-block-start: var(--space-bloco);
-		scroll-margin-block-start: var(--indice-topo);
+	.case__corpo :global(h3) {
+		margin-block-start: var(--space-grande);
+		font-size: var(--text-subtitulo);
+		line-height: var(--leading-subtitulo);
 	}
 
-	.case__texto :global(h2:first-child) {
+	.case__corpo :global(.case-secao__texto > h3:first-child) {
 		margin-block-start: 0;
 	}
 
-	.case__texto :global(h3) {
-		margin-block-start: var(--space-grande);
-		font-size: var(--text-subtitulo);
-	}
-
-	.case__texto :global(ul),
-	.case__texto :global(ol) {
+	.case__corpo :global(ul),
+	.case__corpo :global(ol) {
 		display: grid;
 		gap: var(--space-minimo);
-		max-inline-size: var(--largura-leitura);
 		padding-inline-start: var(--space-grande);
 	}
 
-	.case__texto :global(blockquote) {
-		max-inline-size: var(--largura-leitura);
-		padding-inline-start: var(--space-medio);
-		border-inline-start: var(--bloco-separador);
-		font-size: var(--text-subtitulo);
+	.case__corpo :global(strong) {
+		font-weight: var(--peso-forte);
 	}
 
-	@media (min-width: 64rem) {
-		.case__corpo {
-			grid-template-columns: var(--largura-indice) minmax(0, 1fr);
-			gap: var(--grade-espaco);
+	/* A frase-chave da seção, em citação, vem em azul de destaque. */
+	.case__corpo :global(blockquote) {
+		color: var(--color-destaque-case);
+		font-size: var(--text-grande);
+		line-height: var(--leading-grande);
+	}
+
+	@media (min-width: 768px) {
+		.case {
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
 		}
 
-		.case__indice {
+		.case__central,
+		.case__corpo {
+			grid-column: 2 / span 10;
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.case__central {
+			grid-column: 4 / span 6;
+		}
+
+		.case__corpo {
+			grid-column: 1 / -1;
+		}
+
+		.case__corpo :global(.case-secao) {
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+			column-gap: var(--grade-espaco);
+			align-items: start;
+		}
+
+		.case__corpo :global(.case-secao > h2) {
+			grid-column: 1 / span 3;
 			position: sticky;
-			top: var(--indice-topo);
+			inset-block-start: calc(var(--cabecalho-altura) + var(--space-grande));
+		}
+
+		.case__corpo :global(.case-secao__texto) {
+			grid-column: 4 / span 6;
 		}
 	}
 </style>

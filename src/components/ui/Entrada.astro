@@ -1,0 +1,216 @@
+---
+/**
+ * Uma entrada das listas de Projetos e Textos: título, descrição e "ano, onde" com o círculo de seta.
+ * A linha inteira é clicável, mas só o título é o link: o leitor de tela anuncia um link por entrada.
+ * Sem href, a entrada está em construção: cor secundária, sem link, com ponto e "Em construção".
+ * Grade: 1 coluna no celular; título em cima no tablet; 6, 3 e 3 colunas a partir de 1200 px.
+ */
+import Seta from "./Seta.astro";
+
+export interface Entrada {
+	titulo: string;
+	ano: number;
+	/** Cliente ou plataforma: "Inlead", "Azul · WeFit", "Substack". */
+	onde: string;
+	descricao?: string;
+	href?: string;
+	/** true abre em nova aba e avisa o leitor de tela. */
+	externo?: boolean;
+	/** Etiqueta "Novo", só na entrada mais recente. */
+	novo?: boolean;
+}
+
+interface Props extends Entrada {
+	/** Nível do título. 3 dentro das seções da página inicial. */
+	nivel?: 2 | 3;
+}
+
+const {
+	titulo,
+	ano,
+	onde,
+	descricao,
+	href,
+	externo = false,
+	novo = false,
+	nivel = 3,
+} = Astro.props;
+const Titulo = `h${nivel}` as const;
+const emConstrucao = !href;
+---
+
+<li class="entrada" data-em-construcao={emConstrucao ? "" : undefined}>
+	<div class="entrada__cabeca">
+		<Titulo class="entrada__titulo">
+			{href ? (
+				<a
+					class="entrada__link"
+					href={href}
+					target={externo ? "_blank" : undefined}
+					rel={externo ? "noopener noreferrer" : undefined}
+				>
+					{titulo}
+					{externo && <span class="so-leitor-de-tela"> — abre em nova aba</span>}
+				</a>
+			) : (
+				titulo
+			)}
+		</Titulo>
+		{novo && <span class="entrada__novo">Novo</span>}
+	</div>
+
+	{descricao && <p class="entrada__descricao">{descricao}</p>}
+
+	<div class="entrada__meta">
+		<p>
+			<time datetime={String(ano)}>{ano}</time>, {onde}
+		</p>
+		{emConstrucao ? (
+			<p class="entrada__construcao">
+				<span class="entrada__ponto" aria-hidden="true" />
+				Em construção
+			</p>
+		) : (
+			<Seta />
+		)}
+	</div>
+</li>
+
+<style>
+	.entrada {
+		position: relative;
+		display: grid;
+		gap: var(--space-medio);
+	}
+
+	/* Uma divisória só, entre as entradas, com 24 px acima e abaixo. */
+	.entrada + .entrada {
+		margin-block-start: var(--entrada-intervalo);
+		padding-block-start: var(--entrada-intervalo);
+		border-block-start: var(--divisoria);
+	}
+
+	.entrada__cabeca {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-pequeno) var(--space-medio);
+	}
+
+	.entrada__titulo {
+		font-size: var(--text-entrada);
+		line-height: var(--leading-titulo);
+	}
+
+	.entrada__link {
+		color: var(--link-cor);
+		text-decoration: none;
+	}
+
+	/* Estende a área de clique do link para a entrada toda. */
+	.entrada__link::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+	}
+
+	.entrada__link:focus-visible {
+		outline: none;
+	}
+
+	.entrada__link:focus-visible::before {
+		outline: var(--focus-espessura) solid var(--focus-cor);
+		outline-offset: var(--focus-afastamento);
+	}
+
+	.entrada__novo {
+		padding: var(--etiqueta-espaco);
+		border-radius: var(--radius-pilula);
+		background: var(--etiqueta-fundo);
+		color: var(--etiqueta-texto);
+		font-weight: var(--peso-forte);
+	}
+
+	/* Até 3 linhas; o resto fica no case. */
+	.entrada__descricao {
+		display: -webkit-box;
+		overflow: hidden;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		line-clamp: 3;
+	}
+
+	.entrada__meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-pequeno) var(--space-medio);
+	}
+
+	.entrada__construcao {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-pequeno);
+	}
+
+	.entrada__ponto {
+		inline-size: var(--ponto-grande);
+		block-size: var(--ponto-grande);
+		border-radius: var(--radius-pilula);
+		background: currentColor;
+	}
+
+	.entrada[data-em-construcao] {
+		color: var(--color-texto-secundario);
+	}
+
+	/* A seta avança um pouco quando a entrada recebe o ponteiro ou o foco. */
+	@media (hover: hover) {
+		.entrada:hover :global(.seta__icone) {
+			transform: translate(var(--space-fio), calc(-1 * var(--space-fio)));
+		}
+	}
+
+	.entrada:has(.entrada__link:focus-visible) :global(.seta__icone) {
+		transform: translate(var(--space-fio), calc(-1 * var(--space-fio)));
+	}
+
+	@media (min-width: 768px) {
+		.entrada {
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+			column-gap: var(--grade-espaco);
+		}
+
+		.entrada__cabeca {
+			grid-column: 1 / -1;
+		}
+
+		.entrada__descricao {
+			grid-column: 1 / span 8;
+		}
+
+		.entrada__meta {
+			grid-column: 9 / -1;
+			justify-content: flex-end;
+			align-self: start;
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.entrada {
+			align-items: start;
+		}
+
+		.entrada__cabeca {
+			grid-column: 1 / span 6;
+		}
+
+		.entrada__descricao {
+			grid-column: 7 / span 3;
+		}
+
+		.entrada__meta {
+			grid-column: 10 / -1;
+		}
+	}
+</style>

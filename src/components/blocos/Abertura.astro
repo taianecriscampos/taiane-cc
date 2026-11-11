@@ -1,13 +1,15 @@
 ---
 /**
- * Abertura em grade de blocos (bento). Ordem de leitura: nome, cargo, frase, foto,
- * status com cidade e hora, links. A grade muda de 1 para 6 e para 12 colunas.
+ * Abertura: ocupa a altura da tela menos o cabeçalho, com topo e base afastados.
+ * Topo: a frase como título e o retrato com o selo próprio sobre o canto inferior esquerdo.
+ * Base: seta para Projetos e "Me encontre no LinkedIn".
  */
 import { Image } from "astro:assets";
 import retrato from "../../assets/taiane-retrato.png";
 import { perfil as perfilPadrao, type Perfil } from "../../dados/perfil";
-import HoraLocal from "../ui/HoraLocal.astro";
-import Status from "../ui/Status.astro";
+import LinkComSeta from "../ui/LinkComSeta.astro";
+import Selo from "../ui/Selo.astro";
+import Seta from "../ui/Seta.astro";
 
 interface Props {
 	perfil?: Perfil;
@@ -21,150 +23,108 @@ const Titulo = `h${nivel}` as const;
 ---
 
 <section class="abertura envoltorio" aria-labelledby={`${idBase}-titulo`}>
-	<div class="abertura__bloco abertura__apresentacao">
-		<Titulo id={`${idBase}-titulo`} class="abertura__nome">
-			{perfil.nome}
+	<div class="abertura__topo">
+		<Titulo id={`${idBase}-titulo`} class="abertura__frase">
+			{perfil.frase}
 		</Titulo>
-		<p class="abertura__cargo">{perfil.cargo}</p>
-		<p class="abertura__frase">{perfil.frase}</p>
+		<div class="abertura__retrato">
+			<Image
+				src={retrato}
+				alt={`Retrato de ${perfil.nome}: cabelo escuro na altura dos ombros, com mechas grisalhas, e óculos de armação redonda e fina, sobre fundo claro.`}
+				widths={[207, 414]}
+				sizes="207px"
+				loading="eager"
+				fetchpriority="high"
+			/>
+			<div class="abertura__selo">
+				<Selo id={`${idBase}-selo`} />
+			</div>
+		</div>
 	</div>
 
-	<div class="abertura__bloco abertura__retrato">
-		<Image
-			src={retrato}
-			alt={`Retrato de ${perfil.nome}: cabelo escuro na altura dos ombros, com mechas grisalhas, e óculos de armação redonda e fina, sobre fundo claro.`}
-			widths={[240, 360, 512]}
-			sizes="(min-width: 64rem) 25vw, (min-width: 48rem) 33vw, 60vw"
-			loading="eager"
-			fetchpriority="high"
-		/>
+	<div class="abertura__base">
+		<a class="abertura__descer" href="#projetos">
+			<Seta direcao="baixo" tamanho="grande" />
+			<span class="so-leitor-de-tela">Ir para Projetos</span>
+		</a>
+		<LinkComSeta href={perfil.linkedin} texto="Me encontre no LinkedIn" />
 	</div>
-
-	<div class="abertura__bloco abertura__local">
-		<Status texto={perfil.status} />
-		<p>{perfil.cidade}</p>
-		<p class="abertura__secundario">{perfil.modalidade}</p>
-		<HoraLocal fuso={perfil.fuso} nomeDoFuso={perfil.nomeDoFuso} />
-	</div>
-
-	<nav class="abertura__bloco abertura__links" aria-label="Currículo e contato">
-		<ul role="list">
-			<li>
-				{perfil.curriculo.disponivel ? (
-					<a href={perfil.curriculo.href}>Currículo em PDF</a>
-				) : (
-					<span class="abertura__secundario">Currículo em PDF, em breve</span>
-				)}
-			</li>
-			<li>
-				<a href={perfil.linkedin}>LinkedIn</a>
-			</li>
-			<li>
-				<a href={`mailto:${perfil.email}`}>{perfil.email}</a>
-			</li>
-		</ul>
-	</nav>
 </section>
 
 <style>
 	.abertura {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: var(--space-bloco);
+		min-block-size: calc(100svh - var(--cabecalho-altura));
+		padding-block: var(--space-bloco) var(--space-grande);
+	}
+
+	.abertura__topo {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: var(--grade-espaco);
-		padding-block-start: var(--space-bloco);
+		gap: var(--space-bloco);
 	}
 
-	.abertura__bloco {
-		display: grid;
-		align-content: start;
-		gap: var(--space-pequeno);
-		padding-block-start: var(--bloco-espaco);
-		border-block-start: var(--bloco-separador);
-		min-inline-size: 0;
+	.abertura__frase {
+		font-size: var(--text-abertura);
+		line-height: var(--leading-titulo);
 	}
 
-	.abertura__apresentacao {
-		gap: var(--space-medio);
-	}
-
-	.abertura__nome {
-		font-size: var(--text-display);
-	}
-
-	.abertura__cargo {
-		font-size: var(--text-subtitulo);
-	}
-
-	.abertura__frase,
-	.abertura__secundario {
-		color: var(--color-texto-secundario);
+	/* No celular, o retrato recua 32 px para o selo não sair da tela. */
+	.abertura__retrato {
+		position: relative;
+		justify-self: start;
+		margin-inline-start: var(--space-maior);
 	}
 
 	.abertura__retrato img {
-		inline-size: 100%;
-		max-inline-size: var(--largura-indice);
+		inline-size: var(--retrato-largura);
+		block-size: var(--retrato-altura);
+		object-fit: cover;
+		object-position: 50% 30%;
+		border-radius: var(--retrato-raio);
 	}
 
-	.abertura__links ul {
-		display: grid;
-		gap: var(--space-pequeno);
-		padding: 0;
-		list-style: none;
+	.abertura__selo {
+		position: absolute;
+		inset-inline-start: var(--selo-deslocamento);
+		inset-block-end: var(--selo-deslocamento);
 	}
 
-	/* E-mail e links longos quebram em vez de vazar da tela. */
-	.abertura__links a {
-		overflow-wrap: anywhere;
+	.abertura__base {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-medio);
 	}
 
-	/* Tablet: 6 colunas. Apresentação e foto na primeira linha; local e links na segunda. */
-	@media (min-width: 48rem) {
-		.abertura {
-			grid-template-columns: repeat(6, minmax(0, 1fr));
+	.abertura__descer {
+		border-radius: var(--radius-pilula);
+	}
+
+	@media (hover: hover) {
+		.abertura__descer:hover :global(.seta__icone) {
+			transform: translateY(var(--space-fio));
+		}
+	}
+
+	@media (min-width: 768px) {
+		.abertura__topo {
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+			column-gap: var(--grade-espaco);
+			align-items: start;
 		}
 
-		.abertura__apresentacao {
-			grid-column: 1 / span 4;
+		.abertura__frase {
+			grid-column: 1 / span 8;
 		}
 
 		.abertura__retrato {
-			grid-column: 5 / span 2;
-		}
-
-		.abertura__retrato img {
-			max-inline-size: none;
-		}
-
-		.abertura__local {
-			grid-column: 1 / span 3;
-		}
-
-		.abertura__links {
-			grid-column: 4 / span 3;
-		}
-	}
-
-	/* Computador: 12 colunas. A foto ocupa a lateral direita, nas duas linhas. */
-	@media (min-width: 64rem) {
-		.abertura {
-			grid-template-columns: repeat(12, minmax(0, 1fr));
-		}
-
-		.abertura__apresentacao {
-			grid-column: 1 / span 9;
-		}
-
-		.abertura__retrato {
-			grid-column: 10 / span 3;
-			grid-row: 1 / span 2;
-		}
-
-		.abertura__local {
-			grid-column: 1 / span 5;
-		}
-
-		.abertura__links {
-			grid-column: 6 / span 4;
+			grid-column: 9 / -1;
+			justify-self: end;
+			margin-inline-start: 0;
 		}
 	}
 </style>

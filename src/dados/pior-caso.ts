@@ -2,7 +2,7 @@
  * Dados de pior caso (skill break-ui). Só o /laboratorio usa este arquivo,
  * e o Laboratório fica fora da produção. Valores realistas, no limite do schema quando há limite.
  */
-import type { ProjetoDaLista } from "../components/blocos/Projetos.astro";
+import type { Entrada } from "../components/ui/Entrada.astro";
 import type { Perfil } from "./perfil";
 
 export const perfilPiorCaso: Perfil = {
@@ -10,11 +10,8 @@ export const perfilPiorCaso: Perfil = {
 	cargo: "Designer de Produto Sênior · Engenheira de Design · Pesquisadora de UX",
 	frase:
 		"Design de produto com pensamento sistêmico, inteligência artificial generativa, pesquisa contínua e código de produção.",
-	status: "Disponível para trabalho a partir de janeiro de 2027",
-	cidade: "São José do Rio Preto, SP",
-	modalidade: "Remoto, híbrido ou presencial na Grande São Paulo",
-	fuso: "America/Sao_Paulo",
-	nomeDoFuso: "Horário de Brasília",
+	cidade: "São José do Rio Preto",
+	estado: "SP",
 	email: "bartholomew.fitzgerald@northwind-industries-holdings.example.com",
 	linkedin: "https://www.linkedin.com/in/exemplo/",
 	substack: "https://exemplo.example.com/",
@@ -29,42 +26,41 @@ const tituloLongo = "Redesenho do fluxo de contestação das cobranças na logí
 const chamadaNoLimite =
 	"Contestação de cobranças em três etapas, com rastreio do pedido, prazos legais e retornos do atendimento no mesmo lugar.";
 
-export const projetosPiorCaso: ProjetoDaLista[] = [
+export const entradasPiorCaso: Entrada[] = [
 	{
 		titulo: tituloLongo,
-		empresa: "emDia, do Grupo Santander, cliente atendido pela WeFit",
+		onde: "emDia · Santander · WeFit",
 		ano: 2026,
-		chamada: chamadaNoLimite,
+		descricao: chamadaNoLimite,
 		href: "#",
+		novo: true,
 	},
-	{ titulo: "IA", empresa: "Jo", ano: 2000, chamada: "Ok.", href: "#" },
+	{ titulo: "IA", onde: "Jo", ano: 2000, descricao: "Ok.", href: "#" },
 	{
 		titulo: "Benachrichtigungseinstellungen",
-		empresa: "Hapvida, cliente atendido pela WeFit, para várias operadoras de saúde",
+		onde: "Hapvida · WeFit",
 		ano: 2021,
-		chamada: "Nome de projeto em alemão, sem espaços, como entraria com o site em outro idioma.",
-		href: "#",
+		descricao: "Nome de projeto em alemão, sem espaços, como entraria com o site em outro idioma.",
+		href: "https://exemplo.example.com/",
+		externo: true,
 	},
+	{ titulo: "Texto ainda sem link, em construção", onde: "Substack", ano: 2026 },
 ];
 
 /** Exatamente 400 caracteres, o limite de `resumo`. */
 const resumoNoLimite =
 	"Como Senior Product Designer pela WeFit, conduzi o redesenho do fluxo de contestação de cobranças indevidas para uma operação logística com mais de 12.840 pontos de coleta, integrando atendimento, financeiro e transporte num único serviço. O mapeamento sistêmico revelou quatro rupturas entre as áreas. Resultados: contestações resolvidas em menos tempo e menos retrabalho para as equipes envolvidas.";
 
+/** Cada cartão no limite de 160 caracteres. */
+const cartaoNoLimite =
+	"Conduzi a pesquisa com atendimento, financeiro e transporte, desenhei o novo fluxo de ponta a ponta e acompanhei a entrega com o time de engenharia da operação.";
+
 export const cabecalhoPiorCaso = {
 	titulo: tituloLongo,
 	resumo: resumoNoLimite,
-	empresa: "Luft Logistics, cliente atendido pela WeFit, em parceria com a operação de São Paulo",
+	cliente: "Hapvida Saúde · WeFit SP", // 24 caracteres, o limite
 	ano: 2026,
-	papel: "Senior Product Designer | UX Strategy, Service Design e IA pela WeFit",
+	minutos: 1,
 	sigilo: "confidencial" as const,
-	resultados: [
-		{ valor: "R$ 12.345.678,90", descricao: "em custo operacional evitado no primeiro ano" },
-		{ valor: "3x", descricao: "mais rápido" },
-		{
-			valor: "Superintendência",
-			descricao:
-				"um resultado descrito em texto, sem número, com uma descrição bem mais longa que as outras",
-		},
-	],
+	cartoes: { atuacao: cartaoNoLimite, desafio: "Ok.", solucao: cartaoNoLimite, rascunho: true },
 };

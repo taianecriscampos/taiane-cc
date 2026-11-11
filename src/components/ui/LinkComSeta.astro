@@ -1,0 +1,35 @@
+---
+/**
+ * Link de texto com o círculo de seta ao lado, como "Me encontre no LinkedIn".
+ * O círculo fica dentro do link: a área de toque inclui os dois.
+ */
+import Seta from "./Seta.astro";
+
+interface Props {
+	href: string;
+	texto: string;
+}
+
+const { href, texto } = Astro.props;
+---
+
+<a class="link-com-seta" href={href}>
+	<span class="link link-com-seta__texto">{texto}</span>
+	<Seta />
+</a>
+
+<style>
+	.link-com-seta {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-pequeno);
+		color: var(--link-cor);
+		text-decoration: none;
+	}
+
+	/* O sublinhado do texto acompanha o hover e o foco do link inteiro. */
+	.link-com-seta:hover .link-com-seta__texto::after,
+	.link-com-seta:focus-visible .link-com-seta__texto::after {
+		transform: scaleX(1);
+	}
+</style>

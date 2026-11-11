@@ -1,224 +1,237 @@
 /*
- * Tokens do design system — direção visual oficial (etapa 0.3.0, briefing de design v2).
+ * Tokens do design system — base fiel à debora.wiki (etapa 0.3.0, fase 0.3.b).
+ * Fonte das medidas: docs/especificacao-base-debora.md.
  *
  * Três camadas:
  *   1. Primitivos  (--prim-*)  valores brutos. Só os semânticos leem estes.
  *   2. Semânticos  (--color-*, --space-*, --text-*...)  o nome diz a função.
- *   3. Componentes (--bento-*, --menu-*, --etiqueta-*...)  decisões de um componente.
+ *   3. Componentes (--cabecalho-*, --entrada-*, --selo-*...)  decisões de um componente.
  * Componentes usam SOMENTE as camadas 2 e 3.
+ * A parte 4 só troca valores semânticos nas quebras de 768 e 1200 px.
  *
  * O /laboratorio lê este arquivo na compilação: mantenha um token por linha.
  */
 
 /* ---------- 1. Primitivos ---------- */
 :root {
-	/* Cor. Contraste medido sobre --prim-color-branco-quente. */
-	--prim-color-branco-quente: #fbfaf7;
-	--prim-color-areia: #f2efe9; /* fundo dos blocos; cinza-600 sobre ele: 4,63:1 */
-	--prim-color-preto: #141414; /* 17,65:1 */
-	--prim-color-cinza-700: #55534e; /* 7,36:1 */
-	--prim-color-cinza-600: #6e6b65; /* 5,09:1 */
-	--prim-color-cinza-400: #a8a49c; /* só sobre o preto: 7,42:1 */
-	--prim-color-cinza-200: #e4e1da; /* 1,25:1, só decorativo */
-	--prim-color-vermelho: #c8201a; /* 5,47:1 */
-	--prim-color-verde: #1e9e5a; /* 3,30:1, só o ponto de status, ao lado do texto */
+	/* Cor. Contraste medido sobre --prim-color-cinza-50. */
+	--prim-color-cinza-50: #fafafa;
+	--prim-color-cinza-100: #e5e8ec; /* fundo secundário, sem texto claro em cima */
+	--prim-color-cinza-300: #cbd0d6; /* 1,49:1, só divisórias */
+	--prim-color-cinza-700: #4d575f; /* 7,07:1 */
+	--prim-color-cinza-900: #1a2025; /* 15,75:1 */
+	--prim-color-vermelho: #ff2400; /* 3,66:1, só o selo, que é decorativo */
+	--prim-color-azul: #0040ff; /* 6,33:1 */
 	--prim-color-branco: #ffffff;
-	--prim-color-areia-translucida: rgb(242 239 233 / 0.86);
-	--prim-color-realce-escuro: rgb(251 250 247 / 0.12);
+	--prim-color-cinza-50-translucido: rgb(250 250 250 / 0.1);
 
-	/* Fontes auto-hospedadas em public/fontes (licença SIL OFL 1.1, arquivos ao lado). */
-	--prim-font-archivo: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-	--prim-font-geist-mono: "Geist Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+	/* Fonte auto-hospedada em public/fontes (licença SIL OFL 1.1, arquivo ao lado). */
+	--prim-font-schibsted:
+		"Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+	--prim-font-mono-sistema: ui-monospace, "Cascadia Mono", Consolas, monospace;
 
-	/* Escala inspirada na debora.wiki: poucos tamanhos, contraste forte entre eles. */
-	--prim-text-pequeno: clamp(0.8125rem, 0.7905rem + 0.0939vw, 0.875rem);
-	--prim-text-corpo: clamp(1rem, 0.956rem + 0.1878vw, 1.125rem);
-	--prim-text-titulo: clamp(2rem, 1.2958rem + 3.0047vw, 4rem);
+	/* Tamanhos de texto, em px de referência. */
+	--prim-text-12: 0.75rem;
+	--prim-text-14: 0.875rem;
+	--prim-text-16: 1rem;
+	--prim-text-18: 1.125rem;
+	--prim-text-20: 1.25rem;
+	--prim-text-24: 1.5rem;
+	--prim-text-32: 2rem;
+	--prim-text-40: 2.5rem;
+	--prim-text-48: 3rem;
+	--prim-text-56: 3.5rem;
+	--prim-text-80: clamp(2.5rem, 5.556vw, 5rem);
 
-	--prim-leading-justo: 1.04;
-	--prim-leading-base: 1.55;
-	--prim-tracking-justo: -0.025em;
-	--prim-peso-regular: 400;
-	--prim-peso-medio: 500;
-	--prim-peso-forte: 650;
-	/* Eixo de largura da Archivo: 100% é a largura normal; menos é mais estreito. */
-	--prim-largura-normal: 100%;
-	--prim-largura-estreita: 84%;
-	--prim-largura-condensada: 72%;
+	/* Entrelinha: altura da linha dividida pelo tamanho (ex.: 24/16 = 1,5). */
+	--prim-leading-1: 1;
+	--prim-leading-12: 1.5; /* 18/12 */
+	--prim-leading-14: 1.4286; /* 20/14 */
+	--prim-leading-16: 1.5; /* 24/16 */
+	--prim-leading-18: 1.4444; /* 26/18 */
+	--prim-leading-20: 1.4; /* 28/20 */
+	--prim-leading-24: 1.3333; /* 32/24 */
+	--prim-leading-32: 1.25; /* 40/32 */
 
-	/* Espaçamento: base de 4px. */
-	--prim-space-1: 0.25rem;
-	--prim-space-2: 0.5rem;
-	--prim-space-3: 0.75rem;
-	--prim-space-4: 1rem;
-	--prim-space-5: 1.25rem;
-	--prim-space-6: 1.5rem;
-	--prim-space-8: 2rem;
-	--prim-space-12: 3rem;
-	--prim-space-16: 4rem;
-	--prim-space-24: 6rem;
-	--prim-space-32: 8rem;
+	--prim-peso-400: 400;
+	--prim-peso-500: 500;
+	--prim-peso-700: 700;
+
+	/* Espaço: escala da especificação. */
+	--prim-space-0: 0;
+	--prim-space-2: 0.125rem;
+	--prim-space-4: 0.25rem;
+	--prim-space-8: 0.5rem;
+	--prim-space-16: 1rem;
+	--prim-space-24: 1.5rem;
+	--prim-space-32: 2rem;
+	--prim-space-40: 2.5rem;
+	--prim-space-48: 3rem;
+	--prim-space-56: 3.5rem;
+	--prim-space-80: 5rem;
+	--prim-space-margem-larga: clamp(1.5rem, 2.78vw, 2.5rem);
 
 	/* Medidas de estrutura. */
-	--prim-borda-fina: 1px;
-	--prim-size-2: 0.5rem;
-	--prim-size-11: 2.75rem;
-	--prim-size-32: 8rem;
-	--prim-size-48: 12rem;
-	--prim-size-60: 15rem;
-	--prim-size-104: 26rem;
+	--prim-borda-1: 1px;
+	--prim-borda-1pt: 1pt;
+	--prim-size-5: 0.3125rem;
+	--prim-size-10: 0.625rem;
+	--prim-size-20: 1.25rem;
+	--prim-size-40: 2.5rem;
+	--prim-size-48: 3rem;
+	--prim-size-56: 3.5rem;
+	--prim-size-96: 6rem;
+	--prim-size-104: 6.5rem;
+	--prim-size-207: 12.9375rem;
+	--prim-size-257: 16.0625rem;
+	--prim-size-1800: 112.5rem;
+	--prim-colunas-12: 12;
+	--prim-desfoque-15: blur(15px);
 
-	/* Raios: cantos arredondados de aplicativo. */
+	/* Raios. */
 	--prim-radius-0: 0;
-	--prim-radius-2: 4px;
-	--prim-radius-3: 0.75rem;
-	--prim-radius-5: 1.25rem;
-	--prim-radius-pilula: 999px;
+	--prim-radius-8: 0.5rem;
+	--prim-radius-pilula: 9999px;
 
-	/* Sombra só para o que flutua sobre o conteúdo (menu). */
-	--prim-sombra-flutuante:
-		0 0.5rem 1.5rem rgb(20 20 20 / 0.14), 0 0.125rem 0.375rem rgb(20 20 20 / 0.08);
-
-	/* Ruído leve do fundo: SVG embutido, permitido pela CSP (img-src data:). */
-	--prim-textura-ruido: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)' opacity='.07'/%3E%3C/svg%3E");
-
-	/* Movimento (skill movimento). O JavaScript lê estes valores. */
-	--prim-duration-fast: 0.2s;
-	--prim-duration-base: 0.4s;
-	--prim-duration-slow: 0.8s;
+	/* Movimento: por enquanto, só o sublinhado dos links. */
+	--prim-duration-280: 0.28s;
 	--prim-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ---------- 2. Semânticos ---------- */
 :root {
-	--color-fundo: var(--prim-color-branco-quente);
-	--color-superficie: var(--prim-color-areia);
-	--color-texto: var(--prim-color-preto);
+	--color-fundo: var(--prim-color-cinza-50);
+	--color-fundo-secundario: var(--prim-color-cinza-100);
+	--color-texto: var(--prim-color-cinza-900);
 	--color-texto-secundario: var(--prim-color-cinza-700);
-	--color-texto-terciario: var(--prim-color-cinza-600);
-	--color-destaque: var(--prim-color-vermelho);
-	--color-disponivel: var(--prim-color-verde);
-	--color-linha: var(--prim-color-cinza-200);
-	--color-sobre-destaque: var(--prim-color-branco);
-	--color-inverso-fundo: var(--prim-color-preto);
-	--color-inverso-texto: var(--prim-color-branco-quente);
-	--color-inverso-secundario: var(--prim-color-cinza-400);
-	--color-inverso-realce: var(--prim-color-realce-escuro);
-	--color-superficie-translucida: var(--prim-color-areia-translucida);
+	--color-borda: var(--prim-color-cinza-300);
+	--color-marca: var(--prim-color-vermelho);
+	--color-destaque-case: var(--prim-color-azul);
+	--color-inverso-fundo: var(--prim-color-cinza-900);
+	--color-inverso-texto: var(--prim-color-cinza-50);
+	--color-sobre-destaque-case: var(--prim-color-branco);
+	--color-fundo-translucido: var(--prim-color-cinza-50-translucido);
 
-	--textura-fundo: var(--prim-textura-ruido);
+	--font-texto: var(--prim-font-schibsted);
+	--font-tecnica: var(--prim-font-mono-sistema);
 
-	--font-texto: var(--prim-font-archivo);
-	--font-tecnica: var(--prim-font-geist-mono);
+	--text-abertura: var(--prim-text-80);
+	--text-entrada: var(--prim-text-40);
+	--text-titulo-case: var(--prim-text-40);
+	--text-secao-case: var(--prim-text-32);
+	--text-subtitulo: var(--prim-text-24);
+	--text-rotulo: var(--prim-text-20);
+	--text-grande: var(--prim-text-18);
+	--text-corpo: var(--prim-text-16);
+	--text-pequeno: var(--prim-text-14);
+	--text-legenda: var(--prim-text-12);
 
-	/* Três tamanhos. Todo título de seção usa --text-titulo, como na debora.wiki. */
-	--text-pequeno: var(--prim-text-pequeno);
-	--text-corpo: var(--prim-text-corpo);
-	--text-titulo: var(--prim-text-titulo);
+	--leading-titulo: var(--prim-leading-1);
+	--leading-secao-case: var(--prim-leading-32);
+	--leading-subtitulo: var(--prim-leading-24);
+	--leading-rotulo: var(--prim-leading-20);
+	--leading-grande: var(--prim-leading-18);
+	--leading-corpo: var(--prim-leading-16);
+	--leading-pequeno: var(--prim-leading-14);
+	--leading-legenda: var(--prim-leading-12);
 
-	/* Transição: nomes antigos apontam para a escala nova até a fase 0.3.b. */
-	--text-subtitulo: var(--prim-text-corpo);
-	--text-titulo-3: var(--prim-text-corpo);
-	--text-titulo-2: var(--prim-text-titulo);
-	--text-titulo-1: var(--prim-text-titulo);
-	--text-display: var(--prim-text-titulo);
+	--peso-corpo: var(--prim-peso-400);
+	--peso-titulo: var(--prim-peso-500);
+	--peso-forte: var(--prim-peso-700);
 
-	--leading-titulo: var(--prim-leading-justo);
-	--leading-corpo: var(--prim-leading-base);
-	--tracking-titulo: var(--prim-tracking-justo);
-	--peso-corpo: var(--prim-peso-regular);
-	--peso-titulo: var(--prim-peso-forte);
-	--peso-forte: var(--prim-peso-forte);
-	--peso-rotulo: var(--prim-peso-medio);
-	--largura-fonte-titulo: var(--prim-largura-estreita);
-	--largura-fonte-texto: var(--prim-largura-normal);
-	--largura-fonte-condensada: var(--prim-largura-condensada);
+	--space-nenhum: var(--prim-space-0);
+	--space-fio: var(--prim-space-2);
+	--space-minimo: var(--prim-space-4);
+	--space-pequeno: var(--prim-space-8);
+	--space-medio: var(--prim-space-16);
+	--space-grande: var(--prim-space-24);
+	--space-maior: var(--prim-space-32);
+	--space-bloco: var(--prim-space-40);
+	--space-largo: var(--prim-space-48);
+	--space-amplo: var(--prim-space-56);
+	--space-maximo: var(--prim-space-80);
+	--space-secao: var(--prim-space-40);
+	--space-margem-pagina: var(--prim-space-16);
 
-	--space-minimo: var(--prim-space-1);
-	--space-pequeno: var(--prim-space-2);
-	--space-medio: var(--prim-space-4);
-	--space-grande: var(--prim-space-8);
-	--space-bloco: var(--prim-space-12);
-	--space-secao: var(--prim-space-24);
-	--space-margem-pagina: clamp(var(--prim-space-4), 5vw, var(--prim-space-16));
-	--space-interno: clamp(var(--prim-space-4), 3vw, var(--prim-space-6));
-
-	--linha-espessura: var(--prim-borda-fina);
-	--largura-indice: var(--prim-size-60);
-	--largura-coluna-minima: var(--prim-size-48);
-	--largura-leitura: 68ch;
-	--largura-pagina: 90rem;
-	--alvo-toque: var(--prim-size-11);
-	--largura-foto-pequena: var(--prim-size-32);
-	--largura-menu: var(--prim-size-104);
+	--grade-colunas: var(--prim-colunas-12);
+	--grade-espaco: var(--prim-space-24);
+	--largura-pagina: var(--prim-size-1800);
+	--linha-espessura: var(--prim-borda-1);
+	--alvo-toque: var(--prim-size-40);
 
 	--radius-nenhum: var(--prim-radius-0);
-	--radius-controle: var(--prim-radius-2);
-	--radius-medio: var(--prim-radius-3);
-	--radius-bloco: var(--prim-radius-5);
+	--radius-medio: var(--prim-radius-8);
 	--radius-pilula: var(--prim-radius-pilula);
 
-	--sombra-flutuante: var(--prim-sombra-flutuante);
-
-	--motion-duration-fast: var(--prim-duration-fast);
-	--motion-duration-base: var(--prim-duration-base);
-	--motion-duration-slow: var(--prim-duration-slow);
+	--motion-duration-base: var(--prim-duration-280);
 	--motion-ease-out: var(--prim-ease-out);
 }
 
 /* ---------- 3. Componentes ---------- */
 :root {
-	--focus-cor: var(--color-destaque);
+	--focus-cor: var(--color-texto);
 	--focus-espessura: 2px;
 	--focus-afastamento: 3px;
 
 	--link-cor: var(--color-texto);
-	--link-cor-hover: var(--color-destaque);
-	--link-sublinhado: 1px;
+	--link-sublinhado: var(--prim-borda-1pt);
 	--link-sublinhado-afastamento: 0.2em;
 
-	--skip-link-fundo: var(--color-texto);
-	--skip-link-texto: var(--color-fundo);
+	--skip-link-fundo: var(--color-inverso-fundo);
+	--skip-link-texto: var(--color-inverso-texto);
 	--skip-link-espaco: var(--space-pequeno) var(--space-medio);
-	--skip-link-raio: var(--radius-controle);
+	--skip-link-raio: var(--radius-medio);
 
-	/* Linha só entre itens de uma lista (briefing v2). */
-	--lista-separador: var(--linha-espessura) solid var(--color-linha);
-	--bloco-separador: var(--lista-separador);
-	--bloco-espaco: var(--space-medio);
-	--grade-espaco: var(--space-grande);
-	--indice-topo: var(--space-grande);
+	--divisoria: var(--linha-espessura) solid var(--color-borda);
 
-	/* Bloco bento: agrupa informação no lugar das linhas. */
-	--bento-fundo: var(--color-superficie);
-	--bento-raio: var(--radius-bloco);
-	--bento-espaco: var(--space-interno);
-	--bento-intervalo: var(--space-pequeno);
+	--cabecalho-altura: var(--prim-size-56);
+	--cabecalho-fundo: var(--color-fundo-translucido);
+	--cabecalho-desfoque: var(--prim-desfoque-15);
+	--cabecalho-camada: 100;
+	--painel-fundo: var(--color-fundo);
 
-	--foto-raio: var(--radius-bloco);
-	--seta-fundo: var(--bento-fundo);
+	--circulo-pequeno: var(--prim-size-40);
+	--circulo-grande: var(--prim-size-48);
+	--circulo-fundo: var(--color-fundo-secundario);
+	--seta-tamanho: var(--prim-size-20);
 
-	--etiqueta-fundo: var(--color-superficie);
-	--etiqueta-texto: var(--color-texto-secundario);
-	--etiqueta-raio: var(--radius-pilula);
-	--etiqueta-espaco: var(--space-minimo) var(--space-pequeno);
+	--retrato-largura: var(--prim-size-207);
+	--retrato-altura: var(--prim-size-257);
+	--retrato-raio: var(--radius-medio);
+	--selo-tamanho: var(--prim-size-96);
+	--selo-cor: var(--color-marca);
+	--selo-fundo: var(--color-fundo);
+	--selo-deslocamento: -1.875rem;
 
-	--status-ponto-cor: var(--color-disponivel);
-	--status-ponto-tamanho: var(--prim-size-2);
+	--entrada-intervalo: var(--space-grande);
+	--etiqueta-fundo: var(--color-inverso-fundo);
+	--etiqueta-texto: var(--color-inverso-texto);
+	--etiqueta-espaco: var(--space-fio) var(--space-pequeno);
+	--ponto-grande: var(--prim-size-10);
+	--ponto-pequeno: var(--prim-size-5);
 
-	--menu-raio: var(--radius-pilula);
-	--menu-sombra: var(--sombra-flutuante);
-	--menu-afastamento: var(--space-medio);
-	--menu-item-altura: var(--alvo-toque);
-	--menu-largura: var(--largura-menu);
-	--menu-escuro-fundo: var(--color-inverso-fundo);
-	--menu-escuro-texto: var(--color-inverso-secundario);
-	--menu-escuro-ativo: var(--color-inverso-texto);
-	--menu-escuro-realce: var(--color-inverso-realce);
-	--menu-claro-fundo: var(--color-superficie-translucida);
-	--menu-claro-texto: var(--color-texto-secundario);
-	--menu-claro-ativo: var(--color-texto);
-	--menu-claro-realce: var(--color-fundo);
-	--menu-desfoque: blur(0.75rem) saturate(1.2);
-	--menu-camada: 100;
+	--rodape-altura: var(--prim-size-104);
+
+	--cartao-fundo: var(--color-fundo-secundario);
+	--cartao-raio: var(--radius-medio);
+	--cartao-espaco: var(--space-medio);
+	--marcador-midia-tamanho: var(--prim-size-20);
+	--marcador-midia-fundo: var(--color-destaque-case);
+	--marcador-midia-texto: var(--color-sobre-destaque-case);
+}
+
+/* ---------- 4. Ajustes por largura ---------- */
+@media (min-width: 768px) {
+	:root {
+		--text-entrada: var(--prim-text-56);
+		--text-titulo-case: var(--prim-text-48);
+		--space-secao: var(--prim-space-80);
+		--space-margem-pagina: var(--prim-space-24);
+	}
+}
+
+@media (min-width: 1200px) {
+	:root {
+		--space-margem-pagina: var(--prim-space-margem-larga);
+	}
 }

@@ -55,13 +55,13 @@
 	html {
 		color-scheme: light;
 		background: var(--color-fundo);
+		/* As âncoras param abaixo do cabeçalho fixo. */
+		scroll-padding-block-start: var(--cabecalho-altura);
 	}
 
-	/* Fundo com ruído leve, em vez de branco chapado (briefing v2). */
 	body {
 		min-height: 100dvh;
 		background-color: var(--color-fundo);
-		background-image: var(--textura-fundo);
 		color: var(--color-texto);
 		font-family: var(--font-texto);
 		font-size: var(--text-corpo);
@@ -74,27 +74,13 @@
 	h2,
 	h3,
 	h4 {
+		font-size: inherit;
 		font-weight: var(--peso-titulo);
-		font-stretch: var(--largura-fonte-titulo);
 		line-height: var(--leading-titulo);
-		letter-spacing: var(--tracking-titulo);
 		text-wrap: balance;
 	}
 
-	h1 {
-		font-size: var(--text-titulo-1);
-	}
-
-	h2 {
-		font-size: var(--text-titulo-2);
-	}
-
-	h3 {
-		font-size: var(--text-titulo-3);
-	}
-
 	p {
-		max-width: var(--largura-leitura);
 		text-wrap: pretty;
 	}
 
@@ -104,14 +90,9 @@
 		text-underline-offset: var(--link-sublinhado-afastamento);
 	}
 
-	a:hover {
-		color: var(--link-cor-hover);
-	}
-
 	code,
 	kbd,
-	samp,
-	time {
+	samp {
 		font-family: var(--font-tecnica);
 	}
 
@@ -121,8 +102,8 @@
 	}
 
 	::selection {
-		background: var(--color-destaque);
-		color: var(--color-sobre-destaque);
+		background: var(--color-inverso-fundo);
+		color: var(--color-inverso-texto);
 	}
 
 	/* Quem pede menos movimento não recebe animação nenhuma. */
@@ -144,24 +125,47 @@
 		position: absolute;
 		top: var(--space-medio);
 		left: var(--space-medio);
-		z-index: 100;
+		z-index: calc(var(--cabecalho-camada) + 1);
 		padding: var(--skip-link-espaco);
 		border-radius: var(--skip-link-raio);
 		background: var(--skip-link-fundo);
 		color: var(--skip-link-texto);
 		text-decoration: none;
-		transform: translateY(calc(-100% - var(--space-grande)));
+		transform: translateY(calc(-100% - var(--space-maximo)));
 	}
 
 	.pular-conteudo:focus-visible {
 		transform: none;
 	}
 
-	.pular-conteudo:hover {
-		color: var(--skip-link-texto);
+	/*
+	 * Link de interface: sem sublinhado parado; no hover e no foco, um traço de 1 pt
+	 * cresce da esquerda para a direita. Só transform, como pede a regra de movimento.
+	 */
+	.link {
+		position: relative;
+		color: var(--link-cor);
+		text-decoration: none;
 	}
 
-	/* Seção da página: título e conteúdo com o mesmo ritmo vertical. */
+	.link::after {
+		content: "";
+		position: absolute;
+		inset-inline: 0;
+		inset-block-end: 0;
+		block-size: var(--link-sublinhado);
+		background: currentColor;
+		transform: scaleX(0);
+		transform-origin: left center;
+		transition: transform var(--motion-duration-base) var(--motion-ease-out);
+	}
+
+	.link:hover::after,
+	.link:focus-visible::after {
+		transform: scaleX(1);
+	}
+
+	/* Seção da página inicial: rótulo pequeno e, 24 px abaixo, o conteúdo. */
 	.secao {
 		display: grid;
 		align-content: start;
@@ -169,34 +173,18 @@
 		padding-block-start: var(--space-secao);
 	}
 
+	.secao__rotulo {
+		font-size: var(--text-rotulo);
+		font-weight: var(--peso-corpo);
+		line-height: var(--leading-rotulo);
+	}
+
 	/* Marca texto provisório: [RASCUNHO] e [TEXTO DA TAIANE]. Sai antes da 1.0.0. */
 	.marcador {
 		font-family: var(--font-tecnica);
 		font-size: var(--text-pequeno);
-		color: var(--color-texto-terciario);
-	}
-
-	/* Bloco bento: agrupa informação com fundo sutil e cantos arredondados, no lugar de linhas. */
-	.bento {
-		padding: var(--bento-espaco);
-		border-radius: var(--bento-raio);
-		background: var(--bento-fundo);
-	}
-
-	/* Etiqueta: ano, plataforma, "em produção". */
-	.etiqueta {
-		display: inline-block;
-		padding: var(--etiqueta-espaco);
-		border-radius: var(--etiqueta-raio);
-		background: var(--etiqueta-fundo);
-		color: var(--etiqueta-texto);
-		font-family: var(--font-tecnica);
-		font-size: var(--text-pequeno);
-		font-weight: var(--peso-corpo);
-		font-stretch: normal;
-		letter-spacing: normal;
-		line-height: var(--leading-corpo);
-		white-space: nowrap;
+		line-height: var(--leading-pequeno);
+		color: var(--color-texto-secundario);
 	}
 
 	/* Junta o marcador ao parágrafo a que ele se refere. */
@@ -225,5 +213,18 @@
 		max-width: var(--largura-pagina);
 		margin-inline: auto;
 		padding-inline: var(--space-margem-pagina);
+	}
+
+	/* Grade de 12 colunas a partir do tablet; no celular, uma coluna só. */
+	.grade {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--grade-espaco);
+	}
+
+	@media (min-width: 768px) {
+		.grade {
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+		}
 	}
 }

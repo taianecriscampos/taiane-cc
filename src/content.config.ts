@@ -17,12 +17,21 @@ const cases = defineCollection({
 		/** Até 3 frases: quem, o quê, resultado (ADR 0002). */
 		resumo: z.string().min(1).max(400),
 		empresa: z.string().min(1),
+		/** Nome curto para as listas e os metadados: "Inlead", "Azul · WeFit". */
+		cliente: z.string().min(1).max(24),
 		ano: z.number().int().min(2000).max(2100),
 		papel: z.string().min(1),
 		/** "publico" mostra tudo; "confidencial" esconde números e telas sensíveis. */
 		sigilo: z.enum(["publico", "confidencial"]),
 		/** Posição na lista de cases, começando em 1. */
 		ordem: z.number().int().positive(),
+		/** Os três cartões do topo do case. `rascunho: true` mostra o marcador [RASCUNHO] acima deles. */
+		cartoes: z.object({
+			atuacao: z.string().min(1).max(160),
+			desafio: z.string().min(1).max(160),
+			solucao: z.string().min(1).max(160),
+			rascunho: z.boolean().default(false),
+		}),
 		resultados: z
 			.array(
 				z.object({

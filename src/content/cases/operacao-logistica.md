@@ -3,10 +3,15 @@ titulo: "Operação logística"
 chamada: "[TEXTO DA TAIANE]"
 resumo: "[TEXTO DA TAIANE]"
 empresa: "Luft Logistics, cliente atendido pela WeFit"
+cliente: "Luft · WeFit"
 ano: 2023
 papel: "Senior Product Designer pela WeFit"
 sigilo: "confidencial"
 ordem: 3
+cartoes:
+  atuacao: "[TEXTO DA TAIANE]"
+  desafio: "[TEXTO DA TAIANE]"
+  solucao: "[TEXTO DA TAIANE]"
 resultados:
   - valor: "[A DEFINIR]"
     descricao: "[TEXTO DA TAIANE]"

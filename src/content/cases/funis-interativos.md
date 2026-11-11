@@ -3,10 +3,16 @@ titulo: "Funis interativos"
 chamada: "Modelos prontos para criar funis em formato de quiz sem depender do suporte técnico."
 resumo: "Na Inlead, propus e liderei a reorganização da criação de funis interativos em formato de quiz, a etapa que mais gerava frustração e chamados ao suporte. Sem mexer no back-end, transformei um benchmarking de 15 funis de alta conversão em modelos estruturais prontos na interface. Resultado: 40% menos ajustes manuais e cerca de 25% menos tempo para criar um funil."
 empresa: "Inlead"
+cliente: "Inlead"
 ano: 2025
 papel: "Senior Product Designer"
 sigilo: "publico"
 ordem: 1
+cartoes:
+  atuacao: "Propus e liderei o projeto do início ao fim, do diagnóstico ao handoff para o front-end."
+  desafio: "Montar um funil em formato de quiz exigia lógica condicional e repertório técnico que a maioria dos usuários não tinha."
+  solucao: "Uma barra lateral com etapas prontas, baseadas em 15 funis de alta conversão, sem mexer no back-end."
+  rascunho: true
 resultados:
   - valor: "40%"
     descricao: "menos ajustes manuais na criação de funis"

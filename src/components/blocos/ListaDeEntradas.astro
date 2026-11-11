@@ -1,0 +1,42 @@
+---
+/**
+ * Seção da página inicial com rótulo e lista de entradas: Projetos e Textos usam esta peça.
+ */
+import EntradaDaLista, { type Entrada } from "../ui/Entrada.astro";
+
+interface Props {
+	id: string;
+	rotulo: string;
+	entradas: Entrada[];
+	/** Texto mostrado quando a lista está vazia. */
+	vazio: string;
+}
+
+const { id, rotulo, entradas, vazio } = Astro.props;
+---
+
+<section class="secao envoltorio" id={id} aria-labelledby={`${id}-titulo`}>
+	<h2 id={`${id}-titulo`} class="secao__rotulo">
+		{rotulo}
+	</h2>
+	{entradas.length > 0 ? (
+		<ul class="lista" role="list">
+			{entradas.map((entrada) => (
+				<EntradaDaLista {...entrada} />
+			))}
+		</ul>
+	) : (
+		<p class="lista__vazia">{vazio}</p>
+	)}
+</section>
+
+<style>
+	.lista {
+		padding: 0;
+		list-style: none;
+	}
+
+	.lista__vazia {
+		color: var(--color-texto-secundario);
+	}
+</style>

@@ -3,10 +3,15 @@ titulo: "Azul GPT"
 chamada: "[TEXTO DA TAIANE]"
 resumo: "[TEXTO DA TAIANE]"
 empresa: "Azul Linhas Aéreas, cliente atendido pela WeFit"
+cliente: "Azul · WeFit"
 ano: 2024
 papel: "Senior Product Designer pela WeFit"
 sigilo: "confidencial"
 ordem: 2
+cartoes:
+  atuacao: "[TEXTO DA TAIANE]"
+  desafio: "[TEXTO DA TAIANE]"
+  solucao: "[TEXTO DA TAIANE]"
 resultados:
   - valor: "[A DEFINIR]"
     descricao: "[TEXTO DA TAIANE]"

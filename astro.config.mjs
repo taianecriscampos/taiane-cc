@@ -19,15 +19,6 @@ function laboratorio() {
 					return;
 				}
 				injectRoute({ pattern: "/laboratorio", entrypoint: "./src/pages/_laboratorio.astro" });
-				// Protótipos da etapa 0.3.0 (skill prototype). Saem quando a Taiane escolher.
-				injectRoute({
-					pattern: "/laboratorio/abertura",
-					entrypoint: "./src/pages/_prototipo-abertura.astro",
-				});
-				injectRoute({
-					pattern: "/laboratorio/menu",
-					entrypoint: "./src/pages/_prototipo-menu.astro",
-				});
 			},
 		},
 	};

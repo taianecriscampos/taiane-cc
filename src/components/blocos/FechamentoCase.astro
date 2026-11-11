@@ -1,9 +1,10 @@
 ---
 /**
- * Fechamento padrão de todo case: convite para conversar no LinkedIn e nota de confidencialidade.
- * Textos em RASCUNHO, para a Taiane trocar pelas palavras dela (briefing de design).
+ * Fechamento padrão de todo case: convite para o LinkedIn e nota de confidencialidade.
+ * A nota está em RASCUNHO, para a Taiane trocar pelas palavras dela.
  */
 import { perfil } from "../../dados/perfil";
+import LinkComSeta from "../ui/LinkComSeta.astro";
 
 interface Props {
 	sigilo: "publico" | "confidencial";
@@ -18,28 +19,32 @@ const nota =
 ---
 
 <section class="fechamento" aria-labelledby="fechamento-titulo">
-	<h2 id="fechamento-titulo">Vamos conversar?</h2>
+	<h2 id="fechamento-titulo" class="fechamento__titulo">
+		Quer saber mais detalhes?
+	</h2>
+	<LinkComSeta href={perfil.linkedin} texto="Fale comigo no LinkedIn" />
 	<div class="rascunho">
 		<p class="marcador">[RASCUNHO]</p>
-		<p>Se quiser saber mais sobre este projeto ou sobre como eu trabalho, me chame no LinkedIn.</p>
+		<p class="fechamento__nota">{nota}</p>
 	</div>
-	<p>
-		<a href={perfil.linkedin}>Conversar no LinkedIn</a>
-	</p>
-	<p class="fechamento__nota">{nota}</p>
 </section>
 
 <style>
 	.fechamento {
 		display: grid;
-		gap: var(--space-medio);
-		margin-block-start: var(--space-secao);
-		padding-block-start: var(--space-grande);
-		border-block-start: var(--bloco-separador);
+		justify-items: start;
+		gap: var(--space-grande);
+	}
+
+	.fechamento__titulo {
+		font-size: var(--text-secao-case);
+		font-weight: var(--peso-corpo);
+		line-height: var(--leading-secao-case);
 	}
 
 	.fechamento__nota {
-		color: var(--color-texto-secundario);
 		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+		color: var(--color-texto-secundario);
 	}
 </style>

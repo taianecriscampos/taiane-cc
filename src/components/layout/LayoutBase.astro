@@ -4,7 +4,7 @@
  * Idioma pt-BR, título, descrição, opção de noindex, link "Pular para o conteúdo", cabeçalho e rodapé.
  */
 import "../../styles/global.css";
-import Cabecalho from "./Cabecalho.astro";
+import Cabecalho, { type LinkDoCabecalho } from "./Cabecalho.astro";
 import Rodape from "./Rodape.astro";
 
 /**
@@ -18,11 +18,11 @@ interface Props {
 	descricao: string;
 	/** true para páginas que nunca devem aparecer em buscadores (ex.: /laboratorio). */
 	noindex?: boolean;
-	/** false nos protótipos do Laboratório, que testam a navegação nova. */
-	cabecalho?: boolean;
+	/** Nos cases, o cabeçalho mostra as seções do case no lugar das seções da página inicial. */
+	secoesDoCase?: LinkDoCabecalho[];
 }
 
-const { titulo, descricao, cabecalho = true } = Astro.props;
+const { titulo, descricao, secoesDoCase } = Astro.props;
 const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 ---
 
@@ -36,7 +36,7 @@ const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 		{noindex && <meta name="robots" content="noindex, nofollow" />}
 		<link
 			rel="preload"
-			href="/fontes/archivo-variavel-latin.woff2"
+			href="/fontes/schibsted-grotesk-variavel-latin.woff2"
 			as="font"
 			type="font/woff2"
 			crossorigin
@@ -49,7 +49,11 @@ const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 		<a class="pular-conteudo" href="#conteudo">
 			Pular para o conteúdo
 		</a>
-		{cabecalho && <Cabecalho />}
+		{secoesDoCase ? (
+			<Cabecalho links={secoesDoCase} rotulo="Neste case" quebra="computador" />
+		) : (
+			<Cabecalho />
+		)}
 		<main id="conteudo" tabindex="-1">
 			<slot />
 		</main>

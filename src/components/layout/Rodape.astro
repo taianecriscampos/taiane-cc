@@ -1,6 +1,6 @@
 ---
 /**
- * Rodapé de todas as páginas.
+ * Rodapé de todas as páginas: nome e ano numa ponta, cidade na outra. Sem linha.
  */
 import { perfil } from "../../dados/perfil";
 
@@ -9,59 +9,37 @@ const ano = new Date().getFullYear();
 
 <footer class="rodape envoltorio">
 	<p>
-		<span>{perfil.nome}</span>
-		<span class="rodape__secundario">{perfil.cargo}</span>
+		{perfil.nome} @ <time datetime={String(ano)}>{ano}</time>
 	</p>
-	<nav aria-label="Perfis e contato">
-		<ul class="rodape__links" role="list">
-			<li>
-				<a href={perfil.linkedin}>LinkedIn</a>
-			</li>
-			<li>
-				<a href={perfil.substack}>Substack</a>
-			</li>
-			<li>
-				<a href={perfil.github}>GitHub</a>
-			</li>
-			<li>
-				<a href={`mailto:${perfil.email}`}>E-mail</a>
-			</li>
-		</ul>
-	</nav>
-	<p class="rodape__secundario">
-		© <time datetime={String(ano)}>{ano}</time> {perfil.nome}
+	<p class="rodape__local">
+		{perfil.cidade}
+		<span class="rodape__ponto" aria-hidden="true"></span>
+		<span class="so-leitor-de-tela">,</span>
+		{perfil.estado}
 	</p>
 </footer>
 
 <style>
 	.rodape {
-		display: grid;
-		gap: var(--space-medio);
-		margin-block-start: var(--space-secao);
-		padding-block: var(--space-grande) var(--space-bloco);
-		border-block-start: var(--bloco-separador);
-	}
-
-	.rodape p span {
-		display: block;
-	}
-
-	.rodape__secundario {
-		color: var(--color-texto-secundario);
-	}
-
-	.rodape__links {
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--space-pequeno) var(--space-grande);
-		padding: 0;
-		list-style: none;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-pequeno) var(--space-medio);
+		min-block-size: var(--rodape-altura);
+		margin-block-start: var(--space-secao);
 	}
 
-	@media (min-width: 64rem) {
-		.rodape {
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-			align-items: start;
-		}
+	.rodape__local {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-pequeno);
+	}
+
+	.rodape__ponto {
+		inline-size: var(--ponto-pequeno);
+		block-size: var(--ponto-pequeno);
+		border-radius: var(--radius-pilula);
+		background: currentColor;
 	}
 </style>
