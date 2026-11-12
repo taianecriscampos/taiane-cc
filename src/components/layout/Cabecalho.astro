@@ -268,8 +268,10 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		font-size: 0;
 	}
 
+	/* No cabeçalho, o modelo de trabalho fica numa linha só; na abertura, ele pode quebrar. */
 	.cabecalho__status {
 		justify-self: end;
+		white-space: nowrap;
 	}
 
 	/* ---------- ilha ---------- */

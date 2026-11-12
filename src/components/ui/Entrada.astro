@@ -72,6 +72,7 @@ const emConstrucao = !href;
 	.entrada {
 		position: relative;
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: var(--space-medio);
 	}
 
@@ -91,6 +92,7 @@ const emConstrucao = !href;
 
 	/* Sem o equilíbrio de linhas dos títulos: o título usa a largura inteira da coluna. */
 	.entrada__titulo {
+		overflow-wrap: anywhere;
 		font-size: var(--text-entrada);
 		letter-spacing: var(--tracking-entrada);
 		line-height: var(--leading-titulo);

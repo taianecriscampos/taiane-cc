@@ -62,6 +62,7 @@ const { entradas, id = "projetos", rotulo = "Projetos" } = Astro.props;
 <style>
 	.bento {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: var(--grade-espaco);
 		padding: 0;
 		list-style: none;
@@ -95,7 +96,9 @@ const { entradas, id = "projetos", rotulo = "Projetos" } = Astro.props;
 		gap: var(--space-medio);
 	}
 
+	/* Palavra comprida sem espaço quebra onde precisar, sem estourar o cartão. */
 	.bento__titulo {
+		overflow-wrap: anywhere;
 		font-size: var(--text-entrada);
 		letter-spacing: var(--tracking-entrada);
 		line-height: var(--leading-titulo);
