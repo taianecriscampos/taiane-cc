@@ -4,7 +4,7 @@ Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.1.1 (Fundação, com redirecionamento temporário do domínio)
 **Etapa atual:** 0.3.0 Direção de arte, junto com a estrutura da 0.2.0 (especificação base)
-**Fase da etapa:** 0.3.c Direção de arte v3 · ajustes 1f feitos (menos o item 5, que espera os símbolos), aguardando a revisão da Taiane
+**Fase da etapa:** 0.3.c Direção de arte v3 · ajustes 1f e ajustes rápidos aprovados (home aprovada), aguardando a revisão do case
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -222,9 +222,25 @@ Ramificação design, sem envio ao GitHub. A qualidade roda antes de cada commit
   - Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 104 testes aprovados.
     Prints em `.revisao/r1f-final-*.png` (375, 768, 1024 e 1440).
 
+- **Ajustes rápidos depois da 1f** (conferidos pela Taiane no localhost; home aprovada):
+  - Cartões de Projetos sem fundo, com contorno de 1 px e textos escuros; verso escuro.
+  - Cases sob sigilo na versão A, escolhida pela Taiane: etiqueta "Confidencial 🤫" no topo
+    (marrom #664500 sobre amarelo #fff3c4, 7,8:1; emoji com aria-hidden), título, chamada e o
+    símbolo da marca grande no meio, cinza, com a cor original no hover. Símbolos da Azul e da
+    Luft vindos da Taiane, limpos em `src/assets/simbolos/` (sem `<style>`, por causa da CSP).
+  - Sobre: LinkedIn na margem direita; "não concluída" em itálico, cor secundária.
+  - Skills: entre a faixa e o rodapé, o mesmo espaço que separa duas seções.
+  - Case: pílulas embaixo da introdução, ficha alinhada ao começo do texto; resultados e Minha
+    atuação, Desafio e Solução viraram o tópico "Visão geral" (VisaoGeralCase.astro), na coluna
+    do texto, no sumário e na ilha; resultados com contorno de 1 px; sem linhas entre os três.
+  - Botão "Voltar ao topo" centralizado embaixo (no canto, cobria a hora do rodapé).
+  - CLAUDE.md: exceção da regra de emojis para a etiqueta "Confidencial".
+  - 38 tokens sem uso removidos de `tokens.css` (`.revisao/tokens-sem-uso.mjs` lista os que sobrarem).
+  - Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 104 testes aprovados.
+
 ## Pendências anotadas
 
-- **0.3.c (rodada 1f):** item 5 espera os SVGs dos símbolos da Azul e da Luft. No celular, as
+- **0.3.c (rodada 1f):** no celular, as
   pílulas longas de Skills às vezes ficam sozinhas na linha, porque duas não cabem em 343 px.
   No tablet, o Sobre deixou de ter três colunas (decisão a confirmar).
 

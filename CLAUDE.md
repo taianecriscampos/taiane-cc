@@ -59,7 +59,8 @@ evite tabelas longas e símbolos desnecessários nas respostas.
 
 ## Proibido (para não parecer gerado por IA)
 
-Cartões com borda e sombra genéricos, gradientes roxos, emojis na interface, ícones de banco,
+Cartões com borda e sombra genéricos, gradientes roxos, emojis na interface (única exceção,
+aprovada pela Taiane: o 🤫 da etiqueta "Confidencial" dos cases sob sigilo, com aria-hidden), ícones de banco,
 textos de preenchimento, efeitos que não estejam no escopo.
 
 ## Skills do projeto
