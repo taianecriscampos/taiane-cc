@@ -4,7 +4,7 @@ Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.1.1 (Fundação, com redirecionamento temporário do domínio)
 **Etapa atual:** 0.3.0 Direção de arte, junto com a estrutura da 0.2.0 (especificação base)
-**Fase da etapa:** 0.3.c Direção de arte v3 · Rodada 1 e ajustes 1b feitos, aguardando a revisão da Taiane
+**Fase da etapa:** 0.3.c Direção de arte v3 · ajustes 1c em andamento (protótipos de Projetos e Skills pendentes)
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -152,13 +152,20 @@ Ramificação design, sem envio ao GitHub. A qualidade roda antes de cada commit
   - Robustez: palavras longas e status longo não estouram a tela (pior caso do Laboratório).
 - Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 74 testes aprovados.
 - Prints em `.revisao/r1b-*.png`.
+- **Ajustes 1c** (`docs/ajustes-rodada-1c.md`):
+  - Feitos: respiro da ilha; Artigos com a regra das 2 linhas só a partir de 768 px; Sobre sem
+    foto e com etiqueta "não concluída"; rodapé "Me chama?" com o mesmo ritmo nas três colunas e
+    dois-pontos piscando; conteúdo de exemplo no lugar dos colchetes (data-rascunho,
+    `docs/rascunhos.md`); regra de raios nos tokens (24 px cartões e molduras, 8 px imagens dentro).
+  - Correção da autocrítica: resultado em palavras não estoura o cartão em 768 px.
+  - Pendentes: protótipos de Projetos (bento compacto x carrossel) e Skills (três colunas x
+    duas colunas com faixa). A skill prototype só roda quando a Taiane digita /prototype.
+  - Qualidade: 90 testes aprovados. Prints em `.revisao/r1c-*.png`.
 
 ## Pendências anotadas
 
 - **0.3.c:** conferir num celular de verdade o desfoque da ilha (o navegador de testes desenha o
   desfoque de forma instável com a página rolada), o toque na ilha e o botão de copiar.
-- **0.3.c:** no celular, os títulos dos Artigos ficam com cerca de 15 px para caber em 2 linhas,
-  menores que a linha "ano, plataforma". Decidir com a Taiane.
 - **0.3.c:** o PDF do currículo guarda credenciais de conteúdo (C2PA) que dizem que foi gerado
   pelo ChatGPT. Decidir com a Taiane se remove.
 - **0.3.c:** ano da pós da IDI: a direção v3 diz 2020; o currículo diz 2020 a 2021.
