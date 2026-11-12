@@ -8,8 +8,11 @@
  * Depois, o bloco de destaque: a imagem grande numa moldura bem arredondada e os resultados
  * em cartões arredondados. Por fim, os três cartões: Minha atuação, Desafio e Solução.
  * Conteúdo de exemplo: os campos listados em `rascunhos` ganham data-rascunho (docs/rascunhos.md).
- * Sem imagem do case, o destaque mostra uma ilustração neutra de exemplo.
+ * O destaque mostra a capa do case; sem capa, uma ilustração neutra de exemplo.
+ * Sem duração conhecida, a ficha não mostra essa linha.
  */
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
 import Ilustracao from "../ui/Ilustracao.astro";
 
 interface Props {
@@ -18,8 +21,10 @@ interface Props {
 	empresa: string;
 	ano: number;
 	papel: string;
-	duracao: string;
+	duracao?: string;
 	disciplinas: string[];
+	/** Capa do case, no bloco de destaque. */
+	imagem?: { src: ImageMetadata; alt: string };
 	minutos: number;
 	sigilo: "publico" | "confidencial";
 	resultados: { valor: string; descricao: string }[];
@@ -37,6 +42,7 @@ const {
 	papel,
 	duracao,
 	disciplinas,
+	imagem,
 	minutos,
 	sigilo,
 	resultados,
@@ -54,7 +60,7 @@ const ficha = [
 	{ rotulo: "Papel", valor: papel },
 	{ rotulo: "Duração", valor: duracao, campo: "duracao" },
 	{ rotulo: "Leitura", valor: `${minutos} ${minutos === 1 ? "minuto" : "minutos"} de leitura` },
-];
+].filter((item): item is { rotulo: string; valor: string; campo?: string } => !!item.valor);
 
 const listaDeCartoes = [
 	{ rotulo: "Minha atuação", texto: cartoes.atuacao },
@@ -101,7 +107,17 @@ const listaDeCartoes = [
 
 	<div class="cabecalho-case__destaque">
 		<div class="cabecalho-case__imagem">
-			<Ilustracao variante={1} />
+			{imagem ? (
+				<Image
+					src={imagem.src}
+					alt={imagem.alt}
+					widths={[480, 800, 1200, 1600]}
+					sizes="(min-width: 1440px) 1360px, 95vw"
+					loading="eager"
+				/>
+			) : (
+				<Ilustracao variante={1} />
+			)}
 		</div>
 		<ul
 			class="cabecalho-case__resultados"
@@ -217,6 +233,12 @@ const listaDeCartoes = [
 		aspect-ratio: var(--destaque-proporcao);
 		border-radius: var(--destaque-raio);
 		background: var(--destaque-fundo);
+	}
+
+	.cabecalho-case__imagem img {
+		inline-size: 100%;
+		block-size: 100%;
+		object-fit: cover;
 	}
 
 	.cabecalho-case__resultados {

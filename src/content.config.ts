@@ -22,8 +22,11 @@ const cases = defineCollection({
 			cliente: z.string().min(1).max(24),
 			ano: z.number().int().min(2000).max(2100),
 			papel: z.string().min(1),
-			/** Quanto tempo durou o projeto: "6 meses". Até 40 caracteres, para caber na ficha. */
-			duracao: z.string().min(1).max(40),
+			/**
+			 * Quanto tempo durou o projeto: "6 meses". Até 40 caracteres, para caber na ficha.
+			 * Opcional: sem a informação na fonte, a ficha não mostra a linha (nada de dado inventado).
+			 */
+			duracao: z.string().min(1).max(40).optional(),
 			/** Disciplinas em pílulas, à direita da introdução. Até 6, de até 40 caracteres. */
 			disciplinas: z.array(z.string().min(1).max(40)).max(6).default([]),
 			/** "publico" mostra tudo; "confidencial" esconde números e telas sensíveis. */

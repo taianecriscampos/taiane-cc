@@ -6,7 +6,6 @@ empresa: "Inlead"
 cliente: "Inlead"
 ano: 2025
 papel: "Senior Product Designer"
-duracao: "6 meses"
 disciplinas:
   - "Product Discovery"
   - "Arquitetura da Informação"
@@ -26,8 +25,8 @@ resultados:
     descricao: "menos tempo para criar um funil, de 15% a 30% conforme a experiência do usuário"
   - valor: "3x"
     descricao: "mais rápido para criar variações de campanha, com a duplicação de etapas"
-# Duração de exemplo e cartões escritos a partir do artigo: conferir antes da 1.0.0.
-rascunhos: ["duracao", "cartoes"]
+# Duração: o artigo não informa, então a ficha não mostra. Cartões adaptados do artigo.
+rascunhos: []
 capa:
   src: "../../assets/cases/funis-interativos/capa.jpg"
   alt: "Capa do case: o título Otimização da Experiência ao lado dos modelos de etapa do quiz, como Página inicial, Questão de lista e Escala de Likert, aplicados no construtor de funis da Inlead."
@@ -37,7 +36,8 @@ capa:
 Fonte do texto: https://taianecriscampos.substack.com/p/case-study-benchmarking-de-funil (30/01/2026).
 Fonte dos números: relatório do time de Customer Experience da Inlead, 2026.
 Projeto em 2025; resultados percebidos em 2026.
-Pendente para a 0.4.0: as imagens do artigo, com texto alternativo.
+Imagens: do próprio artigo, em src/assets/cases/funis-interativos/ (docs/imagens-case-funis.md).
+O diagrama "Design Process in Agile Context", de Fares Farhan, é de terceiros e não entra.
 -->
 
 ## Contexto
@@ -95,9 +95,15 @@ Numa startup com pouca abertura para mudanças estruturais, escolhi atuar só no
 
 Analisei 15 funis de alta conversão, de clientes da startup e de clientes de concorrentes diretos. Mapeei padrões de layout, fases recorrentes (início, meio e fim), a ordem ideal das etapas, os componentes mais usados, os tipos de pergunta mais frequentes e as estratégias de storytelling. Essa pesquisa foi determinante para identificar padrões replicáveis.
 
+![Quadro de benchmarking no FigJam com os padrões de etapa encontrados nos funis: Página inicial, Formulário simples, Formulário complexo, Escala de Likert clássica e personalizada, Múltipla escolha, Única escolha, Processamento e Página de venda. Cada padrão mostra o esqueleto de componentes entre o cabeçalho e o rodapé, como texto, mídia, formulário e navegação.](../../assets/cases/funis-interativos/layouts-recorrentes.png)
+
 ### Arquitetura da informação
 
 No FigJam, organizei os fluxos em macroestruturas e classifiquei as etapas do quiz em três tipos: entrada (ações do usuário), processamento (carregamentos e transições) e saída (retorno e resultado). Também mapeei a estrutura da landing page depois do quiz, os gatilhos mais usados e os componentes de conversão.
+
+![Mapa no FigJam com as etapas recorrentes do quiz agrupadas por tipo: entrada de informação, entrada simples, entrada complexa, questionários, processamento e saída. Ao lado de cada esqueleto de etapa, capturas de tela das etapas equivalentes nos funis analisados.](../../assets/cases/funis-interativos/etapas-do-quiz.png)
+
+![Estrutura da etapa de conversão, a página de venda depois do quiz, com os blocos timer, antes e depois, cupom, planos, garantia, mockup, premiações, benefícios, chamada para ação, testemunho e prova social. Ao lado, quatro páginas de venda reais usadas como referência, com contagem regressiva, comparação de antes e depois e planos com desconto.](../../assets/cases/funis-interativos/etapa-de-conversao.jpg)
 
 ## Solução
 
@@ -109,6 +115,8 @@ Como não era possível alterar a lógica da ferramenta, decidi:
 - preparar a interface para a aplicação estratégica da pontuação.
 
 A principal entrega foi uma barra lateral com etapas prontas. O objetivo: permitir que o usuário foque na estratégia do funil, não na complexidade técnica.
+
+![A barra lateral com etapas prontas: onze modelos em miniatura, de Página inicial a Fim do funil, passando por Questão de lista, Escala de Likert, Formulário e Gráficos e métricas. Abaixo, o construtor de funis da Inlead aberto num notebook, com a lista de etapas, a barra de modelos e a prévia da etapa no celular.](../../assets/cases/funis-interativos/sidebar-etapas-prontas.png)
 
 Antes, o usuário precisava decidir espaçamentos, hierarquia tipográfica, organização dos componentes e a estrutura base de cada etapa. Depois, os componentes passaram a carregar estrutura automaticamente, os layouts já respeitam hierarquia e espaçamento, e os elementos críticos ficam protegidos contra alterações acidentais. O layout para celular já nasce responsivo.
 

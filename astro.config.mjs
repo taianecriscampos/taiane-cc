@@ -27,6 +27,9 @@ function laboratorio() {
 // https://astro.build/config
 export default defineConfig({
 	integrations: [laboratorio()],
+	// Imagens responsivas também no Markdown dos cases: várias larguras (srcset), e o navegador
+	// baixa só a que precisa. Sem os estilos automáticos: cada componente cuida do próprio CSS.
+	image: { layout: "constrained", responsiveStyles: false },
 	// O Shiki colore código com atributos style, que a CSP bloqueia. Se precisar, usar "prism".
 	markdown: { syntaxHighlight: false },
 	security: {

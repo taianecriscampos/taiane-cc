@@ -64,6 +64,7 @@ const corpo = html
 				papel={dados.papel}
 				duracao={dados.duracao}
 				disciplinas={dados.disciplinas}
+				imagem={dados.capa}
 				minutos={minutos}
 				sigilo={dados.sigilo}
 				resultados={dados.resultados}
@@ -111,11 +112,18 @@ const corpo = html
 
 	/* Moldura das imagens do texto: cantos arredondados e fundo de cor suave. */
 	.case__corpo :global(figure),
-	.case__corpo :global(p > img:only-child) {
+	.case__corpo :global(p:has(> img:only-child)) {
 		margin: 0;
 		padding: var(--moldura-espaco);
 		border-radius: var(--moldura-raio);
 		background: var(--moldura-fundo);
+	}
+
+	/* Regra de raios (rodada 1c): 24 px na moldura, 8 px na imagem de dentro. */
+	.case__corpo :global(p > img:only-child),
+	.case__corpo :global(figure img) {
+		inline-size: 100%;
+		border-radius: var(--radius-imagem-interna);
 	}
 
 	/* Texto corrido do Markdown. :global porque o HTML vem do conteúdo, não deste arquivo. */
