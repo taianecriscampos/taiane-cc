@@ -1,0 +1,38 @@
+---
+/**
+ * Colunas compartilhadas por Sobre e Skills (rodada 1d), para as duas seções conversarem.
+ * A partir de 1200 px, três colunas com a largura do próprio conteúdo e o MESMO espaço entre
+ * elas: a primeira começa na margem esquerda e limita a linha de leitura do Resumo; a última
+ * termina na margem direita; a do meio fica com distâncias iguais para os dois lados.
+ * De 768 a 1199 px, três colunas não cabem: duas colunas iguais, e a primeira coluna de cada
+ * seção (Resumo, Hard skills) ocupa a linha de cima inteira.
+ * As seções de dentro herdam estas trilhas (subgrid): as larguras são idênticas por construção.
+ * Celular: uma coluna.
+ */
+---
+
+<div class="colunas-sobre envoltorio">
+	<slot />
+</div>
+
+<style>
+	.colunas-sobre {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	@media (min-width: 768px) {
+		.colunas-sobre {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			column-gap: var(--grade-espaco);
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.colunas-sobre {
+			grid-template-columns: minmax(0, var(--sobre-coluna-texto)) auto auto;
+			justify-content: space-between;
+			column-gap: var(--grade-espaco);
+		}
+	}
+</style>

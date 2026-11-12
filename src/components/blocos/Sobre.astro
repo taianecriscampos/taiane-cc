@@ -1,7 +1,8 @@
 ---
 /**
- * Sobre: três colunas de mesma largura a partir de 768 px, com títulos no mesmo estilo:
- * Resumo, Experiência profissional e Formação acadêmica. Curso não concluído: a mesma estrutura
+ * Sobre: três colunas a partir de 768 px, com títulos no mesmo estilo: Resumo, Experiência
+ * profissional e Formação acadêmica. As colunas vêm de ColunasSobre (largura do conteúdo, mesmo
+ * espaço entre elas), compartilhadas com Skills. Curso não concluído: a mesma estrutura
  * dos outros, com uma etiqueta discreta "não concluída" ao lado do ano.
  * Abaixo das colunas, uma linha: "Currículo em PDF" numa ponta e "Mais informações no LinkedIn"
  * na outra, os dois em nova aba.
@@ -16,7 +17,7 @@ import LinkComSeta from "../ui/LinkComSeta.astro";
 const partes = (periodo: string) => periodo.split("–");
 ---
 
-<section class="secao envoltorio" id="sobre" aria-labelledby="sobre-titulo">
+<section class="secao sobre-secao" id="sobre" aria-labelledby="sobre-titulo">
 	<h2 id="sobre-titulo" class="secao__rotulo">
 		Sobre
 	</h2>
@@ -145,10 +146,36 @@ const partes = (periodo: string) => periodo.split("–");
 		gap: var(--space-pequeno) var(--space-medio);
 	}
 
+	/* Herda as três trilhas de ColunasSobre: título e links ocupam todas; as colunas, uma cada. */
 	@media (min-width: 768px) {
+		.sobre-secao,
 		.sobre {
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-			column-gap: var(--grade-espaco);
+			grid-column: 1 / -1;
+			grid-template-columns: subgrid;
+			/* normal: herda o espaço do contêiner. Um valor próprio faria as colunas engordarem. */
+			column-gap: normal;
+		}
+
+		.sobre-secao > * {
+			grid-column: 1 / -1;
+		}
+
+		/* Rótulo e linha dos links ocupam as três colunas sem mexer na largura delas. */
+		.sobre-secao > :not(.sobre) {
+			contain: inline-size;
+		}
+
+		/* Tablet: a primeira coluna ocupa a linha de cima inteira, com a linha de leitura curta. */
+		.sobre__coluna:first-child {
+			grid-column: 1 / -1;
+			max-inline-size: var(--sobre-coluna-texto);
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.sobre__coluna:first-child {
+			grid-column: auto;
+			max-inline-size: none;
 		}
 	}
 </style>

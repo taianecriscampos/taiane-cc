@@ -9,6 +9,7 @@ import ListaDeEntradas from "../components/blocos/ListaDeEntradas.astro";
 import Projetos, { type Projeto } from "../components/blocos/Projetos.astro";
 import Skills from "../components/blocos/Skills.astro";
 import Sobre from "../components/blocos/Sobre.astro";
+import ColunasSobre from "../components/layout/ColunasSobre.astro";
 import LayoutBase from "../components/layout/LayoutBase.astro";
 import { perfil } from "../dados/perfil";
 import { artigos } from "../dados/artigos";
@@ -42,6 +43,8 @@ const projetos: Projeto[] = cases.map(({ id, data }, i) => ({
 		titulosEmDuasLinhas
 		vazio="Os artigos entram aqui em breve."
 	/>
-	<Sobre />
-	<Skills />
+	<ColunasSobre>
+		<Sobre />
+		<Skills />
+	</ColunasSobre>
 </LayoutBase>

@@ -226,3 +226,21 @@ test("a seção Skills traz hard e soft skills, com ícones só de enfeite", asy
 		await expect(icone).toHaveAttribute("aria-hidden", "true");
 	}
 });
+
+test("Sobre e Skills têm as mesmas colunas, com o mesmo espaço entre elas", async ({ page }) => {
+	await page.setViewportSize({ width: 1440, height: 900 });
+	await page.goto("/");
+	const medir = (seletor: string) =>
+		page.locator(seletor).evaluateAll((colunas) =>
+			colunas.map((c) => {
+				const r = c.getBoundingClientRect();
+				return { inicio: Math.round(r.left), fim: Math.round(r.right) };
+			}),
+		);
+	const sobre = await medir(".sobre > *");
+	const skills = await medir(".skills > *");
+	expect(skills).toEqual(sobre);
+	const vao1 = sobre[1].inicio - sobre[0].fim;
+	const vao2 = sobre[2].inicio - sobre[1].fim;
+	expect(Math.abs(vao1 - vao2)).toBeLessThanOrEqual(2);
+});

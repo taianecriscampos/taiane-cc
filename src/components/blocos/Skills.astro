@@ -1,14 +1,21 @@
 ---
 /**
- * Skills: duas colunas a partir de 768 px, "Hard skills" e "Soft skills", com títulos no mesmo
- * estilo do Sobre. Em Hard skills, as competências e as ferramentas, cada ferramenta com o ícone
- * monocromático (Simple Icons, em cinza) e o nome. Visual discreto: listas simples.
- * A nuvem magnética fica para a Rodada 2.
+ * Skills: três colunas que repetem exatamente as do Sobre (mesmas trilhas, via ColunasSobre):
+ * Hard skills, Ferramentas e Soft skills, com títulos no mesmo estilo do Sobre.
+ * Ordem: as ferramentas são curtas e cabem na coluna do meio (a de Experiência); as soft skills,
+ * mais longas, ficam na coluna larga (a de Formação). Assim nenhuma pílula alarga a coluna do
+ * meio e os vãos do Sobre continuam iguais.
+ * Cada item é uma pílula cinza, sem borda e sem sombra. Nas Ferramentas, o ícone monocromático
+ * (Simple Icons, CC0, em cinza) vem antes do nome; sem ícone no pacote, só o nome.
+ * As pílulas não são clicáveis: nada de hover. A nuvem magnética fica para a Rodada 2.
+ *
+ * As listas de pílulas não definem a largura das colunas (quem define é o conteúdo do Sobre):
+ * elas contribuem só com a pílula mais larga, para nenhuma ficar maior que a coluna.
  */
 import { competencias, ferramentas, softSkills } from "../../dados/skills";
 ---
 
-<section class="secao envoltorio" id="skills" aria-labelledby="skills-titulo">
+<section class="secao skills-secao" id="skills" aria-labelledby="skills-titulo">
 	<h2 id="skills-titulo" class="secao__rotulo">
 		Skills
 	</h2>
@@ -16,38 +23,33 @@ import { competencias, ferramentas, softSkills } from "../../dados/skills";
 	<div class="skills">
 		<div class="skills__coluna">
 			<h3 class="skills__titulo">Hard skills</h3>
-
-			<div class="skills__grupo">
-				<h4 class="skills__subtitulo">Competências</h4>
-				<ul class="skills__lista" role="list">
-					{competencias.map((item) => (
-						<li>{item}</li>
-					))}
-				</ul>
-			</div>
-
-			<div class="skills__grupo">
-				<h4 class="skills__subtitulo">Ferramentas e tecnologias</h4>
-				<ul class="skills__ferramentas" role="list">
-					{ferramentas.map((f) => (
-						<li class="skills__ferramenta">
-							{f.icone && (
-								<svg class="skills__icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-									<path d={f.icone} />
-								</svg>
-							)}
-							{f.nome}
-						</li>
-					))}
-				</ul>
-			</div>
+			<ul class="skills__pilulas skills__pilulas--quebra" role="list">
+				{competencias.map((item) => (
+					<li class="skills__pilula">{item}</li>
+				))}
+			</ul>
 		</div>
 
 		<div class="skills__coluna">
+			<h3 class="skills__titulo">Ferramentas</h3>
+			<ul class="skills__pilulas" role="list">
+				{ferramentas.map((f) => (
+					<li class="skills__pilula">
+						{f.icone && (
+							<svg class="skills__icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+								<path d={f.icone} />
+							</svg>
+						)}
+						{f.nome}
+					</li>
+				))}
+			</ul>
+		</div>
+		<div class="skills__coluna">
 			<h3 class="skills__titulo">Soft skills</h3>
-			<ul class="skills__lista" role="list">
+			<ul class="skills__pilulas" role="list">
 				{softSkills.map((item) => (
-					<li>{item}</li>
+					<li class="skills__pilula">{item}</li>
 				))}
 			</ul>
 		</div>
@@ -55,6 +57,7 @@ import { competencias, ferramentas, softSkills } from "../../dados/skills";
 </section>
 
 <style>
+	/* Mesmo ritmo do Sobre: 40 px entre colunas empilhadas, 24 px entre o título e o conteúdo. */
 	.skills {
 		display: grid;
 		gap: var(--space-bloco);
@@ -66,49 +69,48 @@ import { competencias, ferramentas, softSkills } from "../../dados/skills";
 		gap: var(--space-grande);
 	}
 
-	.skills__titulo,
-	.skills__subtitulo {
+	.skills__titulo {
 		font-weight: var(--peso-corpo);
 		line-height: var(--leading-corpo);
 		color: var(--color-texto-secundario);
 	}
 
-	.skills__titulo {
-		font-size: var(--text-corpo);
-	}
-
-	.skills__subtitulo {
-		font-size: var(--text-pequeno);
-		line-height: var(--leading-pequeno);
-	}
-
-	.skills__grupo {
-		display: grid;
-		gap: var(--space-pequeno);
-	}
-
-	.skills__lista,
-	.skills__ferramentas {
-		display: grid;
-		gap: var(--space-minimo);
+	/*
+	 * Largura própria = a pílula mais larga (min-content), mas ocupa a coluna inteira (min e max
+	 * em 100%). Assim a lista quebra linha dentro da coluna sem esticar a coluna.
+	 */
+	.skills__pilulas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--skill-pilula-intervalo);
+		inline-size: min-content;
+		min-inline-size: 100%;
+		max-inline-size: 100%;
 		padding: 0;
 		list-style: none;
 	}
 
-	.skills__ferramentas {
-		grid-template-columns: repeat(auto-fill, minmax(var(--skill-coluna-minima), 1fr));
-		gap: var(--space-pequeno) var(--space-medio);
-	}
-
-	.skills__ferramenta {
-		display: flex;
+	/* O texto da pílula fica numa linha: a coluna se ajusta à pílula mais larga. */
+	.skills__pilula {
+		white-space: nowrap;
+		display: inline-flex;
 		align-items: center;
 		gap: var(--space-pequeno);
+		max-inline-size: 100%;
+		min-block-size: var(--skill-pilula-altura);
+		padding: var(--skill-pilula-espaco);
+		border-radius: var(--radius-pilula);
+		background: var(--skill-pilula-fundo);
+		color: var(--skill-pilula-texto);
+		font-size: var(--skill-pilula-tamanho);
+		line-height: var(--leading-pequeno);
 	}
 
-	/* Sem ícone: o nome começa na mesma linha vertical dos outros. */
-	.skills__ferramenta:not(:has(.skills__icone)) {
-		padding-inline-start: calc(var(--skill-icone) + var(--space-pequeno));
+	/* Na primeira coluna, de largura fixa (a do Resumo), a pílula longa demais quebra o texto
+	   dentro dela, sem estourar. */
+	.skills__pilulas--quebra .skills__pilula {
+		white-space: normal;
+		padding-block: var(--skill-pilula-espaco-quebra);
 	}
 
 	.skills__icone {
@@ -118,10 +120,36 @@ import { competencias, ferramentas, softSkills } from "../../dados/skills";
 		fill: var(--skill-icone-cor);
 	}
 
+	/* Herda as três trilhas de ColunasSobre: título ocupa todas; cada coluna, uma. */
 	@media (min-width: 768px) {
+		.skills-secao,
 		.skills {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-			column-gap: var(--grade-espaco);
+			grid-column: 1 / -1;
+			grid-template-columns: subgrid;
+			/* normal: herda o espaço do contêiner. Um valor próprio faria as colunas engordarem. */
+			column-gap: normal;
+		}
+
+		.skills-secao > * {
+			grid-column: 1 / -1;
+		}
+
+		/* O rótulo ocupa as três colunas sem mexer na largura delas. */
+		.skills-secao > :not(.skills) {
+			contain: inline-size;
+		}
+
+		/* Tablet: a primeira coluna ocupa a linha de cima inteira, com a linha de leitura curta. */
+		.skills__coluna:first-child {
+			grid-column: 1 / -1;
+			max-inline-size: var(--sobre-coluna-texto);
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.skills__coluna:first-child {
+			grid-column: auto;
+			max-inline-size: none;
 		}
 	}
 </style>
