@@ -6,10 +6,8 @@
  * Sem href, a entrada está em construção: cor secundária, sem link, com ponto e "Em construção".
  * Grade: 1 coluna no celular; título em cima no tablet; 6, 3 e 3 colunas a partir de 1200 px.
  *
- * resumirTitulo: o título mostra no máximo 2 linhas, com reticências. Com o mouse em cima ou com
- * o foco do teclado, o título inteiro se revela por cima (reveal com recorte e opacidade), sem
- * empurrar as linhas de baixo. A cópia que se revela é só visual: o título de verdade continua
- * inteiro no HTML, e o leitor de tela lê tudo. Em tela de toque, o título aparece inteiro.
+ * O título aparece sempre inteiro. Sem descrição (Artigos), ele ocupa 9 colunas a partir de
+ * 1200 px. Nas listas com títulos em até duas linhas, o tamanho vem da lista (ListaDeEntradas).
  */
 import Seta from "./Seta.astro";
 
@@ -27,28 +25,14 @@ export interface Entrada {
 interface Props extends Entrada {
 	/** Nível do título. 3 dentro das seções da página inicial. */
 	nivel?: 2 | 3;
-	resumirTitulo?: boolean;
 }
 
-const {
-	titulo,
-	ano,
-	onde,
-	descricao,
-	href,
-	externo = false,
-	nivel = 3,
-	resumirTitulo = false,
-} = Astro.props;
+const { titulo, ano, onde, descricao, href, externo = false, nivel = 3 } = Astro.props;
 const Titulo = `h${nivel}` as const;
 const emConstrucao = !href;
 ---
 
-<li
-	class="entrada"
-	data-em-construcao={emConstrucao ? "" : undefined}
-	data-resumir={resumirTitulo ? "" : undefined}
->
+<li class="entrada" data-em-construcao={emConstrucao ? "" : undefined}>
 	<div class="entrada__cabeca">
 		<Titulo class="entrada__titulo">
 			{href ? (
@@ -65,11 +49,6 @@ const emConstrucao = !href;
 				titulo
 			)}
 		</Titulo>
-		{resumirTitulo && (
-			<div class="entrada__inteiro" aria-hidden="true">
-				<p class="entrada__inteiro-texto">{titulo}</p>
-			</div>
-		)}
 	</div>
 
 	{descricao && <p class="entrada__descricao">{descricao}</p>}
@@ -137,61 +116,6 @@ const emConstrucao = !href;
 	.entrada__link:focus-visible::before {
 		outline: var(--focus-espessura) solid var(--focus-cor);
 		outline-offset: var(--focus-afastamento);
-	}
-
-	/* ---------- título resumido ---------- */
-	.entrada__inteiro {
-		display: none;
-	}
-
-	@media (hover: hover) and (pointer: fine) {
-		.entrada[data-resumir] .entrada__cabeca {
-			display: grid;
-		}
-
-		.entrada[data-resumir] .entrada__titulo {
-			grid-area: 1 / 1;
-			display: -webkit-box;
-			overflow: hidden;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: 2;
-			line-clamp: 2;
-			/* Entrelinha um pouco maior: com 1, o corte comeria as pernas do g e do j. */
-			line-height: var(--leading-titulo-resumido);
-		}
-
-		/* Altura zero: a cópia transborda para baixo sem mudar o tamanho da linha.
-		   Fica acima da linha seguinte (z-index de item de grade) e não pega o clique. */
-		.entrada__inteiro {
-			grid-area: 1 / 1;
-			z-index: 1;
-			display: block;
-			align-self: start;
-			block-size: 0;
-			pointer-events: none;
-		}
-
-		.entrada__inteiro-texto {
-			padding-block-end: var(--space-medio);
-			background: var(--color-fundo);
-			font-size: var(--text-entrada);
-			font-weight: var(--peso-titulo);
-			letter-spacing: var(--tracking-entrada);
-			line-height: var(--leading-titulo-resumido);
-			text-wrap: pretty;
-			opacity: 0;
-			clip-path: inset(0 0 calc(100% - 2lh - var(--space-medio)) 0);
-			transition:
-				opacity var(--motion-duration-rapida) var(--motion-ease-out),
-				clip-path var(--motion-duration-rapida) var(--motion-ease-out);
-		}
-
-		.entrada:hover .entrada__inteiro-texto,
-		.entrada:has(.entrada__link:focus-visible) .entrada__inteiro-texto {
-			opacity: 1;
-			clip-path: inset(0 0 0 0);
-			transition-duration: var(--motion-duration-abrir);
-		}
 	}
 
 	/* Até 3 linhas; o resto fica no case. */
@@ -273,6 +197,10 @@ const emConstrucao = !href;
 
 		.entrada__meta {
 			grid-column: 10 / -1;
+		}
+
+		.entrada:not(:has(.entrada__descricao)) .entrada__cabeca {
+			grid-column: 1 / span 9;
 		}
 	}
 </style>

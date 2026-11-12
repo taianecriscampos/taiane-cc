@@ -1,6 +1,13 @@
 ---
 /**
- * Seção da página inicial com rótulo e lista de entradas: Projetos e Artigos usam esta peça.
+ * Seção da página inicial com rótulo e lista de entradas (Artigos e o Laboratório usam esta peça).
+ *
+ * titulosEmDuasLinhas: todos os títulos usam o MESMO tamanho, calculado para o título mais longo
+ * caber em 2 linhas em qualquer largura, sem reticências e sem JavaScript. O tamanho é a largura
+ * da coluna do título (unidade cqi, de container query) vezes um fator, dividida pelo número de
+ * letras do título mais longo. Esse número chega ao CSS pelo atributo data-letras, arredondado
+ * para cima de 10 em 10 (a política de segurança não deixa estilo direto no HTML).
+ * O teste testes/artigos.spec.ts falha se algum título passar de 2 linhas em 375, 768 e 1440.
  */
 import EntradaDaLista, { type Entrada } from "../ui/Entrada.astro";
 
@@ -10,11 +17,13 @@ interface Props {
 	entradas: Entrada[];
 	/** Texto mostrado quando a lista está vazia. */
 	vazio: string;
-	/** Títulos em até 2 linhas, revelados inteiros no hover e no foco (Artigos). */
-	resumirTitulos?: boolean;
+	titulosEmDuasLinhas?: boolean;
 }
 
-const { id, rotulo, entradas, vazio, resumirTitulos = false } = Astro.props;
+const { id, rotulo, entradas, vazio, titulosEmDuasLinhas = false } = Astro.props;
+
+const maior = Math.max(0, ...entradas.map((e) => e.titulo.length));
+const letras = Math.min(200, Math.max(20, Math.ceil(maior / 10) * 10));
 ---
 
 <section class="secao envoltorio" id={id} aria-labelledby={`${id}-titulo`}>
@@ -22,9 +31,9 @@ const { id, rotulo, entradas, vazio, resumirTitulos = false } = Astro.props;
 		{rotulo}
 	</h2>
 	{entradas.length > 0 ? (
-		<ul class="lista" role="list">
+		<ul class="lista" role="list" data-letras={titulosEmDuasLinhas ? letras : undefined}>
 			{entradas.map((entrada) => (
-				<EntradaDaLista {...entrada} resumirTitulo={resumirTitulos} />
+				<EntradaDaLista {...entrada} />
 			))}
 		</ul>
 	) : (
@@ -40,5 +49,78 @@ const { id, rotulo, entradas, vazio, resumirTitulos = false } = Astro.props;
 
 	.lista__vazia {
 		color: var(--color-texto-secundario);
+	}
+
+	/* ---------- títulos em até duas linhas ---------- */
+	.lista[data-letras] :global(.entrada__cabeca) {
+		container-type: inline-size;
+	}
+
+	.lista[data-letras] :global(.entrada__titulo) {
+		font-size: clamp(
+			var(--titulo-ajustado-minimo),
+			var(--titulo-ajustado-fator) * 100cqi / var(--letras),
+			var(--titulo-ajustado-maximo)
+		);
+		line-height: var(--leading-titulo-ajustado);
+		text-wrap: balance;
+	}
+
+	.lista[data-letras="20"] {
+		--letras: 20;
+	}
+	.lista[data-letras="30"] {
+		--letras: 30;
+	}
+	.lista[data-letras="40"] {
+		--letras: 40;
+	}
+	.lista[data-letras="50"] {
+		--letras: 50;
+	}
+	.lista[data-letras="60"] {
+		--letras: 60;
+	}
+	.lista[data-letras="70"] {
+		--letras: 70;
+	}
+	.lista[data-letras="80"] {
+		--letras: 80;
+	}
+	.lista[data-letras="90"] {
+		--letras: 90;
+	}
+	.lista[data-letras="100"] {
+		--letras: 100;
+	}
+	.lista[data-letras="110"] {
+		--letras: 110;
+	}
+	.lista[data-letras="120"] {
+		--letras: 120;
+	}
+	.lista[data-letras="130"] {
+		--letras: 130;
+	}
+	.lista[data-letras="140"] {
+		--letras: 140;
+	}
+	.lista[data-letras="150"] {
+		--letras: 150;
+	}
+	.lista[data-letras="160"] {
+		--letras: 160;
+	}
+	.lista[data-letras="170"] {
+		--letras: 170;
+	}
+	.lista[data-letras="180"] {
+		--letras: 180;
+	}
+	.lista[data-letras="190"] {
+		--letras: 190;
+	}
+	.lista[data-letras="200"] {
+		--letras: 200;
 	}
 </style>

@@ -1,7 +1,7 @@
 /**
  * Artigos publicados fora do site, na ordem da direção de arte v3.
- * A lista mostra só o título e "ano, plataforma"; o título passa de 2 linhas com reticências
- * e se revela inteiro no hover e no foco.
+ * A lista mostra só o título, sempre inteiro, e "ano, plataforma". Todos os títulos usam o
+ * mesmo tamanho, calculado para o mais longo caber em 2 linhas (ver ListaDeEntradas).
  * "Como construí meu portfólio com Claude Code" sai por enquanto e volta quando for publicado.
  */
 import type { Entrada } from "../components/ui/Entrada.astro";

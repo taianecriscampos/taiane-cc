@@ -171,7 +171,9 @@
 	--text-legenda: var(--prim-text-12);
 
 	--leading-titulo: var(--prim-leading-1);
-	--leading-titulo-resumido: var(--prim-leading-1-1); /* título cortado em 2 linhas */
+	--leading-titulo-ajustado: var(
+		--prim-leading-1-1
+	); /* títulos de 2 linhas: com 1, o g e o j encostam */
 	--leading-secao-case: var(--prim-leading-32);
 	--leading-introducao: var(--prim-leading-1-2);
 	--leading-subtitulo: var(--prim-leading-24);
@@ -318,6 +320,11 @@
 	--marcador-midia-tamanho: var(--prim-size-20);
 	--marcador-midia-fundo: var(--color-destaque-case);
 	--marcador-midia-texto: var(--color-sobre-destaque-case);
+	/* Títulos em até 2 linhas: largura da coluna x fator / caracteres do título mais longo.
+	   Fator 4 = 2 linhas x 92% de aproveitamento / 0,46 (largura média da letra, em em). */
+	--titulo-ajustado-fator: 4;
+	--titulo-ajustado-minimo: var(--text-pequeno);
+	--titulo-ajustado-maximo: var(--text-entrada);
 }
 
 /* ---------- 4. Ajustes por largura ---------- */
