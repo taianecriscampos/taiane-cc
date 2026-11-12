@@ -3,14 +3,12 @@
  * Topo do case, com a personalidade inspirada na kora.framer.media: título grande, em toda a
  * largura, com espaço entre letras apertado.
  * Abaixo, em duas colunas: à esquerda, a intro de case (24/32, peso 400; resumo de até
- * 3 frases, ADR 0002); à direita, as disciplinas em pílulas e a ficha (empresa, ano, papel,
- * duração, tempo de leitura e, nos confidenciais, "Case sob sigilo").
+ * 3 frases, ADR 0002) e, logo abaixo, as disciplinas em pílulas; à direita, a ficha (empresa,
+ * ano, papel, duração, tempo de leitura e, nos confidenciais, "Case sob sigilo").
  * Depois, a capa direto na página, sem moldura, com raio de 24 px.
- * Resultados (rodada 1f): três cartões no estilo dos cartões da página inicial (vidro da ilha,
- * textos claros), número em 56/56 (40 no celular), peso 500, e a descrição em 16/24.
- * Minha atuação, Desafio e Solução: sem cartões, em três colunas separadas por linhas
- * verticais de 1 px (no celular, horizontais); rótulo 16/24 secundário e texto 20/28.
- * Ficha sem linha acima do primeiro item.
+ * Ficha sem linha acima do primeiro item, alinhada ao começo do texto da introdução.
+ * Os resultados e Minha atuação, Desafio e Solução ficaram no tópico "Visão geral"
+ * (VisaoGeralCase.astro), dentro do texto do case.
  * Conteúdo de exemplo: os campos listados em `rascunhos` ganham data-rascunho (docs/rascunhos.md).
  * Sem capa, uma ilustração neutra de exemplo. Sem duração conhecida, a ficha não mostra a linha.
  */
@@ -30,8 +28,6 @@ interface Props {
 	imagem?: { src: ImageMetadata; alt: string };
 	minutos: number;
 	sigilo: "publico" | "confidencial";
-	resultados: { valor: string; descricao: string }[];
-	cartoes: { atuacao: string; desafio: string; solucao: string };
 	/** Campos com conteúdo de exemplo. */
 	rascunhos?: string[];
 	nivel?: 1 | 2;
@@ -48,8 +44,6 @@ const {
 	imagem,
 	minutos,
 	sigilo,
-	resultados,
-	cartoes,
 	rascunhos = [],
 	nivel = 1,
 } = Astro.props;
@@ -64,23 +58,16 @@ const ficha = [
 	{ rotulo: "Duração", valor: duracao, campo: "duracao" },
 	{ rotulo: "Leitura", valor: `${minutos} ${minutos === 1 ? "minuto" : "minutos"} de leitura` },
 ].filter((item): item is { rotulo: string; valor: string; campo?: string } => !!item.valor);
-
-const listaDeCartoes = [
-	{ rotulo: "Minha atuação", texto: cartoes.atuacao },
-	{ rotulo: "Desafio", texto: cartoes.desafio },
-	{ rotulo: "Solução", texto: cartoes.solucao },
-];
 ---
 
 <header class="cabecalho-case">
 	<Titulo class="cabecalho-case__titulo">{titulo}</Titulo>
 
 	<div class="cabecalho-case__intro">
-		<p class="cabecalho-case__resumo" data-rascunho={rascunho("resumo")}>
-			{resumo}
-		</p>
-
-		<div class="cabecalho-case__lado">
+		<div class="cabecalho-case__texto-intro">
+			<p class="cabecalho-case__resumo" data-rascunho={rascunho("resumo")}>
+				{resumo}
+			</p>
 			{disciplinas.length > 0 && (
 				<ul
 					class="cabecalho-case__pilulas"
@@ -93,7 +80,9 @@ const listaDeCartoes = [
 					))}
 				</ul>
 			)}
+		</div>
 
+		<div class="cabecalho-case__lado">
 			<dl class="cabecalho-case__ficha">
 				{ficha.map((item) => (
 					<div class="cabecalho-case__ficha-linha">
@@ -122,29 +111,7 @@ const listaDeCartoes = [
 				<Ilustracao variante={1} />
 			)}
 		</div>
-		<ul
-			class="cabecalho-case__resultados"
-			role="list"
-			aria-label="Resultados"
-			data-rascunho={rascunho("resultados")}
-		>
-			{resultados.map((r) => (
-				<li class="cabecalho-case__resultado">
-					<p class="cabecalho-case__valor">{r.valor}</p>
-					<p>{r.descricao}</p>
-				</li>
-			))}
-		</ul>
 	</div>
-
-	<ul class="cabecalho-case__cartoes" role="list" data-rascunho={rascunho("cartoes")}>
-		{listaDeCartoes.map((cartao) => (
-			<li class="cabecalho-case__cartao">
-				<p class="cabecalho-case__rotulo">{cartao.rotulo}</p>
-				<p class="cabecalho-case__texto">{cartao.texto}</p>
-			</li>
-		))}
-	</ul>
 </header>
 
 <style>
@@ -163,6 +130,13 @@ const listaDeCartoes = [
 	.cabecalho-case__intro {
 		display: grid;
 		gap: var(--space-bloco);
+	}
+
+	/* Introdução e, logo abaixo, as pílulas de disciplina. */
+	.cabecalho-case__texto-intro {
+		display: grid;
+		align-content: start;
+		gap: var(--space-grande);
 	}
 
 	.cabecalho-case__resumo {
@@ -229,7 +203,7 @@ const listaDeCartoes = [
 		line-height: var(--leading-pequeno);
 	}
 
-	/* ---------- capa e resultados ---------- */
+	/* ---------- capa ---------- */
 	.cabecalho-case__destaque {
 		display: grid;
 		gap: var(--space-largo);
@@ -247,107 +221,13 @@ const listaDeCartoes = [
 		block-size: auto;
 	}
 
-	/* Resultados (rodada 1f): cartões no mesmo estilo dos cartões da página inicial, com o vidro
-	   da ilha e textos claros. */
-	.cabecalho-case__resultados {
-		display: grid;
-		gap: var(--grade-espaco);
-		padding: 0;
-		list-style: none;
-	}
-
-	.cabecalho-case__resultado {
-		display: grid;
-		align-content: start;
-		gap: var(--space-medio);
-		padding: var(--projeto-espaco);
-		border-radius: var(--projeto-raio);
-		background: var(--projeto-fundo);
-		-webkit-backdrop-filter: var(--projeto-desfoque);
-		backdrop-filter: var(--projeto-desfoque);
-		color: var(--projeto-texto-secundario);
-	}
-
-	/* Minha atuação, Desafio e Solução: três colunas com linhas verticais (celular: empilhadas,
-	   com linhas horizontais). */
-	.cabecalho-case__cartoes {
-		display: grid;
-		padding: 0;
-		list-style: none;
-	}
-
-	.cabecalho-case__cartao {
-		display: grid;
-		align-content: start;
-		gap: var(--space-pequeno);
-		padding-block: var(--space-grande);
-	}
-
-	.cabecalho-case__cartao:first-child {
-		padding-block-start: 0;
-	}
-
-	.cabecalho-case__cartao:last-child {
-		padding-block-end: 0;
-	}
-
-	.cabecalho-case__cartao + .cabecalho-case__cartao {
-		border-block-start: var(--divisoria);
-	}
-
-	/* Número: título de entrada (56/56, 40 no celular), peso 500, claro. Um valor longo quebra. */
-	.cabecalho-case__valor {
-		overflow-wrap: anywhere;
-		color: var(--projeto-texto);
-		font-size: var(--text-entrada);
-		font-weight: var(--peso-titulo);
-		letter-spacing: var(--tracking-entrada);
-		line-height: var(--leading-titulo);
-	}
-
-	/* Rótulo 16/24 secundário; texto de destaque 20/28. */
-	.cabecalho-case__rotulo {
-		color: var(--color-texto-secundario);
-	}
-
-	.cabecalho-case__texto {
-		font-size: var(--text-destaque);
-		letter-spacing: var(--tracking-destaque);
-		line-height: var(--leading-destaque);
-	}
-
-	@media (min-width: 768px) {
-		.cabecalho-case__resultados,
-		.cabecalho-case__cartoes {
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-		}
-
-		.cabecalho-case__cartao {
-			padding-block: 0;
-			padding-inline: var(--grade-espaco);
-		}
-
-		.cabecalho-case__cartao:first-child {
-			padding-inline-start: 0;
-		}
-
-		.cabecalho-case__cartao:last-child {
-			padding-inline-end: 0;
-		}
-
-		.cabecalho-case__cartao + .cabecalho-case__cartao {
-			border-block-start: 0;
-			border-inline-start: var(--divisoria);
-		}
-	}
-
 	@media (min-width: 1200px) {
 		.cabecalho-case__intro {
 			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
 			column-gap: var(--grade-espaco);
 		}
 
-		.cabecalho-case__resumo {
+		.cabecalho-case__texto-intro {
 			grid-column: 1 / span 7;
 		}
 

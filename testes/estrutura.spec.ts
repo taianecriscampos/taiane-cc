@@ -143,7 +143,7 @@ test("no case, o cabeçalho leva a cada seção do texto", async ({ page }) => {
 	}
 });
 
-test("o case mostra ano, cliente, tempo de leitura e os três cartões de resumo", async ({
+test("o case mostra ano, cliente e tempo de leitura no topo, e a Visão geral no texto", async ({
 	page,
 }) => {
 	await page.goto("/cases/funis-interativos");
@@ -151,8 +151,15 @@ test("o case mostra ano, cliente, tempo de leitura e os três cartões de resumo
 	await expect(topo.getByText("2025", { exact: true })).toHaveCount(1);
 	await expect(topo.getByText("Inlead", { exact: true })).toHaveCount(1);
 	await expect(topo.getByText(/^\d+ minutos? de leitura$/)).toHaveCount(1);
+	// Resultados e os três textos ficam no tópico Visão geral, dentro do texto do case.
+	const visaoGeral = page.locator(".case-secao", {
+		has: page.getByRole("heading", { level: 2, name: "Visão geral" }),
+	});
+	await expect(
+		visaoGeral.getByRole("list", { name: "Resultados" }).getByRole("listitem"),
+	).toHaveCount(3);
 	for (const rotulo of ["Minha atuação", "Desafio", "Solução"]) {
-		await expect(topo.getByText(rotulo, { exact: true })).toHaveCount(1);
+		await expect(visaoGeral.getByText(rotulo, { exact: true })).toHaveCount(1);
 	}
 });
 
@@ -186,7 +193,7 @@ test("o cartão vira com clique, mostra o verso e desvira com Voltar", async ({ 
 });
 
 for (const largura of [375, 1024, 1440]) {
-	test(`em ${largura} px, os cartões de Projetos não deixam buraco, não têm ilustração e marcam os protegidos`, async ({
+	test(`em ${largura} px, os cartões de Projetos não deixam buraco, não têm ilustração e marcam os confidenciais`, async ({
 		page,
 	}) => {
 		await page.setViewportSize({ width: largura, height: 900 });
@@ -206,10 +213,15 @@ for (const largura of [375, 1024, 1440]) {
 		// Só o cartão de Funis tem imagem; os outros dois são tipográficos.
 		await expect(page.locator("#projetos .projeto__imagem")).toHaveCount(1);
 		await expect(page.locator("#projetos .ilustracao__fundo")).toHaveCount(0);
-		await expect(page.locator("#projetos .projeto__etiqueta")).toHaveText([
-			"Case protegido",
-			"Case protegido",
-		]);
+		// Etiqueta "Confidencial" nos cases sob sigilo; o emoji não é lido.
+		const etiquetas = page.locator("#projetos .projeto__etiqueta");
+		await expect(etiquetas).toHaveCount(2);
+		for (const etiqueta of await etiquetas.all()) {
+			await expect(etiqueta).toContainText("Confidencial");
+			await expect(etiqueta.locator('[aria-hidden="true"]')).toHaveText("🤫");
+		}
+		// Símbolo da marca nos dois cartões confidenciais, só de enfeite.
+		await expect(page.locator("#projetos .projeto__simbolo svg")).toHaveCount(4);
 		const [funis, azul, luft] = caixas;
 		if (largura >= 1200) {
 			// Três lado a lado, com a mesma altura.
@@ -333,14 +345,14 @@ test("no desktop, o sumário do case empilha as seções lidas e marca a atual",
 	await page.goto("/cases/funis-interativos");
 	const sumario = page.getByRole("navigation", { name: "Sumário do case" });
 	await expect(sumario).toBeVisible();
-	await expect(sumario.locator('[aria-current="location"]')).toHaveText("Contexto");
-	// No fim do texto: as cinco primeiras ficam pequenas e a última é a atual.
+	await expect(sumario.locator('[aria-current="location"]')).toHaveText("Visão geral");
+	// No fim do texto: as seis primeiras (Visão geral e cinco tópicos) ficam pequenas.
 	await page
 		.locator(".case-secao")
 		.last()
 		.evaluate((s) => s.scrollIntoView());
 	await expect(sumario.locator('[aria-current="location"]')).toHaveText("Aprendizados");
-	await expect(sumario.locator('[data-estado="lida"]')).toHaveCount(5);
+	await expect(sumario.locator('[data-estado="lida"]')).toHaveCount(6);
 	// Um item pequeno leva de volta à seção.
 	await sumario.getByRole("link", { name: "Problema" }).click();
 	await expect(sumario.locator('[aria-current="location"]')).toHaveText("Problema");
@@ -385,6 +397,10 @@ for (const pagina of ["/", "/cases/funis-interativos"]) {
 		const visivel = page.getByRole("button", { name: "Voltar ao topo" });
 		await expect(visivel).toBeVisible();
 		await expect(visivel).toHaveCSS("width", "44px");
+		// Centralizado embaixo, longe da hora do rodapé.
+		const caixa = await visivel.boundingBox();
+		const largura = page.viewportSize()?.width ?? 0;
+		expect(Math.abs((caixa?.x ?? 0) + 22 - largura / 2)).toBeLessThan(2);
 		await visivel.click();
 		await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
 		await page.keyboard.press("Tab");

@@ -1,0 +1,110 @@
+---
+/**
+ * Visão geral do case: o primeiro tópico do texto, com a mesma lógica de Contexto, Problema...
+ * (título na coluna da esquerda, no sumário fixo e na ilha). O título fica no LayoutCase.
+ * - Resultados: três cartões sem fundo, contorno de 1 px (a cor das linhas do site), número em
+ *   56/56 (40 no celular), peso 500, e a descrição em 16/24, cor secundária.
+ * - Minha atuação, Desafio e Solução: três colunas sem linhas entre elas; rótulo 16/24
+ *   secundário e texto de destaque 20/28.
+ * No celular, tudo empilhado. Os campos listados em `rascunhos` ganham data-rascunho.
+ */
+interface Props {
+	resultados: { valor: string; descricao: string }[];
+	cartoes: { atuacao: string; desafio: string; solucao: string };
+	/** Campos com conteúdo de exemplo. */
+	rascunhos?: string[];
+}
+
+const { resultados, cartoes, rascunhos = [] } = Astro.props;
+const rascunho = (campo: string) => (rascunhos.includes(campo) ? "" : undefined);
+
+const listaDeCartoes = [
+	{ rotulo: "Minha atuação", texto: cartoes.atuacao },
+	{ rotulo: "Desafio", texto: cartoes.desafio },
+	{ rotulo: "Solução", texto: cartoes.solucao },
+];
+---
+
+<div class="visao-geral">
+	<ul
+		class="visao-geral__resultados"
+		role="list"
+		aria-label="Resultados"
+		data-rascunho={rascunho("resultados")}
+	>
+		{resultados.map((r) => (
+			<li class="visao-geral__resultado">
+				<p class="visao-geral__valor">{r.valor}</p>
+				<p>{r.descricao}</p>
+			</li>
+		))}
+	</ul>
+
+	<ul class="visao-geral__cartoes" role="list" data-rascunho={rascunho("cartoes")}>
+		{listaDeCartoes.map((cartao) => (
+			<li class="visao-geral__cartao">
+				<p class="visao-geral__rotulo">{cartao.rotulo}</p>
+				<p class="visao-geral__texto">{cartao.texto}</p>
+			</li>
+		))}
+	</ul>
+</div>
+
+<style>
+	.visao-geral {
+		display: grid;
+		gap: var(--space-largo);
+	}
+
+	.visao-geral__resultados,
+	.visao-geral__cartoes {
+		display: grid;
+		gap: var(--grade-espaco);
+		padding: 0;
+		list-style: none;
+	}
+
+	.visao-geral__resultado {
+		display: grid;
+		align-content: start;
+		gap: var(--space-medio);
+		padding: var(--projeto-espaco);
+		border: var(--divisoria);
+		border-radius: var(--projeto-raio);
+		color: var(--color-texto-secundario);
+	}
+
+	/* Número: título de entrada (56/56, 40 no celular), peso 500. Um valor longo quebra. */
+	.visao-geral__valor {
+		overflow-wrap: anywhere;
+		color: var(--color-texto);
+		font-size: var(--text-entrada);
+		font-weight: var(--peso-titulo);
+		letter-spacing: var(--tracking-entrada);
+		line-height: var(--leading-titulo);
+	}
+
+	.visao-geral__cartao {
+		display: grid;
+		align-content: start;
+		gap: var(--space-pequeno);
+	}
+
+	/* Rótulo 16/24 secundário; texto de destaque 20/28. */
+	.visao-geral__rotulo {
+		color: var(--color-texto-secundario);
+	}
+
+	.visao-geral__texto {
+		font-size: var(--text-destaque);
+		letter-spacing: var(--tracking-destaque);
+		line-height: var(--leading-destaque);
+	}
+
+	@media (min-width: 768px) {
+		.visao-geral__resultados,
+		.visao-geral__cartoes {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+</style>

@@ -8,6 +8,7 @@
 import { createHash } from "node:crypto";
 import Abertura from "../components/blocos/Abertura.astro";
 import CabecalhoCase from "../components/blocos/CabecalhoCase.astro";
+import VisaoGeralCase from "../components/blocos/VisaoGeralCase.astro";
 import ListaDeEntradas from "../components/blocos/ListaDeEntradas.astro";
 import Projetos from "../components/blocos/Projetos.astro";
 import Disponibilidade from "../components/ui/Disponibilidade.astro";
@@ -25,6 +26,12 @@ import { projetosDosCases } from "../dados/projetos";
 import tokensCss from "../styles/tokens.css?raw";
 
 const projetosReais = await projetosDosCases();
+// O topo do case e a Visão geral são componentes separados (a Visão geral fica no texto do case).
+const {
+	resultados: resultadosPiorCaso,
+	cartoes: cartoesPiorCaso,
+	...topoPiorCaso
+} = cabecalhoPiorCaso;
 
 type Token = { nome: string; valor: string };
 
@@ -330,7 +337,8 @@ Astro.csp?.insertStyleHash(
 		/>
 		<div class="envoltorio">
 			<div class="lab__case">
-				<CabecalhoCase {...cabecalhoPiorCaso} nivel={2} />
+				<CabecalhoCase {...topoPiorCaso} nivel={2} />
+				<VisaoGeralCase resultados={resultadosPiorCaso} cartoes={cartoesPiorCaso} />
 			</div>
 		</div>
 	</div>

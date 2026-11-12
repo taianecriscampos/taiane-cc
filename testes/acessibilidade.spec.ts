@@ -7,8 +7,9 @@ const regrasWcag22AA = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
 for (const pagina of paginas) {
 	test(`${pagina} passa nas regras WCAG 2.2 AA do axe`, async ({ page }) => {
-		// O Laboratório é longo (todos os tokens e o pior caso): o axe leva mais tempo nele.
-		if (pagina === "/laboratorio") test.slow();
+		// O axe é lento na emulação de celular com a máquina ocupada (a qualidade compila e testa
+		// em paralelo): mais tempo em todas as páginas, sem mudar o que é verificado.
+		test.slow();
 		await page.goto(pagina);
 		const resultado = await new AxeBuilder({ page }).withTags(regrasWcag22AA).analyze();
 		expect(resultado.violations).toEqual([]);

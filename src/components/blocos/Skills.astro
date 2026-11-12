@@ -17,7 +17,7 @@ const colunas = [
 ];
 ---
 
-<section class="secao envoltorio" id="skills" aria-labelledby="skills-titulo">
+<section class="secao envoltorio skills-secao" id="skills" aria-labelledby="skills-titulo">
 	<h2 id="skills-titulo" class="secao__rotulo">
 		Skills
 	</h2>
@@ -74,6 +74,12 @@ const colunas = [
 		color: var(--skill-pilula-texto);
 		font-size: var(--text-pequeno);
 		line-height: var(--leading-pequeno);
+	}
+
+	/* Entre a faixa e o rodapé, o mesmo espaço que separa duas seções: o respiro de baixo desta
+	   seção mais o de cima da seguinte (80 + 80 px; 40 + 40 no celular). */
+	.skills-secao {
+		padding-block-end: calc(2 * var(--space-secao));
 	}
 
 	/* 24 px do gap da seção + 24 px: a faixa fica a 48 px da última pílula. */

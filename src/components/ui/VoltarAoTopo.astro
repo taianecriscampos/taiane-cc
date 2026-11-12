@@ -1,7 +1,8 @@
 ---
 /**
  * Botão "Voltar ao topo" (rodada 1f), em todas as páginas.
- * Redondo, 44 px, discreto (fundo da página, borda clara, seta ↑), no canto inferior direito.
+ * Redondo, 44 px, discreto (fundo da página, borda clara, seta ↑), centralizado embaixo
+ * (no canto direito, cobria a hora do rodapé).
  * Aparece depois de rolar uma tela: um marcador invisível com a altura da janela fica no topo
  * da página, e o IntersectionObserver avisa quando ele sai de vista (nada roda a cada rolagem).
  * Ao clicar, rola até o topo (instantâneo com movimento reduzido) e leva o foco ao início da
@@ -66,8 +67,11 @@
 
 	.voltar-ao-topo {
 		position: fixed;
+		/* Centralizado embaixo: no canto direito, cobria a hora do rodapé. Centraliza com as
+		   margens automáticas, sem transform, que fica livre para a entrada. */
 		inset-block-end: max(var(--space-grande), env(safe-area-inset-bottom));
-		inset-inline-end: max(var(--space-margem-pagina), env(safe-area-inset-right));
+		inset-inline: 0;
+		margin-inline: auto;
 		z-index: var(--topo-camada);
 		display: grid;
 		place-items: center;

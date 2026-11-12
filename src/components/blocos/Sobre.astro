@@ -12,7 +12,7 @@
  * O texto do Resumo tem no máximo 60 caracteres por linha.
  * "Currículo em PDF" fica logo abaixo do Resumo; "Mais informações no LinkedIn" fica na coluna
  * da Formação, na mesma linha do currículo quando as colunas estão lado a lado.
- * Curso não concluído: a etiqueta "não concluída" (12/16, peso 500, espaços de 2 e 8 px).
+ * Curso não concluído: "não concluída" em itálico, na cor secundária, ao lado do ano.
  * O Resumo é o texto de antes da rodada 1d, a pedido da Taiane.
  */
 import { perfil } from "../../dados/perfil";
@@ -86,7 +86,7 @@ const partes = (periodo: string) => periodo.split("–");
 						<p>{item.curso}</p>
 						<p class="sobre__secundario sobre__ano">
 							{item.periodo}
-							{!item.concluida && <span class="sobre__etiqueta">não concluída</span>}
+							{!item.concluida && <span class="sobre__inativo">não concluída</span>}
 						</p>
 					</li>
 				))}
@@ -127,6 +127,11 @@ const partes = (periodo: string) => periodo.split("–");
 		max-inline-size: var(--sobre-resumo-linha);
 	}
 
+	/* "Mais informações no LinkedIn" na margem direita da página, como o link do LinkedIn do hero. */
+	.sobre__link--linkedin {
+		justify-self: end;
+	}
+
 	/* O link do Currículo fica logo abaixo do texto do Resumo. */
 	.sobre__link--curriculo {
 		margin-block-start: calc(var(--space-grande) - var(--space-bloco));
@@ -154,15 +159,11 @@ const partes = (periodo: string) => periodo.split("–");
 		gap: var(--space-pequeno);
 	}
 
-	/* Etiqueta: 12/16, peso 500, espaços de 2 e 8 px, mesma cor e fundo de antes. */
-	.sobre__etiqueta {
-		padding: var(--etiqueta-espaco);
-		border-radius: var(--radius-pilula);
-		background: var(--etiqueta-fundo);
-		color: var(--etiqueta-texto);
-		font-size: var(--text-legenda);
-		font-weight: var(--peso-medio);
-		line-height: var(--leading-etiqueta);
+	/* "não concluída": só texto, em itálico, na cor secundária (inativo), ao lado do ano.
+	   #4d575f sobre o fundo da página: 7,07:1. */
+	.sobre__inativo {
+		font-style: italic;
+		color: var(--color-texto-secundario);
 	}
 
 	/* Tablet: Resumo e currículo em cima; Experiência e Formação lado a lado embaixo. */

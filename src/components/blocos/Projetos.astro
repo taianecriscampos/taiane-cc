@@ -14,7 +14,7 @@
  * Dois tipos de cartão:
  * - Com página: imagem inteira (object-fit: contain), com respiro de 16 px sobre fundo branco;
  *   o título é o link, esticado para o cartão inteiro, com a seta.
- * - Que vira (case sob sigilo, sem página nesta versão): título com a etiqueta "Case protegido",
+ * - Que vira (case sob sigilo, sem página nesta versão): título com a etiqueta "Confidencial",
  *   chamada, o símbolo da marca no espaço livre (cinza; cor original no hover, só com mouse) e,
  *   na base, "ano, empresa" e "Ver resumo". O botão "Ver resumo", esticado para o cartão
  *   inteiro, gira o cartão no eixo Y e mostra o verso escuro e opaco. O lado escondido fica
@@ -34,10 +34,10 @@ import type { Entrada } from "../ui/Entrada.astro";
 export interface Projeto extends Entrada {
 	/** Imagem do cartão (só nos cartões com página). */
 	imagem?: { src: ImageMetadata; alt: string };
-	/** Case sob sigilo: etiqueta "Case protegido" ao lado do título. */
+	/** Case sob sigilo: etiqueta "Confidencial" ao lado do título. */
 	protegido?: boolean;
 	/** Símbolo da marca (SVG oficial, sem o nome escrito), no espaço livre do cartão que vira. */
-	simbolo?: { svg: string; marca: string };
+	simbolo?: { colorido: string; cinza: string };
 	/** Com verso, o cartão vira em vez de levar a uma página. */
 	verso?: { subtitulo: string; blocos: { rotulo: string; texto: string }[] };
 }
@@ -62,6 +62,17 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		{projetos.map((p, i) => {
 			const verso = p.verso;
 			const versoId = `${id}-verso-${i}`;
+			const etiqueta = p.protegido && (
+				<p class="projeto__etiqueta">
+					Confidencial <span aria-hidden="true">🤫</span>
+				</p>
+			);
+			const camadas = p.simbolo && (
+				<>
+					<span class="simbolo__camada simbolo__cinza" set:html={p.simbolo.cinza} />
+					<span class="simbolo__camada simbolo__marca" set:html={p.simbolo.colorido} />
+				</>
+			);
 			return (
 				<li
 					class="projeto"
@@ -81,24 +92,22 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 								</div>
 							)}
 							<div class="projeto__texto">
-								<div class="projeto__cabeca">
-									<h3 class="projeto__titulo">
-										{verso ? (
-											p.titulo
-										) : (
-											<a
-												class="projeto__link"
-												href={p.href}
-												target={p.externo ? "_blank" : undefined}
-												rel={p.externo ? "noopener noreferrer" : undefined}
-											>
-												{p.titulo}
-												{p.externo && <span class="so-leitor-de-tela"> — abre em nova aba</span>}
-											</a>
-										)}
-									</h3>
-									{p.protegido && <p class="projeto__etiqueta">Case protegido</p>}
-								</div>
+								{etiqueta}
+								<h3 class="projeto__titulo">
+									{verso ? (
+										p.titulo
+									) : (
+										<a
+											class="projeto__link"
+											href={p.href}
+											target={p.externo ? "_blank" : undefined}
+											rel={p.externo ? "noopener noreferrer" : undefined}
+										>
+											{p.titulo}
+											{p.externo && <span class="so-leitor-de-tela"> — abre em nova aba</span>}
+										</a>
+									)}
+								</h3>
 								{p.descricao && (
 									<p class="projeto__chamada" data-rascunho={p.rascunho ? "" : undefined}>
 										{p.descricao}
@@ -106,12 +115,8 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 								)}
 							</div>
 							{verso && (
-								<div
-									class="projeto__visual projeto__simbolo"
-									data-marca={p.simbolo?.marca}
-									aria-hidden="true"
-								>
-									{p.simbolo && <Fragment set:html={p.simbolo.svg} />}
+								<div class="projeto__visual projeto__simbolo" aria-hidden="true">
+									{camadas}
 								</div>
 							)}
 							<div class="projeto__meta">
@@ -278,11 +283,9 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		backface-visibility: hidden;
 	}
 
-	/* Frente: o vidro da ilha, com textos claros. */
+	/* Frente: sem fundo, só o contorno de 1 px da cor das linhas do site, textos escuros. */
 	.projeto__frente {
-		background: var(--projeto-fundo);
-		-webkit-backdrop-filter: var(--projeto-desfoque);
-		backdrop-filter: var(--projeto-desfoque);
+		border: var(--divisoria);
 		color: var(--projeto-texto);
 		--link-cor: var(--projeto-texto);
 	}
@@ -301,24 +304,22 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		background: var(--projeto-imagem-fundo);
 	}
 
+	/* A imagem não decide a altura da área: preenche os 16:9, com o respiro, inteira. */
+	.projeto__imagem {
+		position: relative;
+	}
+
 	.projeto__imagem img {
-		inline-size: 100%;
-		block-size: 100%;
-		min-block-size: 0;
+		position: absolute;
+		inset: var(--projeto-imagem-respiro);
+		inline-size: calc(100% - 2 * var(--projeto-imagem-respiro));
+		block-size: calc(100% - 2 * var(--projeto-imagem-respiro));
 		object-fit: contain;
 	}
 
 	.projeto__texto {
 		display: grid;
 		gap: var(--space-pequeno);
-	}
-
-	/* Título e etiqueta na mesma linha, alinhados pelo topo. */
-	.projeto__cabeca {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: var(--space-medio);
 	}
 
 	/* Título de cartão: 32/40, peso 500, em todas as larguras. */
@@ -331,11 +332,10 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		line-height: var(--leading-titulo-cartao);
 	}
 
-	/* Etiqueta pequena (14/20, peso 500), clara sobre o vidro escuro. A margem de 8 px centraliza
-	   a pílula de 24 px na primeira linha do título, de 40 px. */
+	/* Etiqueta "Confidencial": pequena (14/20, peso 500), nas cores do emoji: marrom escuro
+	   #664500 sobre amarelo claro #fff3c4 (7,8:1, AA e até AAA). */
 	.projeto__etiqueta {
-		flex: none;
-		margin-block-start: var(--space-pequeno);
+		justify-self: start;
 		padding: var(--etiqueta-espaco);
 		border-radius: var(--radius-pilula);
 		background: var(--projeto-etiqueta-fundo);
@@ -385,9 +385,29 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		color: var(--projeto-simbolo-cor);
 	}
 
-	.projeto__simbolo :global(svg) {
+	/* Cartão confidencial (versão A, escolhida pela Taiane): etiqueta no topo, à esquerda, com
+	   16 px até o título; símbolo grande no espaço do meio. */
+	.projeto__texto > .projeto__etiqueta {
+		margin-block-end: var(--space-pequeno);
+	}
+
+	.projeto__simbolo .simbolo__camada :global(svg) {
+		block-size: var(--projeto-simbolo-grande);
+	}
+
+	/* As duas camadas do símbolo no mesmo lugar. */
+	.simbolo__camada {
+		grid-area: 1 / 1;
+		display: grid;
+	}
+
+	.simbolo__camada :global(svg) {
 		inline-size: auto;
 		block-size: var(--projeto-simbolo);
+	}
+
+	/* Camada cinza: todas as formas na mesma cor, sem as cores da marca. */
+	.simbolo__cinza :global(*) {
 		fill: currentColor;
 	}
 
@@ -492,7 +512,7 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 
 	/* ---------- resposta ao ponteiro ---------- */
 	/* O símbolo ganha a cor da marca por cima do cinza, só com opacity (200 ms, ease-out). */
-	.projeto__simbolo :global(.simbolo__marca) {
+	.simbolo__marca {
 		opacity: 0;
 		transition: opacity var(--motion-duration-rapida) var(--motion-ease-out);
 	}
@@ -503,7 +523,7 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 			transform: translateX(var(--space-minimo));
 		}
 
-		.projeto:hover .projeto__simbolo :global(.simbolo__marca) {
+		.projeto:hover .simbolo__marca {
 			opacity: 1;
 		}
 	}
@@ -556,16 +576,7 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 
 		/* A área branca ocupa a coluna inteira; a imagem fica inteira dentro dela. */
 		.projeto__imagem {
-			position: relative;
 			aspect-ratio: auto;
-		}
-
-		/* A imagem não decide a altura do cartão: preenche a área branca, com o respiro. */
-		.projeto__imagem img {
-			position: absolute;
-			inset: var(--projeto-imagem-respiro);
-			inline-size: calc(100% - 2 * var(--projeto-imagem-respiro));
-			block-size: calc(100% - 2 * var(--projeto-imagem-respiro));
 		}
 
 		.projeto__texto,

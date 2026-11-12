@@ -13,6 +13,8 @@
  *   ease-out forte. Com movimento reduzido, troca sem animação.
  * - nav "Sumário do case", item atual com aria-current. Os h2 das seções continuam no HTML,
  *   visualmente ocultos no desktop, onde o sumário cumpre o papel.
+ * O primeiro tópico é a Visão geral (resultados, Minha atuação, Desafio e Solução), com a
+ * mesma lógica dos outros: título na coluna da esquerda, no sumário e na ilha.
  * Abaixo de 1200 px, sem sumário: o título de cada seção (32/40) fica acima do texto.
  * Linhas horizontais só entre as seções do texto; nenhuma entre o topo e "Contexto".
  * Nos cases sob sigilo, a nota de confidencialidade fecha a página.
@@ -23,6 +25,7 @@ import type { CollectionEntry } from "astro:content";
 import { perfil } from "../../dados/perfil";
 import CabecalhoCase from "../blocos/CabecalhoCase.astro";
 import FechamentoCase from "../blocos/FechamentoCase.astro";
+import VisaoGeralCase from "../blocos/VisaoGeralCase.astro";
 import LayoutBase from "./LayoutBase.astro";
 
 interface Props {
@@ -35,6 +38,9 @@ const dados = entrada.data;
 const secoes = headings
 	.filter((h) => h.depth === 2)
 	.map((h) => ({ texto: h.text, href: `#${h.slug}` }));
+
+/** O sumário começa pela Visão geral (resultados e resumo), depois os tópicos do texto. */
+const sumario = [{ texto: "Visão geral", href: "#visao-geral" }, ...secoes];
 
 // Tempo de leitura: 200 palavras por minuto, sem contar marcação e comentários.
 const palavras = (entrada.body ?? "")
@@ -78,8 +84,6 @@ const corpo = html
 				imagem={dados.capa}
 				minutos={minutos}
 				sigilo={dados.sigilo}
-				resultados={dados.resultados}
-				cartoes={dados.cartoes}
 				rascunhos={dados.rascunhos}
 			/>
 		</div>
@@ -87,7 +91,7 @@ const corpo = html
 		<div class="case__corpo">
 			<nav class="sumario" aria-label="Sumário do case" data-sumario>
 				<ol class="sumario__lista" role="list">
-					{secoes.map((secao, i) => (
+					{sumario.map((secao, i) => (
 						<li class="sumario__item" data-estado={i === 0 ? "atual" : "proxima"}>
 							<a
 								class="sumario__link"
@@ -100,7 +104,19 @@ const corpo = html
 					))}
 				</ol>
 			</nav>
-			<div class="case__secoes" set:html={corpo} />
+			<div class="case__secoes">
+				<section class="case-secao">
+					<h2 id="visao-geral">Visão geral</h2>
+					<div class="case-secao__texto">
+						<VisaoGeralCase
+							resultados={dados.resultados}
+							cartoes={dados.cartoes}
+							rascunhos={dados.rascunhos}
+						/>
+					</div>
+				</section>
+				<Fragment set:html={corpo} />
+			</div>
 		</div>
 
 		{dados.sigilo === "confidencial" && (
@@ -282,8 +298,9 @@ const corpo = html
 		margin-block-start: 0;
 	}
 
-	.case__secoes :global(ul),
-	.case__secoes :global(ol) {
+	/* Só as listas do texto do artigo (filhas diretas), não as da Visão geral. */
+	.case__secoes :global(.case-secao__texto > ul),
+	.case__secoes :global(.case-secao__texto > ol) {
 		display: grid;
 		gap: var(--space-minimo);
 		padding-inline-start: var(--space-grande);
