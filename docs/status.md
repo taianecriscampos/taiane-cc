@@ -4,7 +4,7 @@ Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.1.1 (Fundação, com redirecionamento temporário do domínio)
 **Etapa atual:** 0.3.0 Direção de arte, junto com a estrutura da 0.2.0 (especificação base)
-**Fase da etapa:** 0.3.b Base fiel à debora.wiki · aguardando a revisão da Taiane
+**Fase da etapa:** 0.3.c Direção de arte v3 · Rodada 1 e ajustes 1b feitos, aguardando a revisão da Taiane
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -91,7 +91,8 @@ e os protótipos da 0.3.a na parte visual.
 | Fase  | Descrição                                                                   | Status             |
 | ----- | --------------------------------------------------------------------------- | ------------------ |
 | 0.3.a | Tokens oficiais, fontes, textura, blocos bento e protótipos no Laboratório  | Substituída        |
-| 0.3.b | Base fiel à debora.wiki: tokens, cabeçalho, página inicial e página de case | Aguardando revisão |
+| 0.3.b | Base fiel à debora.wiki: tokens, cabeçalho, página inicial e página de case | Concluída          |
+| 0.3.c | Direção de arte v3: Rodada 1 (tipografia, ilha, seções) e ajustes 1b        | Aguardando revisão |
 
 ## Fase 0.3.a
 
@@ -126,7 +127,42 @@ e os protótipos da 0.3.a na parte visual.
 - Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 56 testes aprovados.
 - Comparação com a debora.wiki em 375, 768 e 1440 px, em `.revisao/lado-a-lado-*.png`.
 
+## Fase 0.3.c
+
+Referência: `docs/direcao-de-arte-v3.md` e, nos ajustes, `docs/ajustes-rodada-1b.md`.
+Ramificação design, sem envio ao GitHub. A qualidade roda antes de cada commit.
+
+- **Rodada 1:** fonte Google Sans Flex variável (peso e largura), espaço entre letras por nível;
+  cabeçalho com a ilha; abertura nova; Artigos (antes Textos); Sobre em três colunas; rodapé
+  preto; página de case com título grande, ficha, disciplinas e bloco de destaque.
+- **Protótipo de Projetos:** bento x linhas. Escolha da Taiane: bento.
+- **Ajustes 1b:**
+  - Projetos em bento, com texto-modelo nos cartões sem chamada.
+  - Ilha de vidro escuro igual às referências: número e nome da seção, ponto branco; painel com
+    "Seções", "Fechar" e a lista numerada de 01 Início a 05 Skills. Teclado com setas, Esc e Fechar.
+  - Primeira dobra inteira na tela (100svh) em todas as larguras medidas, inclusive celular deitado.
+    Título sem caixa alta e sem condensar, −0,035em. No celular, "Tai", status acima da foto e
+    faixa curta ("Design Engineer" e "LinkedIn").
+  - Artigos com o título sempre inteiro, em até 2 linhas, com o mesmo tamanho para todos, só com
+    CSS. Teste que falha se algum passar de 2 linhas em 375, 768 e 1440.
+  - Sobre com Resumo, Experiência profissional e Formação acadêmica; foto abaixo do resumo;
+    currículo em PDF ativo. Exceção do telefone no PDF registrada no ADR 0003.
+  - Seção Skills nova, com ícones do Simple Icons (CC0) em cinza. Playwright sem ícone no pacote.
+  - Rodapé "Me chama", com copiar e-mail, setas em todos os links externos e relógio.
+  - Robustez: palavras longas e status longo não estouram a tela (pior caso do Laboratório).
+- Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 74 testes aprovados.
+- Prints em `.revisao/r1b-*.png`.
+
 ## Pendências anotadas
+
+- **0.3.c:** conferir num celular de verdade o desfoque da ilha (o navegador de testes desenha o
+  desfoque de forma instável com a página rolada), o toque na ilha e o botão de copiar.
+- **0.3.c:** no celular, os títulos dos Artigos ficam com cerca de 15 px para caber em 2 linhas,
+  menores que a linha "ano, plataforma". Decidir com a Taiane.
+- **0.3.c:** o PDF do currículo guarda credenciais de conteúdo (C2PA) que dizem que foi gerado
+  pelo ChatGPT. Decidir com a Taiane se remove.
+- **0.3.c:** ano da pós da IDI: a direção v3 diz 2020; o currículo diz 2020 a 2021.
+- **0.5.0:** Rodada 2 de movimento (efeitos da direção v3 e a nuvem magnética de skills).
 
 - **1.0.0:** remover do `vercel.json` o redirecionamento temporário (307) de taiane.cc e
   www.taiane.cc para o Linktree. Ele vale só na rota `/`, para o `security.txt` continuar acessível.
@@ -137,10 +173,7 @@ e os protótipos da 0.3.a na parte visual.
   `src/components/layout/LayoutBase.astro`. O Laboratório continua com `noindex`.
 - **0.4.0:** imagens do case de funis, com texto alternativo; trocar todos os "[RASCUNHO]",
   "[TEXTO DA TAIANE]" e "[A DEFINIR]".
-- **0.3.0:** decidir se o e-mail volta a aparecer no site; a especificação base mostra só o LinkedIn.
-- **0.3.0:** descrições curtas para os quatro textos (a lista mostra só título e metadados).
 - **0.4.0:** chamadas dos cases do Azul GPT e da Luft; enquanto forem "[TEXTO DA TAIANE]", a
   lista de projetos mostra só o título.
 - **Ambiente:** com pouca memória livre no computador, rodar os testes com `--workers=1`.
-- **0.3.0:** a foto tem 512 px; trocar por uma maior para telas de alta densidade.
 - **11/2027:** renovar a data `Expires` do `public/.well-known/security.txt` antes de 11/11/2027.

@@ -40,7 +40,8 @@ evite tabelas longas e símbolos desnecessários nas respostas.
   Nada de copiar arquivos, textos, imagens ou o selo da debora.wiki.
 - Paleta: fundo #fafafa, texto #1a2025, cinza secundário, borda clara, vermelho de marca só no
   selo e azul de destaque só nos cases.
-- Tipografia: Schibsted Grotesk, pesos 400, 500 e 700. Mono do sistema só nos marcadores de rascunho.
+- Tipografia: Google Sans Flex variável (eixos de peso e largura), auto-hospedada em public/fontes,
+  com espaço entre letras por nível (tokens --tracking-*). Mono do sistema só nos marcadores de rascunho.
 - A página `/laboratorio` mostra todos os tokens e componentes, com `noindex`.
 - Demais referências em docs/referencias.md. Cada mudança da Taiane sobre a base vai passo a passo.
 
