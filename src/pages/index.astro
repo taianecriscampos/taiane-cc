@@ -8,7 +8,6 @@ import ListaDeEntradas from "../components/blocos/ListaDeEntradas.astro";
 import Projetos from "../components/blocos/Projetos.astro";
 import Skills from "../components/blocos/Skills.astro";
 import Sobre from "../components/blocos/Sobre.astro";
-import ColunasSobre from "../components/layout/ColunasSobre.astro";
 import LayoutBase from "../components/layout/LayoutBase.astro";
 import { perfil } from "../dados/perfil";
 import { artigos } from "../dados/artigos";
@@ -30,8 +29,6 @@ const projetos = await projetosDosCases();
 		titulosEmDuasLinhas
 		vazio="Os artigos entram aqui em breve."
 	/>
-	<ColunasSobre>
-		<Sobre />
-		<Skills />
-	</ColunasSobre>
+	<Sobre />
+	<Skills />
 </LayoutBase>

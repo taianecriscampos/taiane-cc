@@ -1,12 +1,13 @@
 ---
 /**
- * Sobre: três colunas a partir de 768 px, com títulos no mesmo estilo: Resumo, Experiência
- * profissional e Formação acadêmica. As colunas vêm de ColunasSobre (largura do conteúdo, mesmo
- * espaço entre elas), compartilhadas com Skills. Curso não concluído: a mesma estrutura
- * dos outros, com uma etiqueta discreta "não concluída" ao lado do ano.
- * Abaixo das colunas, uma linha: "Currículo em PDF" numa ponta e "Mais informações no LinkedIn"
- * na outra, os dois em nova aba.
- * O Resumo vem de docs/curriculo.md, encurtado para até 4 linhas na coluna de leitura.
+ * Sobre (rodada 1e): três colunas a partir de 768 px, Resumo, Experiência profissional e
+ * Formação acadêmica, com títulos em rótulo (16/24, cor secundária).
+ * Grade 1fr auto 1fr: Resumo e Formação com a mesma largura; a Experiência fica do tamanho do
+ * próprio conteúdo; os dois vãos entre as colunas são iguais (o mesmo column-gap).
+ * Segunda linha da grade: "Currículo em PDF" logo abaixo do Resumo e "Mais informações no
+ * LinkedIn" na coluna da Formação, na mesma linha de base. A Experiência ocupa as duas linhas.
+ * Curso não concluído: a mesma estrutura dos outros, com a etiqueta "não concluída" (14/20, 500).
+ * O Resumo é o texto de antes da rodada 1d, a pedido da Taiane.
  */
 import { perfil } from "../../dados/perfil";
 import { experienciasDoSobre, formacaoDoSobre } from "../../dados/trajetoria";
@@ -16,7 +17,7 @@ import LinkComSeta from "../ui/LinkComSeta.astro";
 const partes = (periodo: string) => periodo.split("–");
 ---
 
-<section class="secao sobre-secao" id="sobre" aria-labelledby="sobre-titulo">
+<section class="secao envoltorio" id="sobre" aria-labelledby="sobre-titulo">
 	<h2 id="sobre-titulo" class="secao__rotulo">
 		Sobre
 	</h2>
@@ -24,13 +25,28 @@ const partes = (periodo: string) => periodo.split("–");
 	<div class="sobre">
 		<div class="sobre__coluna">
 			<h3 class="sobre__grupo-titulo">Resumo</h3>
-			<p class="sobre__resumo">
-				Mais de 10 anos conectando estratégia de negócio, experiência do usuário e engenharia. Hoje,
-				como Design Engineer, encurto o caminho entre hipótese, protótipo e código.
-			</p>
+			<div class="sobre__resumo">
+				<p>
+					Sou designer de produto há mais de 10 anos, na ponte entre estratégia de negócio,
+					experiência do usuário e engenharia. Comecei na direção de arte, passei por sistemas
+					regulatórios e plataformas SaaS e estruturei design systems em escala corporativa.
+				</p>
+				<p>
+					Hoje atuo como Design Engineer: uso front-end e IA generativa para encurtar o caminho
+					entre hipótese, protótipo e código funcional.
+				</p>
+			</div>
 		</div>
 
-		<div class="sobre__coluna">
+		<div class="sobre__link sobre__link--curriculo">
+			{perfil.curriculo.disponivel ? (
+				<LinkComSeta href={perfil.curriculo.href} texto="Currículo em PDF" externo />
+			) : (
+				<p class="sobre__secundario">Currículo em PDF, em breve</p>
+			)}
+		</div>
+
+		<div class="sobre__coluna sobre__coluna--experiencia">
 			<h3 class="sobre__grupo-titulo">Experiência profissional</h3>
 			<ol class="sobre__lista" role="list">
 				{experienciasDoSobre.map((item) => (
@@ -55,7 +71,7 @@ const partes = (periodo: string) => periodo.split("–");
 			</ol>
 		</div>
 
-		<div class="sobre__coluna">
+		<div class="sobre__coluna sobre__coluna--formacao">
 			<h3 class="sobre__grupo-titulo">Formação acadêmica</h3>
 			<ol class="sobre__lista" role="list">
 				{formacaoDoSobre.map((item) => (
@@ -70,21 +86,18 @@ const partes = (periodo: string) => periodo.split("–");
 				))}
 			</ol>
 		</div>
-	</div>
 
-	<div class="sobre__links">
-		{perfil.curriculo.disponivel ? (
-			<LinkComSeta href={perfil.curriculo.href} texto="Currículo em PDF" externo />
-		) : (
-			<p class="sobre__secundario">Currículo em PDF, em breve</p>
-		)}
-		<LinkComSeta href={perfil.linkedin} texto="Mais informações no LinkedIn" externo />
+		<div class="sobre__link sobre__link--linkedin">
+			<LinkComSeta href={perfil.linkedin} texto="Mais informações no LinkedIn" externo />
+		</div>
 	</div>
 </section>
 
 <style>
+	/* Celular: uma coluna, na ordem do HTML: Resumo, Currículo, Experiência, Formação, LinkedIn. */
 	.sobre {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: var(--space-bloco);
 	}
 
@@ -95,10 +108,21 @@ const partes = (periodo: string) => periodo.split("–");
 		gap: var(--space-grande);
 	}
 
+	/* Rótulo: 16/24, cor secundária. */
 	.sobre__grupo-titulo {
 		font-weight: var(--peso-corpo);
 		line-height: var(--leading-corpo);
 		color: var(--color-texto-secundario);
+	}
+
+	.sobre__resumo {
+		display: grid;
+		gap: var(--space-medio);
+	}
+
+	/* O link do Currículo fica logo abaixo do texto do Resumo. */
+	.sobre__link--curriculo {
+		margin-block-start: calc(var(--space-grande) - var(--space-bloco));
 	}
 
 	.sobre__lista {
@@ -123,53 +147,44 @@ const partes = (periodo: string) => periodo.split("–");
 		gap: var(--space-pequeno);
 	}
 
-	/* Etiqueta discreta: pílula pequena, cinza claro, texto secundário. */
+	/* Etiqueta: pequeno (14/20), peso 500, mesma cor e fundo de antes. */
 	.sobre__etiqueta {
 		padding: var(--etiqueta-espaco);
 		border-radius: var(--radius-pilula);
 		background: var(--etiqueta-fundo);
 		color: var(--etiqueta-texto);
-		font-size: var(--etiqueta-tamanho);
-		line-height: var(--leading-legenda);
+		font-size: var(--text-pequeno);
+		font-weight: var(--peso-medio);
+		line-height: var(--leading-pequeno);
 	}
 
-	.sobre__links {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: var(--space-pequeno) var(--space-medio);
-	}
-
-	/* Herda as três trilhas de ColunasSobre: título e links ocupam todas; as colunas, uma cada. */
 	@media (min-width: 768px) {
-		.sobre-secao,
 		.sobre {
-			grid-column: 1 / -1;
-			grid-template-columns: subgrid;
-			/* normal: herda o espaço do contêiner. Um valor próprio faria as colunas engordarem. */
-			column-gap: normal;
+			grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+			grid-template-rows: auto auto;
+			gap: var(--space-grande) var(--grade-espaco);
 		}
 
-		.sobre-secao > * {
-			grid-column: 1 / -1;
+		.sobre__link--curriculo {
+			grid-area: 2 / 1;
+			margin-block-start: 0;
 		}
 
-		/* Rótulo e linha dos links ocupam as três colunas sem mexer na largura delas. */
-		.sobre-secao > :not(.sobre) {
-			contain: inline-size;
+		.sobre__coluna--experiencia {
+			grid-area: 1 / 2 / span 2;
 		}
 
-		/* Tablet: a primeira coluna ocupa a linha de cima inteira, com a linha de leitura curta. */
-		.sobre__coluna:first-child {
-			grid-column: 1 / -1;
-			max-inline-size: var(--sobre-coluna-texto);
+		.sobre__coluna--formacao {
+			grid-area: 1 / 3;
 		}
-	}
 
-	@media (min-width: 1200px) {
-		.sobre__coluna:first-child {
-			grid-column: auto;
-			max-inline-size: none;
+		.sobre__link--linkedin {
+			grid-area: 2 / 3;
+		}
+
+		/* Os dois links na mesma linha de base. */
+		.sobre__link {
+			align-self: start;
 		}
 	}
 </style>

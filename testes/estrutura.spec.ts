@@ -254,32 +254,36 @@ test("o Sobre traz o currículo em PDF e o LinkedIn, os dois em nova aba", async
 	);
 });
 
-test("a seção Skills traz hard e soft skills, com ícones só de enfeite", async ({ page }) => {
+test("a seção Skills traz só hard e soft skills, em duas colunas", async ({ page }) => {
 	await page.goto("/");
 	const skills = page.getByRole("region", { name: "Skills" });
 	await expect(skills.getByRole("heading", { name: "Hard skills" })).toBeVisible();
 	await expect(skills.getByRole("heading", { name: "Soft skills" })).toBeVisible();
-	await expect(skills.getByText("Figma", { exact: true })).toBeVisible();
-	// Ícones decorativos: escondidos do leitor de tela, que lê só o nome.
-	for (const icone of await skills.locator("svg").all()) {
-		await expect(icone).toHaveAttribute("aria-hidden", "true");
-	}
+	await expect(skills.getByRole("heading", { level: 3 })).toHaveCount(2);
+	await expect(skills.getByText("Figma", { exact: true })).toHaveCount(0);
 });
 
-test("Sobre e Skills têm as mesmas colunas, com o mesmo espaço entre elas", async ({ page }) => {
-	await page.setViewportSize({ width: 1440, height: 900 });
-	await page.goto("/");
-	const medir = (seletor: string) =>
-		page.locator(seletor).evaluateAll((colunas) =>
-			colunas.map((c) => {
-				const r = c.getBoundingClientRect();
-				return { inicio: Math.round(r.left), fim: Math.round(r.right) };
-			}),
-		);
-	const sobre = await medir(".sobre > *");
-	const skills = await medir(".skills > *");
-	expect(skills).toEqual(sobre);
-	const vao1 = sobre[1].inicio - sobre[0].fim;
-	const vao2 = sobre[2].inicio - sobre[1].fim;
-	expect(Math.abs(vao1 - vao2)).toBeLessThanOrEqual(2);
+test("no Sobre, Resumo e Formação têm a mesma largura e os dois vãos são iguais", async ({
+	page,
+}) => {
+	for (const largura of [1024, 1440]) {
+		await page.setViewportSize({ width: largura, height: 900 });
+		await page.goto("/");
+		const caixa = (seletor: string) =>
+			page.locator(seletor).evaluate((el) => {
+				const r = el.getBoundingClientRect();
+				return { inicio: r.left, fim: r.right, topo: r.top };
+			});
+		const resumo = await caixa(".sobre__coluna:first-child");
+		const experiencia = await caixa(".sobre__coluna--experiencia");
+		const formacao = await caixa(".sobre__coluna--formacao");
+		expect(Math.abs(resumo.fim - resumo.inicio - (formacao.fim - formacao.inicio))).toBeLessThan(1);
+		expect(
+			Math.abs(experiencia.inicio - resumo.fim - (formacao.inicio - experiencia.fim)),
+		).toBeLessThan(1);
+		// Os dois links na mesma linha.
+		const curriculo = await caixa(".sobre__link--curriculo");
+		const linkedin = await caixa(".sobre__link--linkedin");
+		expect(Math.abs(curriculo.topo - linkedin.topo)).toBeLessThan(1);
+	}
 });
