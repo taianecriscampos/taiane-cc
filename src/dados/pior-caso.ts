@@ -17,6 +17,7 @@ export const perfilPiorCaso: Perfil = {
 	modalidade: "Remoto, híbrido ou presencial em São José do Rio Preto",
 	cidade: "São José do Rio Preto",
 	estado: "SP",
+	localizacao: "São José do Rio Preto / São Paulo, Brasil",
 	email: "bartholomew.fitzgerald@northwind-industries-holdings.example.com",
 	linkedin: "https://www.linkedin.com/in/exemplo/",
 	substack: "https://exemplo.example.com/",

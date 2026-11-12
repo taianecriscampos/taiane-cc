@@ -127,6 +127,7 @@
 	--prim-duration-280: 0.28s;
 	--prim-duration-300: 0.3s;
 	--prim-duration-2000: 2s;
+	--prim-duration-8000: 8s;
 	--prim-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 	/* Mola leve: passa 3% do destino e assenta. Curva desenhada ponto a ponto, sem biblioteca. */
 	--prim-ease-mola: linear(0, 0.3 8%, 0.69 18%, 0.93 29%, 1.025 39%, 1.03 47%, 1.01 62%, 1);
@@ -231,6 +232,7 @@
 	--motion-duration-base: var(--prim-duration-280);
 	--motion-duration-abrir: var(--prim-duration-300);
 	--motion-duration-pulso: var(--prim-duration-2000);
+	--motion-duration-relogio: var(--prim-duration-8000); /* uma volta do ponteiro do rodapé */
 	--motion-ease-out: var(--prim-ease-out);
 	--motion-ease-mola: var(--prim-ease-mola);
 	--motion-escala-pressionado: var(--prim-escala-pressionado);

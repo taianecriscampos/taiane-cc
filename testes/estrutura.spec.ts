@@ -48,12 +48,35 @@ test("os artigos abrem em nova aba e avisam o leitor de tela, com o título inte
 test("o rodapé traz o convite, o e-mail e a hora local", async ({ page }) => {
 	await page.goto("/");
 	const rodape = page.getByRole("contentinfo");
-	await expect(rodape.getByRole("heading", { name: "Vamos conversar?" })).toBeVisible();
+	await expect(rodape.getByRole("heading", { name: "Me chama" })).toBeVisible();
 	await expect(rodape.getByRole("link", { name: "taianecriscampos@gmail.com" })).toHaveAttribute(
 		"href",
 		"mailto:taianecriscampos@gmail.com",
 	);
 	await expect(rodape.locator("[data-hora-valor]")).toHaveText(/^\d{2}:\d{2}$/);
+	await expect(rodape.getByText("Ribeirão Preto / São Paulo, Brasil")).toBeVisible();
+	// Todo link externo do rodapé abre em nova aba e avisa o leitor de tela.
+	for (const link of await rodape.locator('a[href^="http"]').all()) {
+		await expect(link).toHaveAttribute("target", "_blank");
+		await expect(link).toHaveAccessibleName(/abre em nova aba$/);
+	}
+});
+
+test("o botão de copiar o e-mail avisa que copiou e o aviso some depois de 2 segundos", async ({
+	page,
+	context,
+}) => {
+	await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+	await page.goto("/");
+	const rodape = page.getByRole("contentinfo");
+	await rodape.getByRole("button", { name: "Copiar e-mail" }).click();
+	const aviso = rodape.locator("[data-copiado]");
+	await expect(aviso).toHaveText("Copiado");
+	await expect(aviso).toHaveAttribute("aria-live", "polite");
+	expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+		"taianecriscampos@gmail.com",
+	);
+	await expect(aviso).toHaveText("", { timeout: 4000 });
 });
 
 test("o cabeçalho leva às seções da página inicial e de volta ao início", async ({ page }) => {

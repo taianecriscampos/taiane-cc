@@ -1,11 +1,16 @@
 ---
 /**
- * Rodapé de todas as páginas, em fundo preto. Faz também o papel de "Vamos conversar?".
- * Título; navegação; contato (e-mail e LinkedIn); redes; e, na base, "© ano nome" e a cidade
- * com a hora local de Ribeirão Preto, atualizada por um script pequeno, sem serviço de fora.
- * Sem script, a hora não aparece e o resto continua igual.
+ * Rodapé de todas as páginas, em fundo preto. Faz também o papel de contato: "Me chama".
+ * Título; navegação; contato (LinkedIn, designdivergente.blog e o e-mail com botão de copiar);
+ * redes; e, na base, "© ano nome" e a localização com um relógio e a hora local de Ribeirão
+ * Preto, atualizada por um script pequeno, sem serviço de fora.
+ * Todo link externo tem a seta diagonal e avisa o leitor de tela que abre em nova aba.
+ * Copiar: ao clicar, o e-mail vai para a área de transferência e "Copiado" aparece por 2 s,
+ * anunciado ao leitor de tela. Sem script (ou sem área de transferência), o botão não aparece.
+ * O ponteiro do relógio gira devagar e sem parar; com redução de movimento, fica parado.
  */
 import { perfil } from "../../dados/perfil";
+import LinkComSeta from "../ui/LinkComSeta.astro";
 
 const ano = new Date().getFullYear();
 
@@ -23,11 +28,14 @@ const redes = [
 	{ texto: "GitHub", href: perfil.github },
 	{ texto: "designDivergente", href: perfil.designDivergente },
 ];
+
+/** "https://designdivergente.blog/" vira "designdivergente.blog". */
+const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\/$/, "");
 ---
 
 <footer class="rodape">
 	<div class="rodape__grade envoltorio">
-		<h2 class="rodape__titulo">Vamos conversar?</h2>
+		<h2 class="rodape__titulo">Me chama</h2>
 
 		<nav class="rodape__grupo" aria-labelledby="rodape-navegacao">
 			<h3 id="rodape-navegacao" class="rodape__grupo-titulo">
@@ -46,29 +54,54 @@ const redes = [
 
 		<div class="rodape__grupo rodape__grupo--contato">
 			<h3 class="rodape__grupo-titulo">Contato</h3>
-			<ul class="rodape__lista" role="list">
+			<ul class="rodape__lista rodape__lista--setas" role="list">
 				<li>
-					<a class="link rodape__email" href={`mailto:${perfil.email}`}>
-						{perfil.email}
-					</a>
+					<LinkComSeta href={perfil.linkedin} texto="LinkedIn" externo />
 				</li>
 				<li>
-					<a class="link" href={perfil.linkedin} target="_blank" rel="noopener noreferrer">
-						LinkedIn<span class="so-leitor-de-tela"> — abre em nova aba</span>
+					<LinkComSeta
+						href={perfil.designDivergente}
+						texto={semProtocolo(perfil.designDivergente)}
+						externo
+					/>
+				</li>
+				<li class="rodape__email">
+					<a class="link rodape__email-link" href={`mailto:${perfil.email}`}>
+						{perfil.email}
 					</a>
+					<button
+						class="rodape__copiar"
+						type="button"
+						data-copiar={perfil.email}
+						aria-label="Copiar e-mail"
+						hidden
+					>
+						<svg
+							viewBox="0 0 20 20"
+							width="20"
+							height="20"
+							aria-hidden="true"
+							focusable="false"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.5"
+							stroke-linejoin="round"
+						>
+							<rect x="7" y="7" width="9.5" height="9.5" rx="2"></rect>
+							<path d="M13 4.5A1.5 1.5 0 0 0 11.5 3.5h-6a2 2 0 0 0-2 2v6A1.5 1.5 0 0 0 4.5 13"></path>
+						</svg>
+					</button>
+					<span class="rodape__copiado" data-copiado aria-live="polite"></span>
 				</li>
 			</ul>
 		</div>
 
 		<div class="rodape__grupo">
 			<h3 class="rodape__grupo-titulo">Redes</h3>
-			<ul class="rodape__lista" role="list">
+			<ul class="rodape__lista rodape__lista--setas" role="list">
 				{redes.map((item) => (
 					<li>
-						<a class="link" href={item.href} target="_blank" rel="noopener noreferrer">
-							{item.texto}
-							<span class="so-leitor-de-tela"> — abre em nova aba</span>
-						</a>
+						<LinkComSeta href={item.href} texto={item.texto} externo />
 					</li>
 				))}
 			</ul>
@@ -79,10 +112,24 @@ const redes = [
 				© <time datetime={String(ano)}>{ano}</time> {perfil.nome}
 			</p>
 			<p class="rodape__local">
-				<span>
-					{perfil.cidade}, {perfil.estado}
-				</span>
+				<span>{perfil.localizacao}</span>
 				<span class="rodape__hora" data-hora hidden>
+					<svg
+						class="rodape__relogio"
+						viewBox="0 0 20 20"
+						width="16"
+						height="16"
+						aria-hidden="true"
+						focusable="false"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+						stroke-linecap="round"
+					>
+						<circle cx="10" cy="10" r="7.5"></circle>
+						<path d="M10 10V6.5"></path>
+						<path class="rodape__ponteiro" d="M10 10h3"></path>
+					</svg>
 					<span class="so-leitor-de-tela">Hora local: </span>
 					<time data-hora-valor></time>
 				</span>
@@ -92,6 +139,7 @@ const redes = [
 </footer>
 
 <script>
+	// Hora local de Ribeirão Preto, trocada na virada de cada minuto.
 	const caixa = document.querySelector<HTMLElement>("[data-hora]");
 	const valor = caixa?.querySelector<HTMLTimeElement>("[data-hora-valor]");
 	if (caixa && valor) {
@@ -104,11 +152,28 @@ const redes = [
 			const agora = new Date();
 			valor.textContent = formato.format(agora);
 			valor.dateTime = agora.toISOString();
-			// Próxima troca na virada do minuto.
 			setTimeout(atualizar, 60_000 - (agora.getTime() % 60_000));
 		};
 		atualizar();
 		caixa.hidden = false;
+	}
+
+	// Copiar o e-mail: "Copiado" por 2 s, também para o leitor de tela.
+	const copiar = document.querySelector<HTMLButtonElement>("[data-copiar]");
+	const aviso = document.querySelector<HTMLElement>("[data-copiado]");
+	if (copiar && aviso && navigator.clipboard) {
+		let espera: ReturnType<typeof setTimeout> | undefined;
+		copiar.hidden = false;
+		copiar.addEventListener("click", async () => {
+			try {
+				await navigator.clipboard.writeText(copiar.dataset.copiar ?? "");
+				aviso.textContent = "Copiado";
+			} catch {
+				aviso.textContent = "Não deu para copiar. Selecione o e-mail.";
+			}
+			clearTimeout(espera);
+			espera = setTimeout(() => (aviso.textContent = ""), 2000);
+		});
 	}
 </script>
 
@@ -152,9 +217,64 @@ const redes = [
 		list-style: none;
 	}
 
-	/* O e-mail pode quebrar em qualquer ponto numa tela estreita. */
+	/* A seta acompanha o texto claro do rodapé. */
+	.rodape :global(.seta) {
+		color: var(--rodape-texto);
+	}
+
+	/* A área de 40 px da seta já dá o respiro entre as linhas. */
+	.rodape__lista--setas {
+		gap: var(--space-nenhum);
+	}
+
 	.rodape__email {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-minimo) var(--space-pequeno);
+		min-block-size: var(--alvo-toque);
+	}
+
+	/* O e-mail pode quebrar em qualquer ponto numa tela estreita. */
+	.rodape__email-link {
 		overflow-wrap: anywhere;
+	}
+
+	.rodape__copiar {
+		display: inline-grid;
+		place-items: center;
+		flex: none;
+		inline-size: var(--alvo-toque);
+		block-size: var(--alvo-toque);
+		padding: 0;
+		border: 0;
+		border-radius: var(--radius-pilula);
+		background: transparent;
+		color: var(--rodape-texto-secundario);
+		cursor: pointer;
+		user-select: none;
+		-webkit-user-select: none;
+		transition: transform var(--motion-duration-pressionar) var(--motion-ease-out);
+	}
+
+	.rodape__copiar[hidden] {
+		display: none;
+	}
+
+	.rodape__copiar:active {
+		transform: scale(var(--motion-escala-pressionado));
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.rodape__copiar:hover {
+			color: var(--rodape-texto);
+		}
+	}
+
+	.rodape__copiado {
+		color: var(--rodape-texto-secundario);
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
 	}
 
 	.rodape__base {
@@ -169,15 +289,37 @@ const redes = [
 	.rodape__local {
 		display: inline-flex;
 		flex-wrap: wrap;
-		gap: var(--space-medio);
+		align-items: center;
+		gap: var(--space-pequeno) var(--space-medio);
 	}
 
 	.rodape__hora {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-pequeno);
 		font-variant-numeric: tabular-nums;
 	}
 
 	.rodape__hora[hidden] {
 		display: none;
+	}
+
+	/* Ponteiro dos minutos: uma volta lenta e contínua, só transform. */
+	.rodape__ponteiro {
+		transform-origin: 10px 10px;
+		animation: relogio var(--motion-duration-relogio) linear infinite;
+	}
+
+	@keyframes relogio {
+		to {
+			transform: rotate(1turn);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.rodape__ponteiro {
+			animation: none;
+		}
 	}
 
 	@media (min-width: 768px) {
@@ -203,7 +345,7 @@ const redes = [
 			grid-column: 1 / span 5;
 		}
 
-		/* O e-mail precisa de uma coluna a mais para caber numa linha. */
+		/* O e-mail e o botão de copiar precisam de uma coluna a mais. */
 		.rodape__grupo.rodape__grupo--contato {
 			grid-column: span 3;
 		}

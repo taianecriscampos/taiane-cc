@@ -16,6 +16,8 @@ export interface Perfil {
 	modalidade: string;
 	cidade: string;
 	estado: string;
+	/** Como a localização aparece no rodapé. */
+	localizacao: string;
 	email: string;
 	linkedin: string;
 	substack: string;
@@ -38,6 +40,7 @@ export const perfil: Perfil = {
 	modalidade: "Remoto ou híbrido",
 	cidade: "Ribeirão Preto",
 	estado: "SP",
+	localizacao: "Ribeirão Preto / São Paulo, Brasil",
 	email: "taianecriscampos@gmail.com",
 	linkedin: "https://www.linkedin.com/in/taianecriscampos/",
 	substack: "https://taianecriscampos.substack.com/",
