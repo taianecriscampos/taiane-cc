@@ -30,11 +30,12 @@ resultados:
 rascunhos: ["resumo", "duracao", "disciplinas", "cartoes", "resultados"]
 pagina: false
 verso:
-  - texto: "Em parceria com a OpenAI, a Azul criou um assistente interno para tripulantes e times da operação. Antes, eles procuravam regras técnicas em dezenas de PDFs. Com o Azul GPT, escolhem uma base de conhecimento, perguntam e recebem a resposta a partir do documento oficial."
-  - rotulo: "Minha atuação:"
-    texto: "arquitetura da informação, design de interface e de interação, protótipos e a versão de pré-produção da interface. Desenhei os fluxos felizes, de erro e de exceção, e contribuí com o design system próprio do produto."
-  - rotulo: "O desafio:"
-    texto: "desenhar para uma tecnologia nova para todo mundo, sem legado de referência, e fazer times internos trocarem o jeito de trabalhar por ela."
+  subtitulo: "Assistente interno de IA generativa, criado com a OpenAI, para a operação consultar normas técnicas direto no documento oficial."
+  blocos:
+    - rotulo: "Minha atuação"
+      texto: "Arquitetura da informação, design de interface e de interação, protótipos e a interface de pré-produção, com todos os fluxos de sucesso, erro e exceção."
+    - rotulo: "O desafio"
+      texto: "Desenhar para uma tecnologia nova para todo mundo e fazer times internos trocarem o jeito de trabalhar por ela."
 ---
 
 <!--

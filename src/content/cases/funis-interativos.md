@@ -28,8 +28,9 @@ resultados:
 # Duração: o artigo não informa, então a ficha não mostra. Cartões adaptados do artigo.
 rascunhos: []
 capa:
-  src: "../../assets/cases/funis-interativos/capa.jpg"
-  alt: "Capa do case: o título Otimização da Experiência ao lado dos modelos de etapa do quiz, como Página inicial, Questão de lista e Escala de Likert, aplicados no construtor de funis da Inlead."
+  # Imagem do artigo sem texto escrito por cima (rodada 1e): a barra lateral, a entrega principal.
+  src: "../../assets/cases/funis-interativos/sidebar-etapas-prontas.png"
+  alt: "A barra lateral com etapas prontas: onze modelos em miniatura, de Página inicial a Fim do funil. Abaixo, o construtor de funis da Inlead aberto num notebook, com a lista de etapas, a barra de modelos e a prévia da etapa no celular."
 ---
 
 <!--

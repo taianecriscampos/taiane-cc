@@ -3,31 +3,18 @@
  * Página inicial. Ordem de leitura: abertura, projetos, artigos, sobre e skills.
  * O rodapé, com "Me chama!", vem do LayoutBase.
  */
-import { getCollection } from "astro:content";
 import Abertura from "../components/blocos/Abertura.astro";
 import ListaDeEntradas from "../components/blocos/ListaDeEntradas.astro";
-import Projetos, { type Projeto } from "../components/blocos/Projetos.astro";
+import Projetos from "../components/blocos/Projetos.astro";
 import Skills from "../components/blocos/Skills.astro";
 import Sobre from "../components/blocos/Sobre.astro";
 import ColunasSobre from "../components/layout/ColunasSobre.astro";
 import LayoutBase from "../components/layout/LayoutBase.astro";
 import { perfil } from "../dados/perfil";
 import { artigos } from "../dados/artigos";
+import { projetosDosCases } from "../dados/projetos";
 
-const cases = (await getCollection("cases")).sort((a, b) => a.data.ordem - b.data.ordem);
-
-// Case com página: o cartão leva a ela. Sem página (pagina: false), o cartão vira e mostra o verso.
-const projetos: Projeto[] = cases.map(({ id, data }, i) => ({
-	titulo: data.titulo,
-	ano: data.ano,
-	onde: data.cliente,
-	descricao: data.chamada,
-	rascunho: data.rascunhos.includes("chamada"),
-	href: data.pagina ? `/cases/${id}` : undefined,
-	imagem: data.capa,
-	ilustracao: ((i % 3) + 1) as 1 | 2 | 3,
-	verso: data.pagina ? undefined : data.verso,
-}));
+const projetos = await projetosDosCases();
 ---
 
 <LayoutBase

@@ -57,9 +57,11 @@ export const entradasPiorCaso: Entrada[] = [
 	{ titulo: "Texto ainda sem link, em construção", onde: "Substack", ano: 2026 },
 ];
 
-/** Cada parágrafo do verso no limite de 320 caracteres, com o máximo de 4 parágrafos. */
-const versoNoLimite =
-	"A operação tinha processos espalhados em planilhas, e-mails, sistemas antigos e conversas de corredor, e cada área enxergava só a própria parte. Antes de propor qualquer tela, era preciso mapear quem fazia o quê, com quais dados e em que momento, para encontrar as rupturas entre atendimento, financeiro e transporte de ponta a ponta.";
+/** Verso no limite do schema: subtítulo de 160 caracteres e 3 blocos de 200. */
+const subtituloNoLimite =
+	"Mapeamento sistêmico de uma operação com processos em planilhas, e-mails, sistemas antigos e conversas de corredor, cada área vendo só a sua parte.";
+const blocoNoLimite =
+	"Conduzi entrevistas com atendimento, financeiro e transporte, mapeei quem fazia o quê, com quais dados e em que momento, e marquei as rupturas entre as áreas no blueprint.";
 
 /** Projetos no limite: os mesmos da lista acima e um cartão que vira, com o verso mais longo possível. */
 export const projetosPiorCaso: Projeto[] = [
@@ -69,12 +71,14 @@ export const projetosPiorCaso: Projeto[] = [
 		onde: "emDia · Santander · WeFit",
 		ano: 2026,
 		descricao: chamadaNoLimite,
-		verso: [
-			{ texto: versoNoLimite },
-			{ rotulo: "Minha atuação:", texto: versoNoLimite },
-			{ rotulo: "O desafio:", texto: versoNoLimite },
-			{ rotulo: "O resultado:", texto: versoNoLimite },
-		],
+		verso: {
+			subtitulo: subtituloNoLimite.padEnd(160, "."),
+			blocos: [
+				{ rotulo: "Minha atuação", texto: blocoNoLimite.padEnd(200, ".") },
+				{ rotulo: "O desafio", texto: blocoNoLimite.padEnd(200, ".") },
+				{ rotulo: "O resultado de um rótulo longo", texto: blocoNoLimite.padEnd(200, ".") },
+			],
+		},
 	},
 ];
 

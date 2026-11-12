@@ -175,13 +175,52 @@ test("o cartão vira com clique, mostra o verso e desvira com Voltar", async ({ 
 	await expect(botao).toHaveAttribute("aria-expanded", "true");
 	await expect(verso).not.toHaveAttribute("inert");
 	await expect(verso).toBeFocused();
-	await expect(verso.getByText(/Em parceria com a OpenAI/)).toBeVisible();
+	await expect(verso.getByText(/^Assistente interno de IA generativa/)).toBeVisible();
+	await expect(verso.getByText("Minha atuação", { exact: true })).toBeVisible();
+	await expect(verso.getByText(/Case em construção/)).toHaveCount(0);
 	const linkedin = verso.getByRole("link", { name: /^Me chama no LinkedIn/ });
 	await expect(linkedin).toHaveAttribute("target", "_blank");
 	await verso.getByRole("button", { name: "Voltar" }).click();
 	await expect(botao).toHaveAttribute("aria-expanded", "false");
 	await expect(botao).toBeFocused();
 });
+
+for (const largura of [375, 1024, 1440]) {
+	test(`em ${largura} px, os cartões de Projetos não deixam buraco e não têm ilustração`, async ({
+		page,
+	}) => {
+		await page.setViewportSize({ width: largura, height: 900 });
+		await page.goto("/");
+		const cartoes = page.locator("#projetos .projeto");
+		const caixas = await cartoes.evaluateAll((lis) =>
+			lis.map((li) => {
+				const r = li.getBoundingClientRect();
+				return {
+					x: Math.round(r.left),
+					y: Math.round(r.top),
+					w: Math.round(r.width),
+					h: Math.round(r.height),
+				};
+			}),
+		);
+		// Só o cartão de Funis tem imagem; os outros dois são tipográficos.
+		await expect(page.locator("#projetos .projeto__imagem")).toHaveCount(1);
+		await expect(page.locator("#projetos .ilustracao__fundo")).toHaveCount(0);
+		const [funis, azul, luft] = caixas;
+		if (largura >= 1200) {
+			// Três lado a lado, com a mesma altura.
+			expect(new Set(caixas.map((c) => c.y)).size).toBe(1);
+			expect(new Set(caixas.map((c) => c.h)).size).toBe(1);
+		} else if (largura >= 768) {
+			// Funis na largura toda; embaixo, os outros dois lado a lado e da mesma altura.
+			expect(funis.w).toBe(azul.w + luft.w + (luft.x - azul.x - azul.w));
+			expect(azul.y).toBe(luft.y);
+			expect(azul.h).toBe(luft.h);
+		} else {
+			expect(new Set(caixas.map((c) => c.x)).size).toBe(1);
+		}
+	});
+}
 
 test("o cartão vira com o teclado e desvira com Esc", async ({ page }) => {
 	await page.goto("/");

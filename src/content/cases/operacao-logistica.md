@@ -30,11 +30,12 @@ resultados:
 rascunhos: ["resumo", "duracao", "disciplinas", "cartoes", "resultados"]
 pagina: false
 verso:
-  - texto: "A Luft tinha processos no papel, no boca a boca e em sistemas antigos, cheios de lacunas. Antes de inovar, era preciso enxergar a operação inteira."
-  - rotulo: "Minha atuação:"
-    texto: "em dupla com outro designer, que fazia as entrevistas e a imersão em campo, eu documentei, mapeei e ilustrei as descobertas no service blueprint, trabalhando remotamente."
-  - rotulo: "O resultado:"
-    texto: "o mapa revelou pontos de contato e processos informais que a própria empresa não conhecia, e virou a base para decidir o que sistematizar primeiro, com valor para a empresa e para quem trabalha nela."
+  subtitulo: "Service blueprint de uma grande operação logística que vivia no papel, no boca a boca e em sistemas antigos."
+  blocos:
+    - rotulo: "Minha atuação"
+      texto: "Em dupla com outro designer, que fazia a imersão em campo, eu documentei, mapeei e ilustrei as descobertas, remotamente."
+    - rotulo: "O resultado"
+      texto: "O mapa revelou pontos de contato e processos informais que a empresa não conhecia e virou a base para decidir o que sistematizar primeiro."
 ---
 
 <!--

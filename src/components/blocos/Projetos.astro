@@ -1,35 +1,40 @@
 ---
 /**
- * Projetos: cartões de fundo cinza, raio de 24 px, sem borda e sem sombra.
- * Celular: uma coluna, como na rodada 1c, com o primeiro título maior. Todos os cartões têm
- * imagem: sem ela, a frente dos cartões que viram ficaria com um vão vazio da altura do verso.
- * 768 a 1199 px: dois por linha. 1200 px ou mais: três iguais, 4 colunas cada da grade de 12.
- * Imagem 16:9 no topo, título (32/40 a partir de 768 px), chamada e "ano, empresa".
+ * Projetos (rodada 1e): cartões de fundo cinza, raio de 24 px, sem borda e sem sombra.
+ * Bento sem buraco:
+ * - Celular: empilhados.
+ * - 768 a 1199 px: o primeiro cartão (o que tem imagem) ocupa a largura toda, na horizontal,
+ *   imagem à esquerda e texto à direita; embaixo, os outros dois lado a lado.
+ * - 1200 px ou mais: três lado a lado, 4 colunas cada da grade de 12.
+ * Os cartões de uma mesma linha têm a mesma altura: se um verso precisa de mais espaço,
+ * a linha inteira cresce. Nada é cortado nem comprimido.
+ *
+ * Hierarquia única do site: título do cartão 32/40, chamada 16/24 secundária, "ano, empresa"
+ * 16/24 secundário (como em Artigos).
  *
  * Dois tipos de cartão:
- * - Com página: o título é o link, esticado para o cartão inteiro, com a seta reta.
- * - Que vira (case sem página nesta versão): o botão "Ver resumo", esticado para o cartão
- *   inteiro, gira o cartão no eixo Y e mostra o verso escuro. Frente e verso ficam no HTML;
- *   o lado escondido fica inerte (fora do foco e do leitor de tela). "Voltar", Esc ou um
- *   clique no verso desviram. Com movimento reduzido, o giro vira um esmaecimento de 150 ms.
- *   Frente e verso ocupam a mesma célula da grade: o cartão tem a altura do lado mais alto,
- *   então o verso nunca é cortado.
+ * - Com página: imagem no topo; o título é o link, esticado para o cartão inteiro, com a seta.
+ * - Que vira (case sem página nesta versão): cartão só tipográfico. Título e chamada no topo,
+ *   "ano, empresa" e "Ver resumo" colados na base; o espaço livre no meio é respiro.
+ *   O botão "Ver resumo", esticado para o cartão inteiro, gira o cartão no eixo Y e mostra o
+ *   verso escuro. O lado escondido fica inerte. "Voltar", Esc ou um clique no verso desviram.
+ *   Com movimento reduzido, o giro vira um esmaecimento de 150 ms.
+ *
+ * Ícone de "Ver resumo": seta curva aberta (Lucide redo-2, licença ISC), que diz "virar".
+ * A opção da mão (Lucide pointer) fica disponível pela prop `icone`, para comparar no Laboratório.
  */
 import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import { perfil } from "../../dados/perfil";
-import Ilustracao from "../ui/Ilustracao.astro";
 import LinkComSeta from "../ui/LinkComSeta.astro";
 import Seta from "../ui/Seta.astro";
 import type { Entrada } from "../ui/Entrada.astro";
 
 export interface Projeto extends Entrada {
-	/** Imagem do cartão; sem ela, a ilustração neutra. */
+	/** Imagem do cartão (só nos cartões com página). */
 	imagem?: { src: ImageMetadata; alt: string };
-	/** Variante da ilustração neutra, quando não há imagem. */
-	ilustracao?: 1 | 2 | 3;
 	/** Com verso, o cartão vira em vez de levar a uma página. */
-	verso?: { rotulo?: string; texto: string }[];
+	verso?: { subtitulo: string; blocos: { rotulo: string; texto: string }[] };
 }
 
 interface Props {
@@ -37,9 +42,11 @@ interface Props {
 	/** Muda o id quando o bloco aparece mais de uma vez (Laboratório). */
 	id?: string;
 	rotulo?: string;
+	/** Ícone de "Ver resumo": seta curva aberta (padrão) ou mão. */
+	icone?: "seta" | "mao";
 }
 
-const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
+const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro.props;
 ---
 
 <section class="secao envoltorio" id={id} aria-labelledby={`${id}-titulo`}>
@@ -48,34 +55,29 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 	</h2>
 	<ul class="projetos" role="list">
 		{projetos.map((p, i) => {
-			const vira = (p.verso?.length ?? 0) > 0;
+			const verso = p.verso;
 			const versoId = `${id}-verso-${i}`;
-			const imagem = (
-				<div class="projeto__imagem">
-					{p.imagem ? (
-						<Image
-							src={p.imagem.src}
-							alt={p.imagem.alt}
-							widths={[400, 600, 800]}
-							sizes="(min-width: 1200px) 30vw, (min-width: 768px) 45vw, 90vw"
-						/>
-					) : (
-						<Ilustracao variante={p.ilustracao ?? 1} rascunho={!vira} />
-					)}
-				</div>
-			);
 			return (
 				<li
 					class="projeto"
-					data-destaque={i === 0 ? "" : undefined}
-					data-virar={vira ? "" : undefined}
+					data-virar={verso ? "" : undefined}
+					data-com-imagem={p.imagem ? "" : undefined}
 				>
 					<div class="projeto__giro">
 						<div class="projeto__face projeto__frente" data-esmaecer>
-							{imagem}
+							{p.imagem && (
+								<div class="projeto__imagem">
+									<Image
+										src={p.imagem.src}
+										alt={p.imagem.alt}
+										widths={[400, 600, 800, 1200]}
+										sizes="(min-width: 1200px) 30vw, (min-width: 768px) 45vw, 90vw"
+									/>
+								</div>
+							)}
 							<div class="projeto__texto">
 								<h3 class="projeto__titulo">
-									{vira ? (
+									{verso ? (
 										p.titulo
 									) : (
 										<a
@@ -99,7 +101,7 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 								<p>
 									<time datetime={String(p.ano)}>{p.ano}</time>, {p.onde}
 								</p>
-								{vira ? (
+								{verso ? (
 									<button
 										class="projeto__virar"
 										type="button"
@@ -110,19 +112,31 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 										Ver resumo<span class="so-leitor-de-tela"> de {p.titulo}</span>
 										<svg
 											class="projeto__icone"
-											viewBox="0 0 20 20"
+											viewBox="0 0 24 24"
 											width="20"
 											height="20"
 											aria-hidden="true"
 											focusable="false"
 											fill="none"
 											stroke="currentColor"
-											stroke-width="1.5"
+											stroke-width="1.75"
 											stroke-linecap="round"
 											stroke-linejoin="round"
 										>
-											<path d="M15.5 10a5.5 5.5 0 1 1-1.6-3.9" />
-											<path d="M14.2 2.9v3.4h-3.4" />
+											{icone === "mao" ? (
+												<>
+													<path d="M22 14a8 8 0 0 1-8 8" />
+													<path d="M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2" />
+													<path d="M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1" />
+													<path d="M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10" />
+													<path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
+												</>
+											) : (
+												<>
+													<path d="m15 14 5-5-5-5" />
+													<path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13" />
+												</>
+											)}
 										</svg>
 									</button>
 								) : (
@@ -131,7 +145,7 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 							</div>
 						</div>
 
-						{vira && (
+						{verso && (
 							<div
 								class="projeto__face projeto__verso"
 								id={versoId}
@@ -142,14 +156,25 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 								data-esmaecer
 								data-verso
 							>
-								{p.verso?.map((paragrafo) => (
-									<p>
-										{paragrafo.rotulo && <strong>{paragrafo.rotulo}</strong>} {paragrafo.texto}
+								<div class="projeto__texto">
+									<p class="projeto__titulo" aria-hidden="true">
+										{p.titulo}
 									</p>
-								))}
-								<p>Case em construção. Quer saber mais?</p>
-								<div class="projeto__verso-acoes">
-									<LinkComSeta href={perfil.linkedin} texto="Me chama no LinkedIn" externo />
+									<p class="projeto__subtitulo">{verso.subtitulo}</p>
+								</div>
+								<dl class="projeto__blocos">
+									{verso.blocos.map((bloco) => (
+										<div>
+											<dt class="projeto__rotulo">{bloco.rotulo}</dt>
+											<dd>{bloco.texto}</dd>
+										</div>
+									))}
+								</dl>
+								<div class="projeto__verso-rodape">
+									<p>
+										Quer saber mais?{" "}
+										<LinkComSeta href={perfil.linkedin} texto="Me chama no LinkedIn" externo />
+									</p>
 									<button class="projeto__voltar" type="button" data-voltar>
 										Voltar
 									</button>
@@ -229,7 +254,7 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 		grid-area: 1 / 1;
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-bloco);
+		gap: var(--space-grande);
 		padding: var(--projeto-espaco);
 		border-radius: var(--projeto-raio);
 		background: var(--projeto-fundo);
@@ -257,20 +282,16 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 
 	.projeto__texto {
 		display: grid;
-		gap: var(--space-medio);
+		gap: var(--space-pequeno);
 	}
 
-	/* Palavra comprida sem espaço quebra onde precisar, sem estourar o cartão. */
+	/* Título de cartão: 32/40, peso 500, em todas as larguras. */
 	.projeto__titulo {
 		overflow-wrap: anywhere;
-		font-size: var(--text-secao-case);
-		letter-spacing: var(--tracking-secao-case);
-		line-height: var(--leading-titulo);
-	}
-
-	.projeto[data-destaque] .projeto__titulo {
-		font-size: var(--text-entrada);
-		letter-spacing: var(--tracking-entrada);
+		font-size: var(--text-titulo-cartao);
+		font-weight: var(--peso-titulo);
+		letter-spacing: var(--tracking-titulo-cartao);
+		line-height: var(--leading-titulo-cartao);
 	}
 
 	.projeto__link {
@@ -303,6 +324,7 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 		color: var(--color-texto-secundario);
 	}
 
+	/* Colado na base do cartão. */
 	.projeto__meta {
 		display: flex;
 		align-items: center;
@@ -312,7 +334,7 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 		color: var(--color-texto-secundario);
 	}
 
-	/* "Ver resumo": discreto, no lugar da seta, com a mesma altura da área da seta. */
+	/* "Ver resumo": no lugar da seta, com a altura mínima de toque. */
 	.projeto__virar {
 		display: inline-flex;
 		align-items: center;
@@ -335,11 +357,8 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 
 	/* ---------- verso ---------- */
 	.projeto__verso {
-		gap: var(--space-pequeno);
 		background: var(--projeto-verso-fundo);
 		color: var(--projeto-verso-texto);
-		font-size: var(--text-pequeno);
-		line-height: var(--leading-pequeno);
 		transform: rotateY(180deg);
 		--link-cor: var(--projeto-verso-texto);
 		--focus-cor: var(--projeto-verso-focus-cor);
@@ -350,26 +369,41 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 		outline-color: var(--color-texto);
 	}
 
-	.projeto__verso strong {
-		font-weight: var(--peso-forte);
+	.projeto__subtitulo,
+	.projeto__rotulo {
+		color: var(--projeto-verso-texto-secundario);
 	}
 
+	/* 24 px depois do subtítulo (o gap da face); 16 px entre os blocos. */
+	.projeto__blocos {
+		display: grid;
+		gap: var(--space-medio);
+	}
+
+	.projeto__blocos dd {
+		margin: 0;
+	}
+
+	/* Uma linha só: o convite à esquerda, "Voltar" à direita, colados na base.
+	   Se o convite não couber, ele quebra dentro do próprio lado; "Voltar" fica na última linha. */
+	.projeto__verso-rodape {
+		display: flex;
+		align-items: last baseline;
+		justify-content: space-between;
+		gap: var(--space-medio);
+		margin-block-start: auto;
+	}
+
+	/* No verso, a seta fica colada ao texto (a área de toque segue com 40 px de altura),
+	   para o convite e "Voltar" caberem na mesma linha. */
 	.projeto__verso :global(.seta) {
+		inline-size: var(--seta-tamanho);
+		margin-inline-start: var(--space-minimo);
 		color: inherit;
 	}
 
-	.projeto__verso-acoes {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--space-pequeno) var(--space-medio);
-		margin-block-start: auto;
-		font-size: var(--text-corpo);
-		line-height: var(--leading-corpo);
-	}
-
 	.projeto__voltar {
+		flex: none;
 		min-block-size: var(--alvo-toque);
 		padding-inline: var(--space-pequeno);
 		margin-inline-end: calc(-1 * var(--space-pequeno));
@@ -387,21 +421,15 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 
 	/* ---------- resposta ao ponteiro ---------- */
 	@media (hover: hover) and (pointer: fine) {
-		.projeto:hover :global(.seta__icone) {
+		.projeto:hover :global(.seta__icone),
+		.projeto:hover .projeto__icone {
 			transform: translateX(var(--space-minimo));
 		}
-
-		.projeto:hover .projeto__icone {
-			transform: rotate(-30deg);
-		}
 	}
 
-	.projeto:has(.projeto__link:focus-visible) :global(.seta__icone) {
-		transform: translateX(var(--space-minimo));
-	}
-
+	.projeto:has(.projeto__link:focus-visible) :global(.seta__icone),
 	.projeto:has(.projeto__virar:focus-visible) .projeto__icone {
-		transform: rotate(-30deg);
+		transform: translateX(var(--space-minimo));
 	}
 
 	/* Movimento reduzido: sem giro; frente e verso trocam por esmaecimento curto. */
@@ -426,30 +454,36 @@ const { projetos, id = "projetos", rotulo = "Projetos" } = Astro.props;
 		}
 	}
 
+	/* Tablet: o cartão com imagem ocupa a linha toda, na horizontal; os outros, lado a lado. */
 	@media (min-width: 768px) {
 		.projetos {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 
-		.projeto__face:not(.projeto__verso) {
-			gap: var(--space-medio);
-		}
-
-		.projeto[data-destaque] .projeto__titulo {
-			font-size: var(--text-secao-case);
-			letter-spacing: var(--tracking-secao-case);
-		}
-
-		.projeto__titulo {
-			line-height: var(--leading-secao-case);
-		}
-
-		.projeto__texto {
-			gap: var(--space-pequeno);
-		}
-
 		.projeto__chamada {
 			max-inline-size: none;
+		}
+	}
+
+	@media (min-width: 768px) and (max-width: 1199px) {
+		.projeto[data-com-imagem] {
+			grid-column: 1 / -1;
+		}
+
+		.projeto[data-com-imagem] .projeto__frente {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-template-rows: auto 1fr;
+			column-gap: var(--grade-espaco);
+		}
+
+		.projeto[data-com-imagem] .projeto__imagem {
+			grid-row: 1 / -1;
+			align-self: start;
+		}
+
+		.projeto[data-com-imagem] .projeto__meta {
+			align-self: end;
 		}
 	}
 

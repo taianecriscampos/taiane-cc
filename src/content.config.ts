@@ -62,17 +62,25 @@ const cases = defineCollection({
 			 * o verso. O arquivo fica no repositório como rascunho para a v1.1.
 			 */
 			pagina: z.boolean().default(true),
-			/** Verso do cartão que vira: até 4 parágrafos, cada um com um rótulo opcional em negrito. */
+			/**
+			 * Verso do cartão que vira (rodada 1e): um subtítulo e até 3 blocos de rótulo e texto.
+			 * Limites pensados para o verso caber sem texto em 14 px nem corte (break-ui).
+			 */
 			verso: z
-				.array(
-					z.object({
-						rotulo: z.string().min(1).max(30).optional(),
-						texto: z.string().min(1).max(320),
-					}),
-				)
-				.max(4)
-				.default([]),
-			/** Imagem do cartão na página inicial, em 16:9, com texto alternativo. */
+				.object({
+					subtitulo: z.string().min(1).max(160),
+					blocos: z
+						.array(
+							z.object({
+								rotulo: z.string().min(1).max(30),
+								texto: z.string().min(1).max(200),
+							}),
+						)
+						.min(1)
+						.max(3),
+				})
+				.optional(),
+			/** Imagem do cartão na página inicial e do topo do case, sem texto escrito, com texto alternativo. */
 			capa: z.object({ src: image(), alt: z.string().min(1) }).optional(),
 		}),
 });

@@ -209,6 +209,22 @@
 	--tracking-subtitulo: var(--prim-tracking-2); /* 24 px */
 	--tracking-texto: var(--prim-tracking-1); /* 20 px para baixo */
 
+	/*
+	 * Hierarquia tipográfica única (rodada 1e). Seções novas ou revistas usam SÓ estes papéis:
+	 *   título de entrada  --text-entrada (56/56, 40 no celular), peso 500
+	 *   título de cartão   --text-titulo-cartao (32/40), peso 500
+	 *   texto de destaque  --text-destaque (20/28), peso 400
+	 *   texto e rótulo     --text-corpo (16/24); o rótulo em cor secundária
+	 *   pequeno            --text-pequeno (14/20), peso 400 ou 500
+	 */
+	--text-titulo-cartao: var(--prim-text-32);
+	--leading-titulo-cartao: var(--prim-leading-32);
+	--tracking-titulo-cartao: var(--prim-tracking-2);
+	--text-destaque: var(--prim-text-20);
+	--leading-destaque: var(--prim-leading-20);
+	--tracking-destaque: var(--prim-tracking-1);
+	--peso-medio: var(--prim-peso-500);
+
 	--fonte-largura-normal: var(--prim-largura-100);
 	--fonte-largura-condensada: var(--prim-largura-60);
 
@@ -366,6 +382,7 @@
 	--projeto-perspectiva: var(--prim-perspectiva-1200);
 	--projeto-verso-fundo: var(--color-inverso-fundo);
 	--projeto-verso-texto: var(--color-inverso-texto);
+	--projeto-verso-texto-secundario: var(--color-escuro-texto-secundario); /* 11,4:1 sobre o verso */
 	--projeto-verso-focus-cor: var(--color-inverso-texto);
 	--ilustracao-fundo: var(--color-fundo-secundario);
 	--ilustracao-forma-clara: var(--color-fundo);

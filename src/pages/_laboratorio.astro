@@ -21,7 +21,10 @@ import {
 	projetosPiorCaso,
 	perfilPiorCaso,
 } from "../dados/pior-caso";
+import { projetosDosCases } from "../dados/projetos";
 import tokensCss from "../styles/tokens.css?raw";
+
+const projetosReais = await projetosDosCases();
 
 type Token = { nome: string; valor: string };
 
@@ -299,6 +302,17 @@ Astro.csp?.insertStyleHash(
 
 	<div class="lab__pior-caso">
 		<Abertura perfil={perfilPiorCaso} idBase="pior-abertura" nivel={2} />
+		<Projetos
+			id="lab-icone-seta"
+			rotulo="Ver resumo, opção A: seta curva"
+			projetos={projetosReais}
+		/>
+		<Projetos
+			id="lab-icone-mao"
+			rotulo="Ver resumo, opção B: mão"
+			projetos={projetosReais}
+			icone="mao"
+		/>
 		<Projetos id="pior-projetos" rotulo="Projetos no limite" projetos={projetosPiorCaso} />
 		<ListaDeEntradas
 			id="pior-entradas"
