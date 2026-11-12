@@ -34,8 +34,18 @@ Camada das contas (tarefa manual da Taiane, antes do lançamento):
 
 Camada dos dados pessoais (fase 0.4.0):
 
-- Sem telefone no site nem no PDF público do currículo; contato por LinkedIn e e-mail.
+- Sem telefone no site; contato por LinkedIn e e-mail. No PDF público do currículo, ver a exceção abaixo.
 - Remover metadados do PDF e das imagens.
+
+## Exceção registrada: telefone no PDF do currículo (11/11/2026)
+
+- O que: o PDF público em `public/curriculo.pdf` traz o telefone da Taiane. O site continua sem telefone.
+- Por quê: decisão da Taiane; o telefone fica no PDF por enquanto e sai quando ela se recolocar.
+- Até quando: até a recolocação; ao sair, trocar o PDF e apagar esta exceção.
+- Confirmada pela Taiane na rodada 1d (12/11/2026): exceção temporária, até ela conseguir trabalho.
+- Metadados: o PDF não tem autor, programa de criação nem datas. Ele ainda guarda um anexo de
+  credenciais de conteúdo (C2PA) com o nome da ferramenta que o gerou e a data; remover ou manter
+  é decisão pendente da Taiane.
 
 ## Fora do escopo
 

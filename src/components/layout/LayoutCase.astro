@@ -1,0 +1,433 @@
+---
+/**
+ * Layout da página de case (personalidade inspirada na kora.framer.media).
+ * Topo em toda a largura. Corpo: a partir de 1200 px, o sumário fixo na coluna da esquerda
+ * (colunas 1 a 4) e o texto na coluna central (5 a 10).
+ *
+ * Sumário que se empilha (rodada 1e, pedido da Taiane):
+ * - A seção que está sendo lida aparece com o título grande (32/40).
+ * - As seções já lidas não somem: ficam pequenas (16/24, cor secundária), empilhadas acima da
+ *   atual, e cada uma é um link que rola até a seção. As próximas ainda não aparecem.
+ * - Rolando para cima, o caminho inverso.
+ * - A troca anima só com transform (scale e translate) e opacity, em 300 ms, com a curva
+ *   ease-out forte. Com movimento reduzido, troca sem animação.
+ * - nav "Sumário do case", item atual com aria-current. Os h2 das seções continuam no HTML,
+ *   visualmente ocultos no desktop, onde o sumário cumpre o papel.
+ * O primeiro tópico é a Visão geral (resultados, Minha atuação, Desafio e Solução), com a
+ * mesma lógica dos outros: título na coluna da esquerda, no sumário e na ilha.
+ * Abaixo de 1200 px, sem sumário: o título de cada seção (32/40) fica acima do texto.
+ * Linhas horizontais só entre as seções do texto; nenhuma entre o topo e "Contexto".
+ * Nos cases sob sigilo, a nota de confidencialidade fecha a página.
+ * O cabeçalho do site (ilha) também mostra as seções do case.
+ */
+import type { MarkdownHeading } from "astro";
+import type { CollectionEntry } from "astro:content";
+import { getImage } from "astro:assets";
+import { perfil } from "../../dados/perfil";
+import { artigoDoCase } from "../../dados/dados-estruturados";
+import { imagemPadrao, urlAbsoluta } from "../../dados/site";
+import CabecalhoCase from "../blocos/CabecalhoCase.astro";
+import FechamentoCase from "../blocos/FechamentoCase.astro";
+import VisaoGeralCase from "../blocos/VisaoGeralCase.astro";
+import LayoutBase from "./LayoutBase.astro";
+
+interface Props {
+	entrada: CollectionEntry<"cases">;
+	headings: MarkdownHeading[];
+}
+
+const { entrada, headings } = Astro.props;
+const dados = entrada.data;
+const secoes = headings
+	.filter((h) => h.depth === 2)
+	.map((h) => ({ texto: h.text, href: `#${h.slug}` }));
+
+/** O sumário começa pela Visão geral (resultados e resumo), depois os tópicos do texto. */
+const sumario = [{ texto: "Visão geral", href: "#visao-geral" }, ...secoes];
+
+// Imagem de compartilhamento: a capa do case em 1200 px; sem capa, a imagem padrão.
+const capaOg = dados.capa
+	? await getImage({ src: dados.capa.src, width: 1200, format: "jpg", quality: 80 })
+	: undefined;
+const imagemOg = capaOg
+	? { url: urlAbsoluta(capaOg.src), alt: dados.capa!.alt }
+	: { url: urlAbsoluta(imagemPadrao.caminho), alt: imagemPadrao.alt };
+const caminho = `/cases/${entrada.id}/`;
+
+// Tempo de leitura: 200 palavras por minuto, sem contar marcação e comentários.
+const palavras = (entrada.body ?? "")
+	.replace(/<!--[\s\S]*?-->/g, " ")
+	.replace(/<[^>]+>/g, " ")
+	.split(/\s+/)
+	.filter((p) => /[\p{L}\p{N}]/u.test(p)).length;
+const minutos = Math.max(1, Math.ceil(palavras / 200));
+
+/*
+ * O Markdown chega como HTML corrido. Cada título de nível 2 abre uma seção:
+ * <section> com o título e um bloco com o texto.
+ * O que vem antes do primeiro título (só comentários) fica de fora.
+ */
+const html = await Astro.slots.render("default");
+const corpo = html
+	.split(/(?=<h2[\s>])/)
+	.filter((parte) => parte.startsWith("<h2"))
+	.map((parte) => {
+		const fim = parte.indexOf("</h2>") + "</h2>".length;
+		return `<section class="case-secao">${parte.slice(0, fim)}<div class="case-secao__texto">${parte.slice(fim)}</div></section>`;
+	})
+	.join("");
+---
+
+<LayoutBase
+	titulo={`${dados.titulo} · ${perfil.nome}`}
+	descricao={dados.resumo}
+	secoesDoCase={secoes}
+	tipo="article"
+	imagem={imagemOg}
+	dadosEstruturados={artigoDoCase({
+		titulo: dados.titulo,
+		resumo: dados.resumo,
+		caminho,
+		imagem: imagemOg.url,
+		publicadoEm: dados.publicadoEm,
+	})}
+>
+	<article class="case envoltorio">
+		<div class="case__topo">
+			<CabecalhoCase
+				titulo={dados.titulo}
+				resumo={dados.resumo}
+				empresa={dados.empresa}
+				ano={dados.ano}
+				papel={dados.papel}
+				duracao={dados.duracao}
+				disciplinas={dados.disciplinas}
+				imagem={dados.capa}
+				minutos={minutos}
+				sigilo={dados.sigilo}
+				rascunhos={dados.rascunhos}
+			/>
+		</div>
+
+		<div class="case__corpo">
+			<nav class="sumario" aria-label="Sumário do case" data-sumario>
+				<ol class="sumario__lista" role="list">
+					{sumario.map((secao, i) => (
+						<li class="sumario__item" data-estado={i === 0 ? "atual" : "proxima"}>
+							<a
+								class="sumario__link"
+								href={secao.href}
+								aria-current={i === 0 ? "location" : undefined}
+							>
+								{secao.texto}
+							</a>
+						</li>
+					))}
+				</ol>
+			</nav>
+			<div class="case__secoes">
+				<section class="case-secao">
+					<h2 id="visao-geral">Visão geral</h2>
+					<div class="case-secao__texto">
+						<VisaoGeralCase
+							resultados={dados.resultados}
+							cartoes={dados.cartoes}
+							rascunhos={dados.rascunhos}
+						/>
+					</div>
+				</section>
+				<Fragment set:html={corpo} />
+			</div>
+		</div>
+
+		{dados.sigilo === "confidencial" && (
+			<div class="case__central case__fim">
+				<FechamentoCase />
+			</div>
+		)}
+	</article>
+</LayoutBase>
+
+<script>
+	/*
+	 * Sumário que se empilha. Uma linha imaginária a 45% da altura da janela (a mesma da ilha) decide a seção atual:
+	 * a última seção que já cruzou essa linha. O IntersectionObserver avisa quando alguma seção
+	 * entra ou sai da faixa acima da linha; não há cálculo a cada rolagem.
+	 */
+	const nav = document.querySelector<HTMLElement>("[data-sumario]");
+	const itens = [...(nav?.querySelectorAll<HTMLLIElement>(".sumario__item") ?? [])];
+	const secoes = itens.map((item) => {
+		const alvo = item.querySelector("a")?.getAttribute("href") ?? "";
+		return document.getElementById(decodeURIComponent(alvo.slice(1)))?.closest("section") ?? null;
+	});
+	const reduzido = matchMedia("(prefers-reduced-motion: reduce)");
+	const curva = getComputedStyle(document.documentElement)
+		.getPropertyValue("--motion-ease-out")
+		.trim();
+	let atual = 0;
+
+	/** Mostra a seção `indice` como atual: as de antes ficam pequenas e as de depois somem. */
+	const marcar = (indice: number) => {
+		if (indice === atual) return;
+		// FLIP: guarda onde cada item visível estava e o tamanho da letra, troca e anima a diferença.
+		const antes = itens.map((item) =>
+			item.dataset.estado === "proxima"
+				? null
+				: {
+						caixa: item.getBoundingClientRect(),
+						letra: parseFloat(getComputedStyle(item).fontSize),
+					},
+		);
+		itens.forEach((item, i) => {
+			item.dataset.estado = i < indice ? "lida" : i === indice ? "atual" : "proxima";
+			const link = item.querySelector("a");
+			if (i === indice) link?.setAttribute("aria-current", "location");
+			else link?.removeAttribute("aria-current");
+		});
+		atual = indice;
+		// Sem sumário visível (abaixo de 1200 px) ou com movimento reduzido: troca sem animação.
+		if (reduzido.matches || !nav?.offsetParent) return;
+		const opcoes = { duration: 300, easing: curva || "ease-out" };
+		itens.forEach((item, i) => {
+			if (item.dataset.estado === "proxima") return;
+			const anterior = antes[i];
+			if (!anterior) {
+				item.animate(
+					[
+						{ opacity: 0, transform: "translateY(0.5rem)" },
+						{ opacity: 1, transform: "none" },
+					],
+					opcoes,
+				);
+				return;
+			}
+			const caixa = item.getBoundingClientRect();
+			const escala = anterior.letra / parseFloat(getComputedStyle(item).fontSize);
+			const dx = anterior.caixa.left - caixa.left;
+			const dy = anterior.caixa.top - caixa.top;
+			if (escala === 1 && dx === 0 && dy === 0) return;
+			item.animate(
+				[{ transform: `translate(${dx}px, ${dy}px) scale(${escala})` }, { transform: "none" }],
+				opcoes,
+			);
+		});
+	};
+
+	if (nav && secoes.every(Boolean)) {
+		// O aviso do observador só dispara a conta; a conta mede onde cada seção está agora.
+		// Assim um salto grande (clique no sumário, tecla Home) também acerta a seção atual.
+		const observador = new IntersectionObserver(
+			() => {
+				const linha = innerHeight * 0.45;
+				let indice = 0;
+				secoes.forEach((s, i) => {
+					if (s && s.getBoundingClientRect().top <= linha) indice = i;
+				});
+				marcar(indice);
+			},
+			// Faixa do topo da janela até a linha a 45% da altura, a mesma da ilha.
+			{ rootMargin: "0px 0px -55% 0px" },
+		);
+		for (const s of secoes) if (s) observador.observe(s);
+	}
+</script>
+
+<style>
+	.case {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		column-gap: var(--grade-espaco);
+		padding-block: var(--space-bloco) var(--space-secao);
+	}
+
+	.case__topo {
+		grid-column: 1 / -1;
+	}
+
+	/* O texto começa com espaço largo depois do topo, sem linha: a tipografia já separa. */
+	.case__corpo {
+		margin-block-start: var(--space-maximo);
+	}
+
+	/* Sumário: só a partir de 1200 px. */
+	.sumario {
+		display: none;
+	}
+
+	/* Linhas só ENTRE as seções do texto, com 48 px acima e abaixo. */
+	.case__secoes :global(.case-secao + .case-secao),
+	.case__fim {
+		margin-block-start: var(--space-largo);
+		padding-block-start: var(--space-largo);
+		border-block-start: var(--divisoria);
+	}
+
+	.case__secoes :global(.case-secao) {
+		display: grid;
+		gap: var(--space-grande);
+	}
+
+	/* Título de seção do case: 32/40, peso 500. Pelo sumário ou pela ilha, a seção para abaixo
+	   do cabeçalho. */
+	.case__secoes :global(h2) {
+		scroll-margin-block-start: calc(var(--cabecalho-altura) + var(--space-maior));
+		font-size: var(--text-titulo-cartao);
+		letter-spacing: var(--tracking-titulo-cartao);
+		font-weight: var(--peso-titulo);
+		line-height: var(--leading-titulo-cartao);
+	}
+
+	/* Moldura das imagens do texto: cantos arredondados e fundo de cor suave. */
+	.case__secoes :global(figure),
+	.case__secoes :global(p:has(> img:only-child)) {
+		margin: 0;
+		padding: var(--moldura-espaco);
+		border-radius: var(--moldura-raio);
+		background: var(--moldura-fundo);
+	}
+
+	/* Regra de raios (rodada 1c): 24 px na moldura, 8 px na imagem de dentro. */
+	.case__secoes :global(p > img:only-child),
+	.case__secoes :global(figure img) {
+		inline-size: 100%;
+		border-radius: var(--radius-imagem-interna);
+	}
+
+	/* Texto corrido do Markdown. :global porque o HTML vem do conteúdo, não deste arquivo. */
+	.case__secoes :global(.case-secao__texto) {
+		display: grid;
+		align-content: start;
+		gap: var(--space-medio);
+		min-inline-size: 0;
+	}
+
+	/* O bloco de conteúdo de exemplo não muda o ritmo: os parágrafos de dentro seguem a grade. */
+	.case__secoes :global(.case-secao__texto > [data-rascunho]) {
+		display: contents;
+	}
+
+	/* Subtítulo dentro da seção: texto de destaque (20/28), peso 500. */
+	.case__secoes :global(h3) {
+		margin-block-start: var(--space-grande);
+		font-size: var(--text-destaque);
+		font-weight: var(--peso-titulo);
+		letter-spacing: var(--tracking-destaque);
+		line-height: var(--leading-destaque);
+	}
+
+	.case__secoes :global(.case-secao__texto > h3:first-child) {
+		margin-block-start: 0;
+	}
+
+	/* Só as listas do texto do artigo (filhas diretas), não as da Visão geral. */
+	.case__secoes :global(.case-secao__texto > ul),
+	.case__secoes :global(.case-secao__texto > ol) {
+		display: grid;
+		gap: var(--space-minimo);
+		padding-inline-start: var(--space-grande);
+	}
+
+	.case__secoes :global(strong) {
+		font-weight: var(--peso-forte);
+	}
+
+	/* A frase-chave da seção, em citação: texto de destaque (20/28) em azul. */
+	.case__secoes :global(blockquote) {
+		color: var(--color-destaque-case);
+		font-size: var(--text-destaque);
+		letter-spacing: var(--tracking-destaque);
+		line-height: var(--leading-destaque);
+	}
+
+	@media (min-width: 768px) {
+		.case {
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+		}
+
+		.case__central,
+		.case__corpo {
+			grid-column: 2 / span 10;
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.case__central {
+			grid-column: 4 / span 6;
+		}
+
+		.case__corpo {
+			grid-column: 1 / -1;
+			display: grid;
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+			column-gap: var(--grade-espaco);
+			align-items: start;
+		}
+
+		.case__secoes {
+			grid-column: 5 / span 6;
+		}
+
+		.case__secoes :global(.case-secao) {
+			position: relative;
+		}
+
+		/* O h2 continua no HTML para o leitor de tela e para os links; o sumário mostra o título. */
+		.case__secoes :global(h2) {
+			position: absolute;
+			inline-size: 1px;
+			block-size: 1px;
+			overflow: hidden;
+			clip-path: inset(50%);
+			white-space: nowrap;
+		}
+
+		.sumario {
+			display: block;
+			grid-column: 1 / span 4;
+			grid-row: 1;
+			position: sticky;
+			inset-block-start: calc(var(--cabecalho-altura) + var(--space-grande));
+		}
+
+		.sumario__lista {
+			display: grid;
+			gap: var(--space-pequeno);
+			padding: 0;
+			list-style: none;
+		}
+
+		/* Já lida: pequena (16/24), cor secundária, link para voltar à seção. */
+		.sumario__item {
+			transform-origin: left top;
+			font-size: var(--text-corpo);
+			line-height: var(--leading-corpo);
+		}
+
+		.sumario__item[data-estado="proxima"] {
+			display: none;
+		}
+
+		/* Atual: título de seção (32/40), peso 500. */
+		.sumario__item[data-estado="atual"] {
+			font-size: var(--text-titulo-cartao);
+			font-weight: var(--peso-titulo);
+			letter-spacing: var(--tracking-titulo-cartao);
+			line-height: var(--leading-titulo-cartao);
+		}
+
+		.sumario__link {
+			color: var(--color-texto-secundario);
+			text-decoration: none;
+		}
+
+		.sumario__item[data-estado="atual"] .sumario__link {
+			color: var(--color-texto);
+		}
+	}
+
+	@media (min-width: 1200px) and (hover: hover) and (pointer: fine) {
+		.sumario__item[data-estado="lida"] .sumario__link:hover {
+			color: var(--color-texto);
+		}
+	}
+</style>

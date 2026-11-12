@@ -17,6 +17,7 @@ Estrutura do texto:
 
 Regras:
 - Sem emojis; a hierarquia vem dos títulos.
-- Case sob sigilo (`sigilo: true`): sem telas, números internos ou documentos; mostre processo e papel.
+- Case sob sigilo (`sigilo: "confidencial"`; o padrão é `"publico"`): sem telas, números internos ou documentos; mostre processo e papel. Só os confidenciais mostram "Case sob sigilo" na ficha.
+- Limites do schema: título até 60 caracteres, chamada até 120, resumo até 400, valor de resultado até 16 e no máximo 3 resultados.
 - Mantenha a voz da Taiane; não invente dados. Liste as perguntas em aberto no fim da resposta.
 - Imagens em `src/assets/cases/<slug>/`, com texto alternativo descritivo.

@@ -1,0 +1,603 @@
+---
+/**
+ * Projetos (rodada 1f): cartões com o mesmo material da ilha (escuro translúcido, com o mesmo
+ * desfoque), raio de 24 px, sem borda e sem sombra. Textos claros com contraste AA.
+ * - Celular: empilhados.
+ * - 768 a 1199 px: os três no mesmo formato e no mesmo tamanho, um embaixo do outro, na
+ *   horizontal: visual à esquerda, texto à direita. Nenhum maior que o outro, nenhum buraco.
+ * - 1200 px ou mais: três lado a lado, 4 colunas cada da grade de 12, com a mesma altura.
+ * Se um verso precisa de mais espaço, todos crescem juntos. Nada é cortado nem comprimido.
+ *
+ * Hierarquia única do site: título do cartão 32/40, chamada e "ano, empresa" 16/24 em cor
+ * secundária clara, etiqueta 14/20 com peso 500.
+ *
+ * Dois tipos de cartão:
+ * - Com página: imagem inteira (object-fit: contain), com respiro de 16 px sobre fundo branco;
+ *   o título é o link, esticado para o cartão inteiro, com a seta.
+ * - Que vira (case sob sigilo, sem página nesta versão): título com a etiqueta "Confidencial",
+ *   chamada, o símbolo da marca no espaço livre (cinza; cor original no hover, só com mouse) e,
+ *   na base, "ano, empresa" e "Ver resumo". O botão "Ver resumo", esticado para o cartão
+ *   inteiro, gira o cartão no eixo Y e mostra o verso escuro e opaco. O lado escondido fica
+ *   inerte. "Voltar", Esc ou um clique no verso desviram. Com movimento reduzido, o giro vira
+ *   um esmaecimento de 150 ms.
+ *
+ * Ícone de "Ver resumo": seta curva aberta (Lucide redo-2, licença ISC), que diz "virar".
+ * A opção da mão (Lucide pointer) fica disponível pela prop `icone`, para comparar no Laboratório.
+ */
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { perfil } from "../../dados/perfil";
+import LinkComSeta from "../ui/LinkComSeta.astro";
+import Seta from "../ui/Seta.astro";
+import type { Entrada } from "../ui/Entrada.astro";
+
+export interface Projeto extends Entrada {
+	/** Imagem do cartão (só nos cartões com página). */
+	imagem?: { src: ImageMetadata; alt: string };
+	/** Case sob sigilo: etiqueta "Confidencial" ao lado do título. */
+	protegido?: boolean;
+	/** Símbolo da marca (SVG oficial, sem o nome escrito), no espaço livre do cartão que vira. */
+	simbolo?: { colorido: string; cinza: string };
+	/** Com verso, o cartão vira em vez de levar a uma página. */
+	verso?: { subtitulo: string; blocos: { rotulo: string; texto: string }[] };
+}
+
+interface Props {
+	projetos: Projeto[];
+	/** Muda o id quando o bloco aparece mais de uma vez (Laboratório). */
+	id?: string;
+	rotulo?: string;
+	/** Ícone de "Ver resumo": seta curva aberta (padrão) ou mão. */
+	icone?: "seta" | "mao";
+}
+
+const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro.props;
+---
+
+<section class="secao envoltorio" id={id} aria-labelledby={`${id}-titulo`}>
+	<h2 id={`${id}-titulo`} class="secao__rotulo">
+		{rotulo}
+	</h2>
+	<ul class="projetos" role="list">
+		{projetos.map((p, i) => {
+			const verso = p.verso;
+			const versoId = `${id}-verso-${i}`;
+			const etiqueta = p.protegido && (
+				<p class="projeto__etiqueta">
+					Confidencial <span aria-hidden="true">🤫</span>
+				</p>
+			);
+			const camadas = p.simbolo && (
+				<>
+					<span class="simbolo__camada simbolo__cinza" set:html={p.simbolo.cinza} />
+					<span class="simbolo__camada simbolo__marca" set:html={p.simbolo.colorido} />
+				</>
+			);
+			return (
+				<li
+					class="projeto"
+					data-virar={verso ? "" : undefined}
+					data-com-imagem={p.imagem ? "" : undefined}
+				>
+					<div class="projeto__giro">
+						<div class="projeto__face projeto__frente" data-esmaecer>
+							{p.imagem && (
+								<div class="projeto__visual projeto__imagem">
+									<Image
+										src={p.imagem.src}
+										alt={p.imagem.alt}
+										widths={[400, 600, 800, 1200]}
+										sizes="(min-width: 1200px) 30vw, (min-width: 768px) 45vw, 90vw"
+									/>
+								</div>
+							)}
+							<div class="projeto__texto">
+								{etiqueta}
+								<h3 class="projeto__titulo">
+									{verso ? (
+										p.titulo
+									) : (
+										<a
+											class="projeto__link"
+											href={p.href}
+											target={p.externo ? "_blank" : undefined}
+											rel={p.externo ? "noopener noreferrer" : undefined}
+										>
+											{p.titulo}
+											{p.externo && <span class="so-leitor-de-tela"> — abre em nova aba</span>}
+										</a>
+									)}
+								</h3>
+								{p.descricao && (
+									<p class="projeto__chamada" data-rascunho={p.rascunho ? "" : undefined}>
+										{p.descricao}
+									</p>
+								)}
+							</div>
+							{verso && (
+								<div class="projeto__visual projeto__simbolo" aria-hidden="true">
+									{camadas}
+								</div>
+							)}
+							<div class="projeto__meta">
+								<p>
+									<time datetime={String(p.ano)}>{p.ano}</time>, {p.onde}
+								</p>
+								{verso ? (
+									<button
+										class="projeto__virar"
+										type="button"
+										aria-expanded="false"
+										aria-controls={versoId}
+										data-virar-botao
+									>
+										Ver resumo<span class="so-leitor-de-tela"> de {p.titulo}</span>
+										<svg
+											class="projeto__icone"
+											viewBox="0 0 24 24"
+											width="20"
+											height="20"
+											aria-hidden="true"
+											focusable="false"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1.75"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											{icone === "mao" ? (
+												<>
+													<path d="M22 14a8 8 0 0 1-8 8" />
+													<path d="M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2" />
+													<path d="M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1" />
+													<path d="M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10" />
+													<path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
+												</>
+											) : (
+												<>
+													<path d="m15 14 5-5-5-5" />
+													<path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13" />
+												</>
+											)}
+										</svg>
+									</button>
+								) : (
+									<Seta direcao={p.externo ? "diagonal" : "direita"} />
+								)}
+							</div>
+						</div>
+
+						{verso && (
+							<div
+								class="projeto__face projeto__verso"
+								id={versoId}
+								role="group"
+								aria-label={`Resumo de ${p.titulo}`}
+								tabindex="-1"
+								inert
+								data-esmaecer
+								data-verso
+							>
+								<div class="projeto__texto">
+									<p class="projeto__titulo" aria-hidden="true">
+										{p.titulo}
+									</p>
+									<p class="projeto__subtitulo">{verso.subtitulo}</p>
+								</div>
+								<dl class="projeto__blocos">
+									{verso.blocos.map((bloco) => (
+										<div>
+											<dt class="projeto__rotulo">{bloco.rotulo}</dt>
+											<dd>{bloco.texto}</dd>
+										</div>
+									))}
+								</dl>
+								<div class="projeto__verso-rodape">
+									<p>
+										Quer saber mais?{" "}
+										<LinkComSeta href={perfil.linkedin} texto="Me chama no LinkedIn" externo />
+									</p>
+									<button class="projeto__voltar" type="button" data-voltar>
+										Voltar
+									</button>
+								</div>
+							</div>
+						)}
+					</div>
+				</li>
+			);
+		})}
+	</ul>
+</section>
+
+<script>
+	for (const cartao of document.querySelectorAll<HTMLElement>("[data-virar]")) {
+		const botao = cartao.querySelector<HTMLButtonElement>("[data-virar-botao]");
+		const frente = cartao.querySelector<HTMLElement>(".projeto__frente");
+		const verso = cartao.querySelector<HTMLElement>("[data-verso]");
+		const voltar = cartao.querySelector<HTMLButtonElement>("[data-voltar]");
+		if (!botao || !frente || !verso || !voltar) continue;
+
+		const virar = (virado: boolean) => {
+			cartao.toggleAttribute("data-virado", virado);
+			botao.setAttribute("aria-expanded", String(virado));
+			// Só o lado visível recebe foco e é lido; o outro fica inerte.
+			frente.inert = virado;
+			verso.inert = !virado;
+			(virado ? verso : botao).focus({ preventScroll: true });
+		};
+
+		botao.addEventListener("click", () => virar(true));
+		voltar.addEventListener("click", () => virar(false));
+		// Clicar no verso (fora do link e do botão) desvira, como clicar de novo na carta.
+		verso.addEventListener("click", (evento) => {
+			if (!(evento.target as HTMLElement).closest("a, button")) virar(false);
+		});
+		verso.addEventListener("keydown", (evento) => {
+			if (evento.key === "Escape") virar(false);
+		});
+	}
+</script>
+
+<style>
+	.projetos {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--grade-espaco);
+		padding: 0;
+		list-style: none;
+	}
+
+	/* A perspectiva fica no pai: o giro tem profundidade sem distorcer. */
+	.projeto {
+		display: grid;
+		perspective: var(--projeto-perspectiva);
+		transition: transform var(--motion-duration-pressionar) var(--motion-ease-out);
+	}
+
+	.projeto:active {
+		transform: scale(var(--projeto-escala-pressionado));
+	}
+
+	/* Frente e verso na mesma célula: o cartão tem a altura do lado mais alto. */
+	.projeto__giro {
+		position: relative;
+		display: grid;
+		transform-style: preserve-3d;
+		transition: transform var(--motion-duration-virar) var(--motion-ease-out);
+	}
+
+	.projeto[data-virado] .projeto__giro {
+		transform: rotateY(180deg);
+	}
+
+	.projeto__face {
+		position: relative;
+		grid-area: 1 / 1;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-grande);
+		padding: var(--projeto-espaco);
+		border-radius: var(--projeto-raio);
+		-webkit-backface-visibility: hidden;
+		backface-visibility: hidden;
+	}
+
+	/* Frente: sem fundo, só o contorno de 1 px da cor das linhas do site, textos escuros. */
+	.projeto__frente {
+		border: var(--divisoria);
+		color: var(--projeto-texto);
+		--link-cor: var(--projeto-texto);
+	}
+
+	/* O lado inerte não recebe clique, mesmo estando por cima. */
+	.projeto__face[inert] {
+		pointer-events: none;
+	}
+
+	/* Imagem inteira, com respiro: nenhum elemento encosta na borda. */
+	.projeto__imagem {
+		display: grid;
+		aspect-ratio: var(--destaque-proporcao);
+		padding: var(--projeto-imagem-respiro);
+		border-radius: var(--projeto-imagem-raio);
+		background: var(--projeto-imagem-fundo);
+	}
+
+	/* A imagem não decide a altura da área: preenche os 16:9, com o respiro, inteira. */
+	.projeto__imagem {
+		position: relative;
+	}
+
+	.projeto__imagem img {
+		position: absolute;
+		inset: var(--projeto-imagem-respiro);
+		inline-size: calc(100% - 2 * var(--projeto-imagem-respiro));
+		block-size: calc(100% - 2 * var(--projeto-imagem-respiro));
+		object-fit: contain;
+	}
+
+	.projeto__texto {
+		display: grid;
+		gap: var(--space-pequeno);
+	}
+
+	/* Título de cartão: 32/40, peso 500, em todas as larguras. */
+	.projeto__titulo {
+		min-inline-size: 0;
+		overflow-wrap: anywhere;
+		font-size: var(--text-titulo-cartao);
+		font-weight: var(--peso-titulo);
+		letter-spacing: var(--tracking-titulo-cartao);
+		line-height: var(--leading-titulo-cartao);
+	}
+
+	/* Etiqueta "Confidencial": pequena (14/20, peso 500), nas cores do emoji: marrom escuro
+	   #664500 sobre amarelo claro #fff3c4 (7,8:1, AA e até AAA). */
+	.projeto__etiqueta {
+		justify-self: start;
+		padding: var(--etiqueta-espaco);
+		border-radius: var(--radius-pilula);
+		background: var(--projeto-etiqueta-fundo);
+		color: var(--projeto-etiqueta-texto);
+		font-size: var(--text-pequeno);
+		font-weight: var(--peso-medio);
+		line-height: var(--leading-pequeno);
+		white-space: nowrap;
+	}
+
+	.projeto__link {
+		color: var(--link-cor);
+		text-decoration: none;
+	}
+
+	/* O link e o botão "Ver resumo" se esticam pelo cartão inteiro. */
+	.projeto__link::before,
+	.projeto__virar::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: var(--projeto-raio);
+	}
+
+	.projeto__link:focus-visible,
+	.projeto__virar:focus-visible {
+		outline: none;
+	}
+
+	.projeto__link:focus-visible::before,
+	.projeto__virar:focus-visible::before {
+		outline: var(--focus-espessura) solid var(--focus-cor);
+		outline-offset: var(--focus-afastamento);
+	}
+
+	.projeto__chamada {
+		max-inline-size: 40ch;
+		color: var(--projeto-texto-secundario);
+	}
+
+	/* Espaço livre do cartão que vira: o símbolo da marca, centralizado, em cinza. */
+	.projeto__simbolo {
+		flex: 1;
+		display: grid;
+		place-items: center;
+		min-block-size: var(--projeto-simbolo-area);
+		color: var(--projeto-simbolo-cor);
+	}
+
+	/* Cartão confidencial (versão A, escolhida pela Taiane): etiqueta no topo, à esquerda, com
+	   16 px até o título; símbolo grande no espaço do meio. */
+	.projeto__texto > .projeto__etiqueta {
+		margin-block-end: var(--space-pequeno);
+	}
+
+	.projeto__simbolo .simbolo__camada :global(svg) {
+		block-size: var(--projeto-simbolo-grande);
+	}
+
+	/* As duas camadas do símbolo no mesmo lugar. */
+	.simbolo__camada {
+		grid-area: 1 / 1;
+		display: grid;
+	}
+
+	.simbolo__camada :global(svg) {
+		inline-size: auto;
+		block-size: var(--projeto-simbolo);
+	}
+
+	/* Camada cinza: todas as formas na mesma cor, sem as cores da marca. */
+	.simbolo__cinza :global(*) {
+		fill: currentColor;
+	}
+
+	/* Colado na base do cartão. */
+	.projeto__meta {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-medio);
+		margin-block-start: auto;
+		color: var(--projeto-texto-secundario);
+	}
+
+	.projeto__frente :global(.seta) {
+		color: var(--projeto-texto);
+	}
+
+	/* "Ver resumo": no lugar da seta, com a altura mínima de toque. */
+	.projeto__virar {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-pequeno);
+		min-block-size: var(--alvo-toque);
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--projeto-texto);
+		cursor: pointer;
+		user-select: none;
+		-webkit-user-select: none;
+	}
+
+	.projeto__icone {
+		inline-size: var(--seta-tamanho);
+		block-size: var(--seta-tamanho);
+		transition: transform var(--motion-duration-base) var(--motion-ease-out);
+	}
+
+	/* ---------- verso ---------- */
+	.projeto__verso {
+		background: var(--projeto-verso-fundo);
+		color: var(--projeto-verso-texto);
+		transform: rotateY(180deg);
+		--link-cor: var(--projeto-verso-texto);
+		--focus-cor: var(--projeto-verso-focus-cor);
+	}
+
+	/* O foco no verso inteiro (depois do giro) fica do lado de fora, na cor do texto da página. */
+	.projeto__verso:focus-visible {
+		outline-color: var(--color-texto);
+	}
+
+	.projeto__subtitulo,
+	.projeto__rotulo {
+		color: var(--projeto-verso-texto-secundario);
+	}
+
+	/* 24 px depois do subtítulo (o gap da face); 16 px entre os blocos. */
+	.projeto__blocos {
+		display: grid;
+		gap: var(--space-medio);
+	}
+
+	.projeto__blocos dd {
+		margin: 0;
+	}
+
+	/* Uma linha só: o convite à esquerda, "Voltar" à direita, colados na base.
+	   Se o convite não couber, ele quebra dentro do próprio lado; "Voltar" fica na última linha. */
+	.projeto__verso-rodape {
+		display: flex;
+		align-items: last baseline;
+		justify-content: space-between;
+		gap: var(--space-medio);
+		margin-block-start: auto;
+	}
+
+	/* No verso, a seta fica colada ao texto (a área de toque segue com 40 px de altura),
+	   para o convite e "Voltar" caberem na mesma linha. */
+	.projeto__verso :global(.seta) {
+		inline-size: var(--seta-tamanho);
+		margin-inline-start: var(--space-minimo);
+		color: inherit;
+	}
+
+	.projeto__voltar {
+		flex: none;
+		min-block-size: var(--alvo-toque);
+		padding-inline: var(--space-pequeno);
+		margin-inline-end: calc(-1 * var(--space-pequeno));
+		border: 0;
+		border-radius: var(--radius-medio);
+		background: transparent;
+		color: inherit;
+		cursor: pointer;
+		text-decoration: underline;
+		text-decoration-thickness: var(--link-sublinhado);
+		text-underline-offset: var(--link-sublinhado-afastamento);
+		user-select: none;
+		-webkit-user-select: none;
+	}
+
+	/* ---------- resposta ao ponteiro ---------- */
+	/* O símbolo ganha a cor da marca por cima do cinza, só com opacity (200 ms, ease-out). */
+	.simbolo__marca {
+		opacity: 0;
+		transition: opacity var(--motion-duration-rapida) var(--motion-ease-out);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.projeto:hover :global(.seta__icone),
+		.projeto:hover .projeto__icone {
+			transform: translateX(var(--space-minimo));
+		}
+
+		.projeto:hover .simbolo__marca {
+			opacity: 1;
+		}
+	}
+
+	.projeto:has(.projeto__link:focus-visible) :global(.seta__icone),
+	.projeto:has(.projeto__virar:focus-visible) .projeto__icone {
+		transform: translateX(var(--space-minimo));
+	}
+
+	/* Movimento reduzido: sem giro; frente e verso trocam por esmaecimento curto. */
+	@media (prefers-reduced-motion: reduce) {
+		.projeto__giro,
+		.projeto[data-virado] .projeto__giro,
+		.projeto__verso {
+			transform: none;
+		}
+
+		.projeto__face {
+			transition: opacity var(--motion-duration-esmaecer) var(--motion-ease-out);
+		}
+
+		.projeto__verso,
+		.projeto[data-virado] .projeto__frente {
+			opacity: 0;
+		}
+
+		.projeto[data-virado] .projeto__verso {
+			opacity: 1;
+		}
+	}
+
+	/* Tablet: os três iguais, um embaixo do outro, na horizontal. grid-auto-rows: 1fr deixa
+	   todas as linhas com a altura da mais alta. */
+	@media (min-width: 768px) and (max-width: 1199px) {
+		.projetos {
+			grid-auto-rows: 1fr;
+		}
+
+		.projeto__frente {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-template-rows: auto 1fr auto;
+			column-gap: var(--grade-espaco);
+		}
+
+		.projeto__visual {
+			grid-column: 1;
+			grid-row: 1 / -1;
+		}
+
+		/* A área branca ocupa a coluna inteira; a imagem fica inteira dentro dela. */
+		.projeto__imagem {
+			aspect-ratio: auto;
+		}
+
+		.projeto__texto,
+		.projeto__meta {
+			grid-column: 2;
+		}
+
+		.projeto__meta {
+			grid-row: 3;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.projeto__chamada {
+			max-inline-size: none;
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.projetos {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+</style>

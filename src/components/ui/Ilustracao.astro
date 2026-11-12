@@ -1,0 +1,98 @@
+---
+/**
+ * Ilustração neutra de exemplo, no lugar de uma imagem de case que ainda não existe.
+ * Só formas nos cinzas do site, sem texto: lembra uma tela de produto sem mostrar nada real.
+ * É decorativa (o leitor de tela não a lê) e fica marcada com data-rascunho, para sair antes
+ * da 1.0.0 (lista em docs/rascunhos.md).
+ * Variantes: 1 painel com cartões, 2 lista com etapas, 3 mapa de fluxo.
+ * Nos cases sob sigilo, que não podem mostrar telas, ela é a imagem definitiva do cartão:
+ * nesse caso, `rascunho={false}`.
+ */
+interface Props {
+	variante?: 1 | 2 | 3;
+	class?: string;
+	rascunho?: boolean;
+}
+
+const { variante = 1, class: classe, rascunho = true } = Astro.props;
+---
+
+<svg
+	class:list={["ilustracao", classe]}
+	viewBox="0 0 320 180"
+	preserveAspectRatio="xMidYMid slice"
+	aria-hidden="true"
+	focusable="false"
+	data-rascunho={rascunho ? "" : undefined}
+>
+	<rect class="ilustracao__fundo" width="320" height="180"></rect>
+	{variante === 1 && (
+		<g>
+			<rect class="ilustracao__forma-clara" x="24" y="24" width="72" height="132" rx="8" />
+			<rect class="ilustracao__forma-media" x="36" y="40" width="48" height="6" rx="3" />
+			<rect class="ilustracao__forma-media" x="36" y="56" width="36" height="6" rx="3" />
+			<rect class="ilustracao__forma-media" x="36" y="72" width="42" height="6" rx="3" />
+			<rect class="ilustracao__forma-clara" x="108" y="24" width="188" height="64" rx="8" />
+			<rect class="ilustracao__forma-escura" x="124" y="40" width="64" height="8" rx="4" />
+			<rect class="ilustracao__forma-media" x="124" y="58" width="120" height="6" rx="3" />
+			<rect class="ilustracao__forma-clara" x="108" y="100" width="88" height="56" rx="8" />
+			<rect class="ilustracao__forma-clara" x="208" y="100" width="88" height="56" rx="8" />
+			<circle class="ilustracao__forma-media" cx="132" cy="124" r="10" />
+			<circle class="ilustracao__forma-escura" cx="232" cy="124" r="10" />
+		</g>
+	)}
+	{variante === 2 && (
+		<g>
+			<rect class="ilustracao__forma-clara" x="48" y="20" width="224" height="140" rx="8" />
+			<circle class="ilustracao__forma-escura" cx="76" cy="48" r="8" />
+			<rect class="ilustracao__forma-media" x="94" y="44" width="120" height="8" rx="4" />
+			<circle class="ilustracao__forma-media" cx="76" cy="80" r="8" />
+			<rect class="ilustracao__forma-media" x="94" y="76" width="96" height="8" rx="4" />
+			<circle class="ilustracao__forma-media" cx="76" cy="112" r="8" />
+			<rect class="ilustracao__forma-media" x="94" y="108" width="140" height="8" rx="4" />
+			<rect class="ilustracao__forma-escura" x="200" y="132" width="56" height="16" rx="8" />
+		</g>
+	)}
+	{variante === 3 && (
+		<g>
+			<path class="ilustracao__linha" d="M68 90 H132 M188 90 H252 M160 62 V36 M160 118 V144" />
+			<rect class="ilustracao__forma-clara" x="20" y="66" width="48" height="48" rx="8" />
+			<rect class="ilustracao__forma-escura" x="132" y="62" width="56" height="56" rx="8" />
+			<rect class="ilustracao__forma-clara" x="252" y="66" width="48" height="48" rx="8" />
+			<rect class="ilustracao__forma-clara" x="136" y="8" width="48" height="28" rx="8" />
+			<rect class="ilustracao__forma-clara" x="136" y="144" width="48" height="28" rx="8" />
+			<circle class="ilustracao__forma-media" cx="44" cy="90" r="8" />
+			<circle class="ilustracao__forma-media" cx="276" cy="90" r="8" />
+		</g>
+	)}
+</svg>
+
+<style>
+	.ilustracao {
+		display: block;
+		inline-size: 100%;
+		block-size: 100%;
+	}
+
+	.ilustracao__fundo {
+		fill: var(--ilustracao-fundo);
+	}
+
+	.ilustracao__forma-clara {
+		fill: var(--ilustracao-forma-clara);
+	}
+
+	.ilustracao__forma-media {
+		fill: var(--ilustracao-forma-media);
+	}
+
+	.ilustracao__forma-escura {
+		fill: var(--ilustracao-forma-escura);
+	}
+
+	.ilustracao__linha {
+		fill: none;
+		stroke: var(--ilustracao-forma-media);
+		stroke-width: 2;
+	}
+</style>

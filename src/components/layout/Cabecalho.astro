@@ -1,0 +1,526 @@
+---
+/**
+ * Cabeçalho de todas as páginas: fixo no topo, translúcido, sem linha embaixo.
+ * Esquerda: o nome leva ao início ("Tai" no celular). Centro: a ilha. Direita: o modelo de
+ * trabalho com o ponto verde ("Remoto ou híbrido"; no celular, só o ponto). O leitor
+ * de tela lê a frase completa: "Disponível para trabalho remoto ou híbrido".
+ *
+ * A ilha é uma pílula de vidro escuro (preto translúcido com desfoque do que está atrás) com o
+ * número e o nome da seção atual e um ponto branco. Ao clicar, ela cresce até o painel (morph:
+ * o recorte se abre a partir da pílula, com uma mola leve); o conteúdo antigo some com um
+ * desfoque leve enquanto o novo entra. Ao fechar, encolhe sem mola.
+ * Painel: "Seções" e "Fechar" no topo e a lista numerada; o ponto marca a seção atual.
+ *
+ * Por dentro: o painel é quem desenha a pílula. Fechado, ele fica recortado no tamanho exato do
+ * botão (medido pelo script), e o botão transparente fica por cima. Assim a pílula e o painel são
+ * a mesma peça, e a troca de largura entre "Início" e "Projetos" também anda suave.
+ *
+ * Teclado: abre sem animação e leva o foco à seção atual; setas, Home e End andam pela lista;
+ * Esc e "Fechar" fecham e devolvem o foco ao botão. Nos cases, a lista traz as seções do case.
+ */
+import { perfil } from "../../dados/perfil";
+import Disponibilidade from "../ui/Disponibilidade.astro";
+
+export interface LinkDoCabecalho {
+	texto: string;
+	href: string;
+}
+
+interface Props {
+	links?: LinkDoCabecalho[];
+	/** Nome da navegação para o leitor de tela. */
+	rotulo?: string;
+	/** O primeiro item da lista: o topo da página. */
+	inicio?: LinkDoCabecalho;
+}
+
+const {
+	links = [
+		{ texto: "Projetos", href: "/#projetos" },
+		{ texto: "Artigos", href: "/#artigos" },
+		{ texto: "Sobre", href: "/#sobre" },
+		{ texto: "Skills", href: "/#skills" },
+	],
+	rotulo = "Principal",
+	inicio = { texto: "Início", href: "/#inicio" },
+} = Astro.props;
+
+const numero = (i: number) => String(i + 1).padStart(2, "0");
+// No celular aparece só o apelido; o resto do nome continua lá para o leitor de tela,
+// e o texto visível faz parte do nome lido (critério 2.5.3).
+const [curto, resto] = perfil.nome.startsWith(perfil.apelido)
+	? [perfil.apelido, perfil.nome.slice(perfil.apelido.length)]
+	: [perfil.nome, ""];
+const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) }));
+---
+
+<header class="cabecalho">
+	<div class="cabecalho__barra envoltorio">
+		<!-- Sem espaço entre o apelido e o resto: "Tai" + "ane Cris Campos". -->
+		<!-- prettier-ignore -->
+		<a class="link cabecalho__nome" href="/">{curto}<span class="cabecalho__nome-resto">{resto}</span><span class="cabecalho__nome-oculto">, início</span></a>
+
+		<nav class="ilha" aria-label={rotulo} data-ilha>
+			<button class="ilha__botao" type="button" aria-expanded="false" aria-controls="ilha-painel">
+				<span class="ilha__conteudo">
+					<span class="ilha__numero" aria-hidden="true" data-numero>
+						{itens[0].numero}
+					</span>
+					<span class="so-leitor-de-tela">Menu, seção atual: </span>
+					<span data-atual>{itens[0].texto}</span>
+					<span class="ilha__ponto" aria-hidden="true"></span>
+				</span>
+			</button>
+
+			<div class="ilha__painel" id="ilha-painel">
+				<div class="ilha__interno">
+					<div class="ilha__topo">
+						<p class="ilha__titulo" aria-hidden="true">
+							Seções
+						</p>
+						<button class="ilha__fechar" type="button" data-fechar>
+							Fechar
+						</button>
+					</div>
+					<ul class="ilha__links" role="list">
+						{itens.map((item) => (
+							<li>
+								<a class="ilha__link" href={item.href} data-numero={item.numero}>
+									<span class="ilha__numero" aria-hidden="true">
+										{item.numero}
+									</span>
+									{item.texto}
+									<span class="ilha__ponto" aria-hidden="true" />
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div class="cabecalho__status">
+			<Disponibilidade
+				texto={perfil.modalidade}
+				soPontoNoCelular
+				rotulo={perfil.modalidadeCompleta}
+			/>
+		</div>
+	</div>
+</header>
+
+<script>
+	const ilha = document.querySelector<HTMLElement>("[data-ilha]");
+	const botao = ilha?.querySelector<HTMLButtonElement>(".ilha__botao");
+	const painel = ilha?.querySelector<HTMLElement>(".ilha__painel");
+	const atual = ilha?.querySelector<HTMLElement>("[data-atual]");
+	const numeroAtual = ilha?.querySelector<HTMLElement>("[data-numero]");
+	const fecharBotao = ilha?.querySelector<HTMLButtonElement>("[data-fechar]");
+
+	if (ilha && botao && painel && atual && numeroAtual && fecharBotao) {
+		const links = [...painel.querySelectorAll<HTMLAnchorElement>(".ilha__link")];
+		const aberta = () => ilha.hasAttribute("data-aberta");
+
+		// Fechado, o painel fica recortado no tamanho e no lugar exatos do botão.
+		const medirRecorte = () => {
+			const topo = botao.offsetTop - painel.offsetTop;
+			const esquerda = botao.offsetLeft - painel.offsetLeft;
+			const direita = painel.offsetWidth - esquerda - botao.offsetWidth;
+			const baixo = painel.offsetHeight - topo - botao.offsetHeight;
+			painel.style.setProperty(
+				"--ilha-recorte",
+				`inset(${topo}px ${direita}px ${baixo}px ${esquerda}px round ${botao.offsetHeight / 2}px)`,
+			);
+		};
+		new ResizeObserver(medirRecorte).observe(botao);
+		addEventListener("resize", medirRecorte);
+		medirRecorte();
+		ilha.setAttribute("data-pronta", "");
+
+		const linkAtual = () => links.find((l) => l.hasAttribute("aria-current")) ?? links[0];
+
+		const abrir = (instantaneo: boolean) => {
+			ilha.toggleAttribute("data-instantaneo", instantaneo);
+			ilha.setAttribute("data-aberta", "");
+			botao.setAttribute("aria-expanded", "true");
+			// O botão some dentro do painel aberto: o foco vai para a seção atual.
+			linkAtual().focus({ preventScroll: true });
+		};
+
+		const fechar = (instantaneo: boolean, devolverFoco = false) => {
+			if (!aberta()) return;
+			ilha.toggleAttribute("data-instantaneo", instantaneo);
+			ilha.removeAttribute("data-aberta");
+			botao.setAttribute("aria-expanded", "false");
+			if (devolverFoco) botao.focus({ preventScroll: true });
+		};
+
+		// detail 0: o clique veio do teclado (Enter ou espaço), então sem animação.
+		botao.addEventListener("click", (evento) => {
+			if (aberta()) fechar(evento.detail === 0, true);
+			else abrir(evento.detail === 0);
+		});
+
+		fecharBotao.addEventListener("click", (evento) => fechar(evento.detail === 0, true));
+
+		painel.addEventListener("click", (evento) => {
+			if ((evento.target as HTMLElement).closest("a")) fechar(false);
+		});
+
+		// Setas, Home e End andam pela lista, sem sair dela.
+		painel.addEventListener("keydown", (evento) => {
+			const i = links.indexOf(document.activeElement as HTMLAnchorElement);
+			const alvo = {
+				ArrowDown: links[(i + 1) % links.length],
+				ArrowUp: links[(i - 1 + links.length) % links.length],
+				Home: links[0],
+				End: links[links.length - 1],
+			}[evento.key];
+			if (!alvo) return;
+			evento.preventDefault();
+			alvo.focus({ preventScroll: true });
+		});
+
+		document.addEventListener("keydown", (evento) => {
+			if (evento.key === "Escape" && aberta()) fechar(true, true);
+		});
+
+		document.addEventListener("pointerdown", (evento) => {
+			if (aberta() && !ilha.contains(evento.target as Node)) fechar(false);
+		});
+
+		ilha.addEventListener("focusout", (evento) => {
+			const destino = evento.relatedTarget as Node | null;
+			if (aberta() && destino && !ilha.contains(destino)) fechar(true);
+		});
+
+		// Seção atual: a que cruza a faixa do meio da tela. Quando o link aponta para o título
+		// de uma seção (case), observa a seção inteira: no desktop o título fica oculto (1 px).
+		const secoes = links
+			.map((link) => {
+				const id = decodeURIComponent(link.hash.slice(1));
+				const alvo = id ? document.getElementById(id) : null;
+				return { link, alvo: alvo?.closest<HTMLElement>("section") ?? alvo };
+			})
+			.filter((s): s is { link: HTMLAnchorElement; alvo: HTMLElement } => s.alvo !== null);
+
+		const marcar = (link: HTMLAnchorElement) => {
+			atual.textContent = link.textContent?.replace(link.dataset.numero ?? "", "").trim() ?? "";
+			numeroAtual.textContent = link.dataset.numero ?? "";
+			for (const l of links) {
+				if (l === link) l.setAttribute("aria-current", "location");
+				else l.removeAttribute("aria-current");
+			}
+		};
+
+		if (secoes.length > 0) {
+			// Seção atual: a última cujo começo já passou da linha a 45% da altura da janela (a mesma
+			// do sumário do case). O observador só avisa quando alguma seção cruza a faixa de cima;
+			// a conta mede onde cada uma está agora. Assim uma seção curta, que nem chega à linha,
+			// também é marcada (rodada 1f).
+			const observador = new IntersectionObserver(
+				() => {
+					const linha = innerHeight * 0.45;
+					const ativa = secoes.filter((s) => s.alvo.getBoundingClientRect().top <= linha).at(-1);
+					marcar(ativa ? ativa.link : links[0]);
+				},
+				{ rootMargin: "0px 0px -55% 0px" },
+			);
+			for (const s of secoes) observador.observe(s.alvo);
+		}
+	}
+</script>
+
+<style>
+	/* O desfoque do cabeçalho fica numa camada à parte: se ficasse no próprio cabeçalho, o vidro
+	   da ilha só desfocaria o cabeçalho, e não a página que passa por baixo do painel aberto. */
+	.cabecalho {
+		position: sticky;
+		inset-block-start: 0;
+		z-index: var(--cabecalho-camada);
+	}
+
+	/* A faixa vai 16 px abaixo da ilha (rodada 1f): o conteúdo nunca parece encostado nela. */
+	.cabecalho::before {
+		content: "";
+		position: absolute;
+		inset: 0 0 calc(-1 * var(--cabecalho-folga));
+		z-index: -1;
+		background: var(--cabecalho-fundo);
+		-webkit-backdrop-filter: var(--cabecalho-desfoque);
+		backdrop-filter: var(--cabecalho-desfoque);
+	}
+
+	.cabecalho__barra {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+		align-items: center;
+		gap: var(--space-medio);
+		block-size: var(--cabecalho-altura);
+		/* A pílula fica a 12 px do topo; nome e status alinham pelo centro dela. */
+		padding-block-start: var(--ilha-topo);
+	}
+
+	.cabecalho__nome {
+		justify-self: start;
+		white-space: nowrap;
+	}
+
+	/* No celular, o resto do nome fica sem tamanho, mas continua em linha com o apelido:
+	   assim o nome lido é "Taiane Cris Campos", sem espaço no meio. */
+	.cabecalho__nome-resto,
+	.cabecalho__nome-oculto {
+		font-size: 0;
+	}
+
+	/* O modelo de trabalho fica numa linha só, na ponta direita. */
+	.cabecalho__status {
+		justify-self: end;
+		white-space: nowrap;
+		font-size: var(--cabecalho-status-tamanho);
+		line-height: var(--leading-pequeno);
+	}
+
+	/* ---------- ilha ---------- */
+	.ilha {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		--ilha-painel-largura: min(var(--ilha-largura-aberta), 100vw - 2 * var(--space-margem-pagina));
+	}
+
+	.ilha__botao {
+		position: relative;
+		z-index: 1;
+		display: inline-flex;
+		align-items: center;
+		block-size: var(--ilha-altura);
+		padding-inline: var(--ilha-espaco);
+		border: 0;
+		border-radius: var(--radius-pilula);
+		background: transparent;
+		color: var(--ilha-texto);
+		font-weight: var(--peso-titulo);
+		white-space: nowrap;
+		cursor: pointer;
+		user-select: none;
+		-webkit-user-select: none;
+		--focus-cor: var(--color-texto);
+		transition: transform var(--motion-duration-pressionar) var(--motion-ease-out);
+	}
+
+	/* Sem script, o botão desenha a própria pílula e o painel não aparece. */
+	.ilha:not([data-pronta]) .ilha__botao {
+		background: var(--ilha-fundo);
+	}
+
+	.ilha:not([data-pronta]) .ilha__painel {
+		display: none;
+	}
+
+	.ilha__conteudo {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-pequeno);
+		transition:
+			opacity var(--motion-duration-rapida) var(--motion-ease-out),
+			filter var(--motion-duration-rapida) var(--motion-ease-out);
+	}
+
+	.ilha__conteudo .ilha__ponto {
+		margin-inline-start: var(--space-pequeno);
+	}
+
+	.ilha__numero {
+		color: var(--ilha-texto-secundario);
+		font-size: var(--text-pequeno);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.ilha__ponto {
+		flex: none;
+		inline-size: var(--ilha-ponto);
+		block-size: var(--ilha-ponto);
+		border-radius: var(--radius-pilula);
+		background: currentColor;
+	}
+
+	/* A pílula encolhe um pouco no toque: o painel (que a desenha) e o conteúdo juntos. */
+	.ilha:has(.ilha__botao:active) .ilha__painel,
+	.ilha__botao:active {
+		transform: scale(var(--motion-escala-pressionado));
+	}
+
+	/*
+	 * Painel: fechado, fica recortado no formato da pílula. Ao abrir, o recorte se abre até o
+	 * painel inteiro, com uma mola leve no tamanho. Ao fechar, volta mais rápido e sem mola.
+	 */
+	.ilha__painel {
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 50%;
+		margin-inline-start: calc(var(--ilha-painel-largura) / -2);
+		inline-size: var(--ilha-painel-largura);
+		padding: var(--ilha-painel-espaco-bloco) var(--ilha-painel-espaco-inline);
+		border-radius: var(--ilha-raio-aberta);
+		background: var(--ilha-fundo);
+		-webkit-backdrop-filter: var(--ilha-desfoque);
+		backdrop-filter: var(--ilha-desfoque);
+		color: var(--ilha-texto);
+		clip-path: var(--ilha-recorte);
+		transform-origin: 50% calc(var(--ilha-altura) / 2);
+		transition:
+			clip-path var(--motion-duration-rapida) var(--motion-ease-out),
+			transform var(--motion-duration-pressionar) var(--motion-ease-out);
+	}
+
+	.ilha__interno {
+		visibility: hidden;
+		opacity: 0;
+		filter: var(--motion-desfoque-troca);
+		transition:
+			opacity var(--motion-duration-rapida) var(--motion-ease-out),
+			filter var(--motion-duration-rapida) var(--motion-ease-out),
+			visibility 0s linear var(--motion-duration-rapida);
+	}
+
+	.ilha__topo {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-block-end: var(--ilha-painel-intervalo);
+		color: var(--ilha-texto-secundario);
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+	}
+
+	/* Área de toque maior que o texto, sem mudar o alinhamento nem a altura da linha. */
+	.ilha__fechar {
+		margin: calc(-1 * var(--space-pequeno));
+		padding: var(--space-pequeno);
+		border: 0;
+		border-radius: var(--radius-medio);
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+		user-select: none;
+		-webkit-user-select: none;
+		--focus-cor: var(--ilha-focus-cor);
+	}
+
+	.ilha__links {
+		padding: 0;
+		list-style: none;
+	}
+
+	.ilha__link {
+		display: flex;
+		align-items: center;
+		gap: var(--space-medio);
+		block-size: var(--ilha-linha-altura);
+		color: var(--ilha-texto);
+		font-size: var(--text-rotulo);
+		font-weight: var(--peso-titulo);
+		letter-spacing: var(--tracking-texto);
+		text-decoration: none;
+		--focus-cor: var(--ilha-focus-cor);
+	}
+
+	.ilha__link .ilha__numero {
+		min-inline-size: 1.5em;
+	}
+
+	.ilha__link .ilha__ponto {
+		margin-inline-start: auto;
+		visibility: hidden;
+	}
+
+	.ilha__link[aria-current] .ilha__ponto {
+		visibility: visible;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.ilha__link:hover {
+			color: var(--ilha-texto-secundario);
+		}
+
+		.ilha__fechar:hover {
+			color: var(--ilha-texto);
+		}
+	}
+
+	/* ---------- aberta ---------- */
+	.ilha[data-aberta] .ilha__botao {
+		visibility: hidden;
+		pointer-events: none;
+		transition: visibility 0s linear var(--motion-duration-rapida);
+	}
+
+	.ilha[data-aberta] .ilha__conteudo {
+		opacity: 0;
+		filter: var(--motion-desfoque-troca);
+	}
+
+	.ilha[data-aberta] .ilha__painel {
+		clip-path: inset(0 round var(--ilha-raio-aberta));
+		transition: clip-path var(--motion-duration-abrir) var(--motion-ease-out);
+		animation: ilha-mola var(--motion-duration-abrir) var(--motion-ease-mola);
+	}
+
+	.ilha[data-aberta] .ilha__interno {
+		visibility: visible;
+		opacity: 1;
+		filter: none;
+		transition:
+			opacity var(--motion-duration-abrir) var(--motion-ease-out)
+				calc(var(--motion-duration-rapida) / 4),
+			filter var(--motion-duration-abrir) var(--motion-ease-out)
+				calc(var(--motion-duration-rapida) / 4),
+			visibility 0s;
+	}
+
+	@keyframes ilha-mola {
+		from {
+			transform: scale(var(--motion-escala-pressionado));
+		}
+	}
+
+	/* Teclado: nada de animação, nem para abrir nem para fechar. */
+	.ilha[data-instantaneo] .ilha__painel,
+	.ilha[data-instantaneo] .ilha__interno,
+	.ilha[data-instantaneo] .ilha__conteudo,
+	.ilha[data-instantaneo] .ilha__botao {
+		transition-duration: 0s;
+		transition-delay: 0s;
+		animation: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ilha__painel,
+		.ilha__interno,
+		.ilha__conteudo {
+			filter: none !important;
+			animation: none !important;
+		}
+	}
+
+	/* Telas bem estreitas (320 px): sem o número na pílula fechada, nome, ilha e status não se
+	   encostam. O número é decorativo e continua no painel aberto. */
+	@media (max-width: 359px) {
+		.ilha__conteudo .ilha__numero {
+			display: none;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.cabecalho__nome-resto {
+			font-size: inherit;
+		}
+
+		.cabecalho__status {
+			font-size: inherit;
+			line-height: inherit;
+		}
+	}
+</style>

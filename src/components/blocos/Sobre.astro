@@ -1,0 +1,228 @@
+---
+/**
+ * Sobre (rodada 1f): Resumo, Experiência profissional e Formação acadêmica, com títulos em
+ * rótulo (16/24, cor secundária).
+ * - 1200 px ou mais: três colunas da margem esquerda à direita. Grade 1fr auto 1fr: Resumo e
+ *   Formação com a mesma largura; a Experiência do tamanho do próprio conteúdo. Os dois vãos são
+ *   iguais e crescem com a tela, de 80 a 120 px.
+ * - 768 a 1199 px: três colunas com vãos de 80 px deixariam cada uma com menos de 200 px em
+ *   768 px. Então o Resumo fica em cima, e Experiência e Formação ficam lado a lado embaixo, com
+ *   o mesmo vão.
+ * - Celular: uma coluna.
+ * O texto do Resumo tem no máximo 60 caracteres por linha.
+ * "Currículo em PDF" fica logo abaixo do Resumo; "Mais informações no LinkedIn" fica na coluna
+ * da Formação, na mesma linha do currículo quando as colunas estão lado a lado.
+ * Curso não concluído: "não concluída" em itálico, na cor secundária, ao lado do ano.
+ * O Resumo é o texto de antes da rodada 1d, a pedido da Taiane.
+ */
+import { perfil } from "../../dados/perfil";
+import { experienciasDoSobre, formacaoDoSobre } from "../../dados/trajetoria";
+import LinkComSeta from "../ui/LinkComSeta.astro";
+
+/** "2025–2026" vira duas datas, e o leitor de tela lê "2025 até 2026". */
+const partes = (periodo: string) => periodo.split("–");
+---
+
+<section class="secao envoltorio" id="sobre" aria-labelledby="sobre-titulo">
+	<h2 id="sobre-titulo" class="secao__rotulo">
+		Sobre
+	</h2>
+
+	<div class="sobre">
+		<div class="sobre__coluna">
+			<h3 class="sobre__grupo-titulo">Resumo</h3>
+			<div class="sobre__resumo">
+				<p>
+					Sou designer de produto há mais de 10 anos, na ponte entre estratégia de negócio,
+					experiência do usuário e engenharia. Comecei na direção de arte, passei por sistemas
+					regulatórios e plataformas SaaS e estruturei design systems em escala corporativa.
+				</p>
+				<p>
+					Hoje atuo como Design Engineer: uso front-end e IA generativa para encurtar o caminho
+					entre hipótese, protótipo e código funcional.
+				</p>
+			</div>
+		</div>
+
+		<div class="sobre__link sobre__link--curriculo">
+			{perfil.curriculo.disponivel ? (
+				<LinkComSeta href={perfil.curriculo.href} texto="Currículo em PDF" externo />
+			) : (
+				<p class="sobre__secundario">Currículo em PDF, em breve</p>
+			)}
+		</div>
+
+		<div class="sobre__coluna sobre__coluna--experiencia">
+			<h3 class="sobre__grupo-titulo">Experiência profissional</h3>
+			<ol class="sobre__lista" role="list">
+				{experienciasDoSobre.map((item) => (
+					<li>
+						<p class="sobre__forte">{item.empresa}</p>
+						<p>{item.cargo}</p>
+						<p class="sobre__secundario">
+							{partes(item.periodo).map((ano, i) => (
+								<>
+									{i > 0 && (
+										<>
+											<span aria-hidden="true">–</span>
+											<span class="so-leitor-de-tela">até</span>
+										</>
+									)}
+									<time datetime={ano}>{ano}</time>
+								</>
+							))}
+						</p>
+					</li>
+				))}
+			</ol>
+		</div>
+
+		<div class="sobre__coluna sobre__coluna--formacao">
+			<h3 class="sobre__grupo-titulo">Formação acadêmica</h3>
+			<ol class="sobre__lista" role="list">
+				{formacaoDoSobre.map((item) => (
+					<li>
+						<p class="sobre__forte">{item.instituicao}</p>
+						<p>{item.curso}</p>
+						<p class="sobre__secundario sobre__ano">
+							{item.periodo}
+							{!item.concluida && <span class="sobre__inativo">não concluída</span>}
+						</p>
+					</li>
+				))}
+			</ol>
+		</div>
+
+		<div class="sobre__link sobre__link--linkedin">
+			<LinkComSeta href={perfil.linkedin} texto="Mais informações no LinkedIn" externo />
+		</div>
+	</div>
+</section>
+
+<style>
+	/* Celular: uma coluna, na ordem do HTML: Resumo, Currículo, Experiência, Formação, LinkedIn. */
+	.sobre {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--space-bloco);
+	}
+
+	.sobre__coluna {
+		display: grid;
+		align-content: start;
+		justify-items: start;
+		gap: var(--space-grande);
+	}
+
+	/* Rótulo: 16/24, cor secundária. */
+	.sobre__grupo-titulo {
+		font-weight: var(--peso-corpo);
+		line-height: var(--leading-corpo);
+		color: var(--color-texto-secundario);
+	}
+
+	.sobre__resumo {
+		display: grid;
+		gap: var(--space-medio);
+		max-inline-size: var(--sobre-resumo-linha);
+	}
+
+	/* "Mais informações no LinkedIn" na margem direita da página, como o link do LinkedIn do hero. */
+	.sobre__link--linkedin {
+		justify-self: end;
+	}
+
+	/* O link do Currículo fica logo abaixo do texto do Resumo. */
+	.sobre__link--curriculo {
+		margin-block-start: calc(var(--space-grande) - var(--space-bloco));
+	}
+
+	.sobre__lista {
+		display: grid;
+		gap: var(--space-medio);
+		padding: 0;
+		list-style: none;
+	}
+
+	.sobre__forte {
+		font-weight: var(--peso-forte);
+	}
+
+	.sobre__secundario {
+		color: var(--color-texto-secundario);
+	}
+
+	.sobre__ano {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-pequeno);
+	}
+
+	/* "não concluída": só texto, em itálico, na cor secundária (inativo), ao lado do ano.
+	   #4d575f sobre o fundo da página: 7,07:1. */
+	.sobre__inativo {
+		font-style: italic;
+		color: var(--color-texto-secundario);
+	}
+
+	/* Tablet: Resumo e currículo em cima; Experiência e Formação lado a lado embaixo. */
+	@media (min-width: 768px) {
+		.sobre {
+			grid-template-columns: auto minmax(0, 1fr);
+			grid-template-areas:
+				"resumo resumo"
+				"curriculo curriculo"
+				"experiencia formacao"
+				"experiencia linkedin";
+			gap: var(--space-grande) var(--sobre-vao);
+		}
+
+		.sobre__coluna:first-child {
+			grid-area: resumo;
+		}
+
+		.sobre__link--curriculo {
+			grid-area: curriculo;
+			margin-block-start: 0;
+		}
+
+		.sobre__coluna--experiencia {
+			grid-area: experiencia;
+		}
+
+		.sobre__coluna--formacao {
+			grid-area: formacao;
+		}
+
+		.sobre__link--linkedin {
+			grid-area: linkedin;
+		}
+
+		/* 40 px entre o currículo e as colunas de baixo, como entre blocos empilhados. */
+		.sobre__coluna--experiencia,
+		.sobre__coluna--formacao {
+			margin-block-start: calc(var(--space-bloco) - var(--space-grande));
+		}
+
+		/* Os dois links começam no topo da própria linha: mesma linha de base. */
+		.sobre__link {
+			align-self: start;
+		}
+	}
+
+	/* Desktop: três colunas, 1fr auto 1fr, com os dois vãos iguais. */
+	@media (min-width: 1200px) {
+		.sobre {
+			grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+			grid-template-areas:
+				"resumo experiencia formacao"
+				"curriculo experiencia linkedin";
+		}
+
+		.sobre__coluna--experiencia,
+		.sobre__coluna--formacao {
+			margin-block-start: 0;
+		}
+	}
+</style>

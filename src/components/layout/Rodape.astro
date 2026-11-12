@@ -1,0 +1,407 @@
+---
+/**
+ * Rodapé de todas as páginas, em fundo preto. Faz também o papel de contato: "Me chama!".
+ * Título; navegação; contato (LinkedIn, designdivergente.blog e o e-mail com botão de copiar);
+ * redes; e, na base, "© ano nome" e a localização com um relógio e a hora local de Ribeirão
+ * Preto, atualizada por um script pequeno, sem serviço de fora.
+ * Todo link externo tem a seta diagonal e avisa o leitor de tela que abre em nova aba.
+ * Copiar: ao clicar, o e-mail vai para a área de transferência e "Copiado" aparece por 2 s,
+ * anunciado ao leitor de tela. Sem script (ou sem área de transferência), o botão não aparece.
+ * Relógio vivo, como o ponto verde: o ponteiro gira devagar e sem parar, e os dois-pontos da hora
+ * piscam a cada segundo. Com redução de movimento, tudo fica parado.
+ * As três colunas têm o mesmo ritmo: cada item ocupa uma linha de 40 px (a área da seta).
+ */
+import { perfil } from "../../dados/perfil";
+import LinkComSeta from "../ui/LinkComSeta.astro";
+
+const ano = new Date().getFullYear();
+
+const navegacao = [
+	{ texto: "Início", href: "/" },
+	{ texto: "Projetos", href: "/#projetos" },
+	{ texto: "Artigos", href: "/#artigos" },
+	{ texto: "Sobre", href: "/#sobre" },
+	{ texto: "Skills", href: "/#skills" },
+];
+
+const redes = [
+	{ texto: "LinkedIn", href: perfil.linkedin },
+	{ texto: "Substack", href: perfil.substack },
+	{ texto: "GitHub", href: perfil.github },
+	{ texto: "designDivergente", href: perfil.designDivergente },
+];
+
+/** "https://designdivergente.blog/" vira "designdivergente.blog". */
+const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+---
+
+<footer class="rodape">
+	<div class="rodape__grade envoltorio">
+		<h2 class="rodape__titulo">Me chama!</h2>
+
+		<nav class="rodape__grupo" aria-labelledby="rodape-navegacao">
+			<h3 id="rodape-navegacao" class="rodape__grupo-titulo">
+				Navegação
+			</h3>
+			<ul class="rodape__lista" role="list">
+				{navegacao.map((item) => (
+					<li>
+						<a class="link" href={item.href}>
+							{item.texto}
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+
+		<div class="rodape__grupo rodape__grupo--contato">
+			<h3 class="rodape__grupo-titulo">Contato</h3>
+			<ul class="rodape__lista" role="list">
+				<li>
+					<LinkComSeta href={perfil.linkedin} texto="LinkedIn" externo />
+				</li>
+				<li>
+					<LinkComSeta
+						href={perfil.designDivergente}
+						texto={semProtocolo(perfil.designDivergente)}
+						externo
+					/>
+				</li>
+				<li class="rodape__email">
+					<a class="link rodape__email-link" href={`mailto:${perfil.email}`}>
+						{perfil.email}
+					</a>
+					<button
+						class="rodape__copiar"
+						type="button"
+						data-copiar={perfil.email}
+						aria-label="Copiar e-mail"
+						hidden
+					>
+						<svg
+							viewBox="0 0 20 20"
+							width="20"
+							height="20"
+							aria-hidden="true"
+							focusable="false"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.5"
+							stroke-linejoin="round"
+						>
+							<rect x="7" y="7" width="9.5" height="9.5" rx="2"></rect>
+							<path d="M13 4.5A1.5 1.5 0 0 0 11.5 3.5h-6a2 2 0 0 0-2 2v6A1.5 1.5 0 0 0 4.5 13"></path>
+						</svg>
+					</button>
+					<span class="rodape__copiado" data-copiado aria-live="polite"></span>
+				</li>
+			</ul>
+		</div>
+
+		<div class="rodape__grupo">
+			<h3 class="rodape__grupo-titulo">Redes</h3>
+			<ul class="rodape__lista" role="list">
+				{redes.map((item) => (
+					<li>
+						<LinkComSeta href={item.href} texto={item.texto} externo />
+					</li>
+				))}
+			</ul>
+		</div>
+
+		<div class="rodape__base">
+			<p>
+				© <time datetime={String(ano)}>{ano}</time> {perfil.nome}
+			</p>
+			<p class="rodape__local">
+				<span>{perfil.localizacao}</span>
+				<span class="rodape__hora" data-hora hidden>
+					<svg
+						class="rodape__relogio"
+						viewBox="0 0 20 20"
+						width="16"
+						height="16"
+						aria-hidden="true"
+						focusable="false"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+						stroke-linecap="round"
+					>
+						<circle cx="10" cy="10" r="7.5"></circle>
+						<path d="M10 10V6.5"></path>
+						<path class="rodape__ponteiro" d="M10 10h3"></path>
+					</svg>
+					<span class="so-leitor-de-tela">Hora local: </span>
+					<time data-hora-valor></time>
+				</span>
+			</p>
+		</div>
+	</div>
+</footer>
+
+<script>
+	// Hora local de Ribeirão Preto, trocada na virada de cada minuto.
+	const caixa = document.querySelector<HTMLElement>("[data-hora]");
+	const valor = caixa?.querySelector<HTMLTimeElement>("[data-hora-valor]");
+	if (caixa && valor) {
+		const formato = new Intl.DateTimeFormat("pt-BR", {
+			timeZone: "America/Sao_Paulo",
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+		const atualizar = () => {
+			const agora = new Date();
+			// "22:40" vira 22, dois-pontos que piscam e 40; o texto continua "22:40".
+			const [horas, minutos] = formato.format(agora).split(":");
+			const doisPontos = document.createElement("span");
+			doisPontos.className = "rodape__dois-pontos";
+			doisPontos.textContent = ":";
+			valor.replaceChildren(horas, doisPontos, minutos);
+			valor.dateTime = agora.toISOString();
+			setTimeout(atualizar, 60_000 - (agora.getTime() % 60_000));
+		};
+		atualizar();
+		caixa.hidden = false;
+	}
+
+	// Copiar o e-mail: "Copiado" por 2 s, também para o leitor de tela.
+	const copiar = document.querySelector<HTMLButtonElement>("[data-copiar]");
+	const aviso = document.querySelector<HTMLElement>("[data-copiado]");
+	if (copiar && aviso && navigator.clipboard) {
+		let espera: ReturnType<typeof setTimeout> | undefined;
+		copiar.hidden = false;
+		copiar.addEventListener("click", async () => {
+			try {
+				await navigator.clipboard.writeText(copiar.dataset.copiar ?? "");
+				aviso.textContent = "Copiado";
+			} catch {
+				aviso.textContent = "Não deu para copiar. Selecione o e-mail.";
+			}
+			clearTimeout(espera);
+			espera = setTimeout(() => (aviso.textContent = ""), 2000);
+		});
+	}
+</script>
+
+<style>
+	.rodape {
+		background: var(--rodape-fundo);
+		color: var(--rodape-texto);
+		--link-cor: var(--rodape-texto);
+		--focus-cor: var(--rodape-focus-cor);
+	}
+
+	.rodape__grade {
+		display: grid;
+		gap: var(--space-bloco) var(--grade-espaco);
+		padding-block: var(--space-secao) var(--space-bloco);
+	}
+
+	.rodape__titulo {
+		font-size: var(--text-entrada);
+		letter-spacing: var(--tracking-entrada);
+		line-height: var(--leading-titulo);
+	}
+
+	/* Rodada 1f: metade do respiro. Título até o primeiro texto: 4 px + 4 px (metade da sobra
+	   da linha de 32 px) = 8 px, antes 16. */
+	.rodape__grupo {
+		display: grid;
+		align-content: start;
+		gap: var(--space-minimo);
+	}
+
+	.rodape__grupo-titulo {
+		font-weight: var(--peso-corpo);
+		line-height: var(--leading-corpo);
+		color: var(--rodape-texto-secundario);
+	}
+
+	/* Mesmo ritmo nas três colunas: cada item numa linha de 32 px, sem espaço extra entre eles.
+	   Entre um texto e outro sobram 8 px (antes 16, rodada 1f). 32 px ainda passa do alvo
+	   mínimo de toque das WCAG 2.2 (24 px). */
+	.rodape__lista {
+		display: grid;
+		justify-items: start;
+		padding: 0;
+		list-style: none;
+	}
+
+	.rodape__lista > li {
+		display: flex;
+		align-items: center;
+		min-block-size: var(--rodape-item-altura);
+	}
+
+	/* A seta acompanha o texto claro do rodapé e a altura da linha. */
+	.rodape :global(.seta) {
+		block-size: var(--rodape-item-altura);
+		color: var(--rodape-texto);
+	}
+
+	.rodape__email {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-minimo) var(--space-pequeno);
+		min-block-size: var(--rodape-item-altura);
+	}
+
+	/* O e-mail pode quebrar em qualquer ponto numa tela estreita. */
+	.rodape__email-link {
+		overflow-wrap: anywhere;
+	}
+
+	.rodape__copiar {
+		display: inline-grid;
+		place-items: center;
+		flex: none;
+		inline-size: var(--alvo-toque);
+		block-size: var(--rodape-item-altura);
+		padding: 0;
+		border: 0;
+		border-radius: var(--radius-pilula);
+		background: transparent;
+		color: var(--rodape-texto-secundario);
+		cursor: pointer;
+		user-select: none;
+		-webkit-user-select: none;
+		transition: transform var(--motion-duration-pressionar) var(--motion-ease-out);
+	}
+
+	.rodape__copiar[hidden] {
+		display: none;
+	}
+
+	.rodape__copiar:active {
+		transform: scale(var(--motion-escala-pressionado));
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.rodape__copiar:hover {
+			color: var(--rodape-texto);
+		}
+	}
+
+	.rodape__copiado {
+		color: var(--rodape-texto-secundario);
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+	}
+
+	.rodape__base {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: var(--space-pequeno) var(--space-medio);
+		padding-block-start: var(--space-bloco);
+		color: var(--rodape-texto-secundario);
+	}
+
+	.rodape__local {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-pequeno) var(--space-medio);
+	}
+
+	.rodape__hora {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-pequeno);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.rodape__hora[hidden] {
+		display: none;
+	}
+
+	/* Ponteiro dos minutos: uma volta lenta e contínua, só transform. */
+	.rodape__ponteiro {
+		transform-origin: 10px 10px;
+		animation: relogio var(--motion-duration-relogio) linear infinite;
+	}
+
+	@keyframes relogio {
+		to {
+			transform: rotate(1turn);
+		}
+	}
+
+	/* A classe nasce no script: :global para o estilo chegar a ela. */
+	.rodape__hora :global(.rodape__dois-pontos) {
+		animation: piscar var(--motion-duration-piscar) ease-in-out infinite;
+	}
+
+	@keyframes piscar {
+		50% {
+			opacity: var(--rodape-piscar-opacidade);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.rodape__ponteiro,
+		.rodape__hora :global(.rodape__dois-pontos) {
+			animation: none;
+		}
+	}
+
+	/* Celular (até 767 px): todo o texto centralizado. O botão "Voltar ao topo" é fixo e
+	   centralizado a --space-grande da borda de baixo; o espaço extra no fim do rodapé o deixa
+	   parar abaixo da linha da cidade e da hora, sem cobrir nenhum texto. */
+	@media (max-width: 767px) {
+		.rodape__grade {
+			text-align: center;
+			justify-items: center;
+			padding-block-end: calc(
+				var(--topo-tamanho) + max(var(--space-grande), env(safe-area-inset-bottom)) +
+					var(--space-medio)
+			);
+		}
+
+		.rodape__lista {
+			justify-items: center;
+		}
+
+		.rodape__lista > li,
+		.rodape__email,
+		.rodape__base,
+		.rodape__local {
+			justify-content: center;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.rodape__grade {
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+		}
+
+		.rodape__titulo {
+			grid-column: 1 / -1;
+		}
+
+		.rodape__grupo {
+			grid-column: span 4;
+		}
+
+		.rodape__base {
+			grid-column: 1 / -1;
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.rodape__titulo {
+			grid-column: 1 / span 5;
+		}
+
+		/* O e-mail e o botão de copiar precisam de uma coluna a mais. */
+		.rodape__grupo.rodape__grupo--contato {
+			grid-column: span 3;
+		}
+
+		.rodape__grupo {
+			grid-column: span 2;
+		}
+	}
+</style>

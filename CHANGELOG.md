@@ -6,6 +6,26 @@ e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+## [1.0.0] - 2026-11-12
+
+Lançamento do taiane.cc.
+
+### Adicionado
+
+- Site completo: página inicial (abertura, Projetos, Artigos, Sobre, Skills e rodapé "Me chama!")
+  e o case de Funis interativos, com a ilha de navegação e o botão "Voltar ao topo".
+- Encontrabilidade: JSON-LD (ProfilePage, Person e Article), sitemap, robots.txt, llms.txt,
+  Open Graph e canonical.
+
+### Alterado
+
+- Celular (até 767 px): o cabeçalho mostra só o ponto verde animado; o rodapé fica todo
+  centralizado; o botão "Voltar ao topo" para abaixo da linha da cidade e da hora.
+
+### Removido
+
+- Redirecionamento temporário (307) de taiane.cc e www.taiane.cc para o Linktree.
+
 ## [0.1.1] - 2026-11-11
 
 Ajuste: o domínio taiane.cc fica apontando para o Linktree até o lançamento.
@@ -39,6 +59,7 @@ Etapa Fundação: a base técnica do portfólio, sem conteúdo real ainda.
 - GitHub Actions rodando a qualidade em todo envio e pull request; Dependabot semanal.
 - Publicação na Vercel: produção em taiane-cc.vercel.app e prévias da ramificação design.
 
-[Não publicado]: https://github.com/taianecriscampos/taiane-cc/compare/v0.1.1...HEAD
+[Não publicado]: https://github.com/taianecriscampos/taiane-cc/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/taianecriscampos/taiane-cc/compare/v0.1.1...v1.0.0
 [0.1.1]: https://github.com/taianecriscampos/taiane-cc/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/taianecriscampos/taiane-cc/releases/tag/v0.1.0

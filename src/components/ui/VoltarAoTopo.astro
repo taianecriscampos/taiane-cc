@@ -1,0 +1,113 @@
+---
+/**
+ * Botão "Voltar ao topo" (rodada 1f), em todas as páginas.
+ * Redondo, 44 px, discreto (fundo da página, borda clara, seta ↑), centralizado embaixo
+ * (no canto direito, cobria a hora do rodapé).
+ * Aparece depois de rolar uma tela: um marcador invisível com a altura da janela fica no topo
+ * da página, e o IntersectionObserver avisa quando ele sai de vista (nada roda a cada rolagem).
+ * Ao clicar, rola até o topo (instantâneo com movimento reduzido) e leva o foco ao início da
+ * página: o próximo Tab vai para "Pular para o conteúdo".
+ * Escondido, fica inerte: fora do Tab e do leitor de tela. Entra e sai só com opacity e
+ * transform, em 200 ms, ease-out.
+ */
+---
+
+<div class="voltar-ao-topo__marcador" data-topo-marcador aria-hidden="true"></div>
+<button class="voltar-ao-topo" type="button" aria-label="Voltar ao topo" data-topo inert>
+	<svg
+		viewBox="0 0 20 20"
+		width="20"
+		height="20"
+		aria-hidden="true"
+		focusable="false"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.5"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<path d="M10 16.5v-13M4.5 9 10 3.5 15.5 9"></path>
+	</svg>
+</button>
+
+<script>
+	const botao = document.querySelector<HTMLButtonElement>("[data-topo]");
+	const marcador = document.querySelector<HTMLElement>("[data-topo-marcador]");
+	const reduzido = matchMedia("(prefers-reduced-motion: reduce)");
+
+	if (botao && marcador) {
+		new IntersectionObserver(([registro]) => {
+			const visivel = !registro?.isIntersecting;
+			botao.toggleAttribute("data-visivel", visivel);
+			botao.inert = !visivel;
+		}).observe(marcador);
+
+		botao.addEventListener("click", () => {
+			scrollTo({ top: 0, behavior: reduzido.matches ? "instant" : "smooth" });
+			// O foco volta ao início da página; o corpo só aceita foco enquanto precisa.
+			document.body.tabIndex = -1;
+			document.body.focus({ preventScroll: true });
+			document.body.addEventListener("blur", () => document.body.removeAttribute("tabindex"), {
+				once: true,
+			});
+		});
+	}
+</script>
+
+<style>
+	/* Uma tela de altura, no topo da página: quando sai de vista, o botão aparece. */
+	.voltar-ao-topo__marcador {
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		inline-size: 1px;
+		block-size: 100svh;
+		pointer-events: none;
+	}
+
+	.voltar-ao-topo {
+		position: fixed;
+		/* Centralizado embaixo: no canto direito, cobria a hora do rodapé. Centraliza com as
+		   margens automáticas, sem transform, que fica livre para a entrada. */
+		inset-block-end: max(var(--space-grande), env(safe-area-inset-bottom));
+		inset-inline: 0;
+		margin-inline: auto;
+		z-index: var(--topo-camada);
+		display: grid;
+		place-items: center;
+		inline-size: var(--topo-tamanho);
+		block-size: var(--topo-tamanho);
+		padding: 0;
+		border: var(--divisoria);
+		border-radius: var(--radius-pilula);
+		background: var(--topo-fundo);
+		color: var(--topo-texto);
+		cursor: pointer;
+		opacity: 0;
+		transform: translateY(var(--space-pequeno));
+		transition:
+			opacity var(--motion-duration-rapida) var(--motion-ease-out),
+			transform var(--motion-duration-rapida) var(--motion-ease-out);
+	}
+
+	.voltar-ao-topo[data-visivel] {
+		opacity: 1;
+		transform: none;
+	}
+
+	.voltar-ao-topo[data-visivel]:active {
+		transform: scale(var(--motion-escala-pressionado));
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.voltar-ao-topo:hover {
+			background: var(--topo-fundo-hover);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.voltar-ao-topo {
+			transform: none;
+		}
+	}
+</style>

@@ -1,0 +1,148 @@
+/**
+ * Dados de pior caso (skill break-ui). Só o /laboratorio usa este arquivo,
+ * e o Laboratório fica fora da produção. Valores realistas, no limite do schema quando há limite.
+ */
+import type { Projeto } from "../components/blocos/Projetos.astro";
+import type { Entrada } from "../components/ui/Entrada.astro";
+import type { Perfil } from "./perfil";
+
+export const perfilPiorCaso: Perfil = {
+	nome: "Maria Aparecida dos Santos Wiśniewska-Kowalczyk",
+	apelido: "Maria Aparecida",
+	cargo: "Designer de Produto Sênior · Engenheira de Design · Pesquisadora de UX",
+	frase:
+		"Design de produto com pensamento sistêmico, inteligência artificial generativa, pesquisa contínua e código de produção.",
+	especialidade:
+		"Senior Product Designer | Design Engineering | Research Operations | Design Systems",
+	especialidadeCurta: "Design Engineering e Research Operations",
+	modalidade: "Remoto, híbrido ou presencial em São José do Rio Preto",
+	modalidadeCurta: "Remoto ou híbrido",
+	modalidadeCompleta:
+		"Disponível para trabalho remoto, híbrido ou presencial em São José do Rio Preto",
+	cidade: "São José do Rio Preto",
+	estado: "SP",
+	localizacao: "São José do Rio Preto / São Paulo, Brasil",
+	email: "bartholomew.fitzgerald@northwind-industries-holdings.example.com",
+	linkedin: "https://www.linkedin.com/in/exemplo/",
+	substack: "https://exemplo.example.com/",
+	github: "https://github.com/exemplo",
+	designDivergente: "https://exemplo.example.com/",
+	curriculo: { href: "/curriculo.pdf", disponivel: true },
+};
+
+/** Exatamente 60 caracteres, o limite de `titulo`. */
+const tituloLongo = "Redesenho do fluxo de contestação das cobranças na logística";
+
+/** Exatamente 120 caracteres, o limite de `chamada`. */
+const chamadaNoLimite =
+	"Contestação de cobranças em três etapas, com rastreio do pedido, prazos legais e retornos do atendimento no mesmo lugar.";
+
+export const entradasPiorCaso: Entrada[] = [
+	{
+		titulo: tituloLongo,
+		onde: "emDia · Santander · WeFit",
+		ano: 2026,
+		descricao: chamadaNoLimite,
+		href: "#",
+	},
+	{ titulo: "IA", onde: "Jo", ano: 2000, descricao: "Ok.", href: "#" },
+	{
+		titulo: "Benachrichtigungseinstellungen",
+		onde: "Hapvida · WeFit",
+		ano: 2021,
+		descricao: "Nome de projeto em alemão, sem espaços, como entraria com o site em outro idioma.",
+		href: "https://exemplo.example.com/",
+		externo: true,
+	},
+	{ titulo: "Texto ainda sem link, em construção", onde: "Substack", ano: 2026 },
+];
+
+/** Verso no limite do schema: subtítulo de 160 caracteres e 3 blocos de 200. */
+const subtituloNoLimite =
+	"Mapeamento sistêmico de uma operação com processos em planilhas, e-mails, sistemas antigos e conversas de corredor, cada área vendo só a sua parte.";
+const blocoNoLimite =
+	"Conduzi entrevistas com atendimento, financeiro e transporte, mapeei quem fazia o quê, com quais dados e em que momento, e marquei as rupturas entre as áreas no blueprint.";
+
+/** Projetos no limite: os mesmos da lista acima e um cartão que vira, com o verso mais longo possível. */
+export const projetosPiorCaso: Projeto[] = [
+	...entradasPiorCaso.slice(0, 3),
+	{
+		titulo: tituloLongo,
+		onde: "emDia · Santander · WeFit",
+		ano: 2026,
+		descricao: chamadaNoLimite,
+		verso: {
+			subtitulo: subtituloNoLimite.padEnd(160, "."),
+			blocos: [
+				{ rotulo: "Minha atuação", texto: blocoNoLimite.padEnd(200, ".") },
+				{ rotulo: "O desafio", texto: blocoNoLimite.padEnd(200, ".") },
+				{ rotulo: "O resultado de um rótulo longo", texto: blocoNoLimite.padEnd(200, ".") },
+			],
+		},
+	},
+];
+
+/** Exatamente 400 caracteres, o limite de `resumo`. */
+const resumoNoLimite =
+	"Como Senior Product Designer pela WeFit, conduzi o redesenho do fluxo de contestação de cobranças indevidas para uma operação logística com mais de 12.840 pontos de coleta, integrando atendimento, financeiro e transporte num único serviço. O mapeamento sistêmico revelou quatro rupturas entre as áreas. Resultados: contestações resolvidas em menos tempo e menos retrabalho para as equipes envolvidas.";
+
+/** Cada cartão no limite de 160 caracteres. */
+const cartaoNoLimite =
+	"Conduzi a pesquisa com atendimento, financeiro e transporte, desenhei o novo fluxo de ponta a ponta e acompanhei a entrega com o time de engenharia da operação.";
+
+export const cabecalhoPiorCaso = {
+	titulo: tituloLongo,
+	resumo: resumoNoLimite,
+	empresa: "Hapvida NotreDame Intermédica, cliente atendido pela WeFit",
+	ano: 2026,
+	papel: "Senior Product Designer, UX Strategy e Service Design pela WeFit",
+	duracao: "1 ano e 7 meses, em duas fases de entrega", // 40 caracteres, o limite
+	disciplinas: [
+		"Pesquisa com usuários",
+		"Arquitetura da Informação",
+		"Design de Serviço e mapeamento de jornada", // 40 caracteres, o limite
+		"UX Writing",
+		"Design System",
+		"Acessibilidade",
+	],
+	resultados: [
+		{
+			valor: "R$ 1.284.000,00",
+			descricao: "economizados por ano em retrabalho do time de atendimento",
+		},
+		{ valor: "−37%", descricao: "chamados" },
+		{ valor: "[A DEFINIR]", descricao: "[TEXTO DA TAIANE]" },
+	],
+	minutos: 1,
+	sigilo: "confidencial" as const,
+	cartoes: { atuacao: cartaoNoLimite, desafio: "Ok.", solucao: cartaoNoLimite },
+};
+
+/**
+ * Artigos no pior caso: título de uma palavra, título longo e realista, uma palavra comprida
+ * sem espaço e plataforma de nome longo. O título de artigo não tem limite de caracteres.
+ */
+export const artigosPiorCaso: Entrada[] = [
+	{
+		titulo: "IA",
+		ano: 2026,
+		onde: "Substack",
+		href: "https://exemplo.example.com/ia",
+		externo: true,
+	},
+	{
+		titulo:
+			"Design Engineering na prática: como reorganizamos o handoff entre design, produto e engenharia numa plataforma SaaS com 1.284 clientes ativos",
+		ano: 2026,
+		onde: "designDivergente",
+		href: "https://exemplo.example.com/handoff",
+		externo: true,
+	},
+	{
+		titulo: "Pré-requisitos-de-acessibilidade-para-formulários-multietapas",
+		ano: 2025,
+		onde: "Medium · Publicação Coletiva de Design Brasileiro",
+		href: "https://exemplo.example.com/acessibilidade",
+		externo: true,
+	},
+];

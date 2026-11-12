@@ -1,18 +1,45 @@
 ---
 /**
  * Layout base de todas as páginas.
- * Idioma pt-BR, título, descrição, opção de noindex e link "Pular para o conteúdo".
+ * Idioma pt-BR, título, descrição, opção de noindex, link "Pular para o conteúdo", cabeçalho e rodapé.
  */
 import "../../styles/global.css";
+import Cabecalho, { type LinkDoCabecalho } from "./Cabecalho.astro";
+import Rodape from "./Rodape.astro";
+import VoltarAoTopo from "../ui/VoltarAoTopo.astro";
+import { imagemPadrao, producao, urlAbsoluta } from "../../dados/site";
+
+/**
+ * A indexação está liberada, mas só vale em produção (taiane.cc). Prévias e a ramificação design
+ * continuam com noindex. Só as páginas com `noindex` explícito (o Laboratório) ficam de fora sempre.
+ */
+const indexacaoLiberada = producao;
 
 interface Props {
 	titulo: string;
 	descricao: string;
-	/** true para páginas que não devem aparecer em buscadores (ex.: /laboratorio). */
+	/** true para páginas que nunca devem aparecer em buscadores (ex.: /laboratorio). */
 	noindex?: boolean;
+	/** Nos cases, o cabeçalho mostra as seções do case no lugar das seções da página inicial. */
+	secoesDoCase?: LinkDoCabecalho[];
+	/** Imagem de compartilhamento (Open Graph). Sem ela, vale a imagem padrão com nome e cargo. */
+	imagem?: { url: string; alt: string };
+	/** "article" nos cases; "website" nas demais páginas. */
+	tipo?: "website" | "article";
+	/** Dados estruturados (JSON-LD) da página. */
+	dadosEstruturados?: object;
 }
 
-const { titulo, descricao, noindex = false } = Astro.props;
+const { titulo, descricao, secoesDoCase, tipo = "website", dadosEstruturados } = Astro.props;
+const noindex = Astro.props.noindex ?? !indexacaoLiberada;
+// Endereço canônico: sempre o do domínio oficial, mesmo numa prévia da Vercel.
+const canonica = urlAbsoluta(Astro.url.pathname);
+const imagem = Astro.props.imagem ?? {
+	url: urlAbsoluta(imagemPadrao.caminho),
+	alt: imagemPadrao.alt,
+};
+// "<" vira < para o conteúdo nunca fechar o script antes da hora.
+const jsonLd = dadosEstruturados && JSON.stringify(dadosEstruturados).replace(/</g, "\\u003c");
 ---
 
 <!doctype html>
@@ -20,9 +47,33 @@ const { titulo, descricao, noindex = false } = Astro.props;
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- Barra de status do celular na cor do fundo da página. -->
+		<meta name="theme-color" content="#fafafa" />
 		<title>{titulo}</title>
 		<meta name="description" content={descricao} />
 		{noindex && <meta name="robots" content="noindex, nofollow" />}
+		<link rel="canonical" href={canonica} />
+		<meta property="og:type" content={tipo} />
+		<meta property="og:site_name" content="Taiane Cris Campos" />
+		<meta property="og:locale" content="pt_BR" />
+		<meta property="og:title" content={titulo} />
+		<meta property="og:description" content={descricao} />
+		<meta property="og:url" content={canonica} />
+		<meta property="og:image" content={imagem.url} />
+		<meta property="og:image:alt" content={imagem.alt} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={titulo} />
+		<meta name="twitter:description" content={descricao} />
+		<meta name="twitter:image" content={imagem.url} />
+		<meta name="twitter:image:alt" content={imagem.alt} />
+		{jsonLd && <script is:inline type="application/ld+json" set:html={jsonLd} />}
+		<link
+			rel="preload"
+			href="/fontes/google-sans-flex-variavel-latin.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
@@ -31,8 +82,19 @@ const { titulo, descricao, noindex = false } = Astro.props;
 		<a class="pular-conteudo" href="#conteudo">
 			Pular para o conteúdo
 		</a>
+		{secoesDoCase ? (
+			<Cabecalho
+				links={secoesDoCase}
+				rotulo="Neste case"
+				inicio={{ texto: "Visão geral", href: "#visao-geral" }}
+			/>
+		) : (
+			<Cabecalho />
+		)}
 		<main id="conteudo" tabindex="-1">
 			<slot />
 		</main>
+		<Rodape />
+		<VoltarAoTopo />
 	</body>
 </html>

@@ -1,136 +1,433 @@
 /*
- * Tokens do design system — valores PROVISÓRIOS (fase 0.1.c).
- * Os oficiais saem da direção de arte, na etapa 0.3.0.
+ * Tokens do design system — base fiel à debora.wiki (etapa 0.3.0, fase 0.3.b).
+ * Fonte das medidas: docs/especificacao-base-debora.md.
  *
  * Três camadas:
  *   1. Primitivos  (--prim-*)  valores brutos. Só os semânticos leem estes.
  *   2. Semânticos  (--color-*, --space-*, --text-*...)  o nome diz a função.
- *   3. Componentes (--skip-link-*, --link-*, --focus-*)  decisões de um componente.
+ *   3. Componentes (--cabecalho-*, --entrada-*, --selo-*...)  decisões de um componente.
  * Componentes usam SOMENTE as camadas 2 e 3.
+ * A parte 4 só troca valores semânticos nas quebras de 768 e 1200 px.
  *
  * O /laboratorio lê este arquivo na compilação: mantenha um token por linha.
  */
 
 /* ---------- 1. Primitivos ---------- */
 :root {
-	/* Cor. Contraste medido sobre --prim-color-branco-quente. */
-	--prim-color-branco-quente: #fbfaf7;
-	--prim-color-preto: #141414; /* 17,65:1 */
-	--prim-color-cinza-700: #55534e; /* 7,36:1 */
-	--prim-color-cinza-600: #6e6b65; /* 5,09:1 */
-	--prim-color-cinza-200: #e4e1da; /* 1,25:1, só decorativo */
-	--prim-color-vermelho: #c8201a; /* 5,47:1 */
+	/* Cor. Contraste medido sobre --prim-color-cinza-50. */
+	--prim-color-cinza-50: #fafafa;
+	--prim-color-cinza-100: #e5e8ec; /* fundo secundário, sem texto claro em cima */
+	--prim-color-cinza-300: #cbd0d6; /* 1,49:1, só divisórias */
+	--prim-color-cinza-500: #9aa3ab; /* só formas decorativas, sem texto */
+	--prim-color-cinza-700: #4d575f; /* 7,07:1 */
+	--prim-color-cinza-900: #1a2025; /* 15,75:1 */
+	--prim-color-vermelho: #ff2400; /* 3,66:1, só o selo, que é decorativo */
+	--prim-color-azul: #0040ff; /* 6,33:1 */
 	--prim-color-branco: #ffffff;
+	--prim-color-preto: #000000; /* fundo do rodapé: cinza-50 sobre ele dá 19,6:1, cinza-300 dá 13,4:1 */
+	--prim-color-cinza-50-translucido: rgb(250 250 250 / 0.1);
+	/* Vidro escuro da ilha: preto a 70%. No pior caso (sobre branco) vira #4d4d4d:
+	   branco dá 8,4:1 e cinza-200 dá 4,85:1. */
+	--prim-color-preto-70: rgb(0 0 0 / 0.7);
+	--prim-color-cinza-200: #c4c4c4;
+	--prim-color-amarelo-claro: #fff3c4; /* fundo da etiqueta Confidencial, cor do emoji */
+	--prim-color-marrom: #664500; /* 7,8:1 sobre o amarelo claro */
+	--prim-color-verde: #12a150; /* ponto de status, decorativo: o texto ao lado diz o mesmo */
 
-	/* Fonte provisória: a do sistema. As reais entram na 0.3.0. */
-	--prim-font-grotesca:
-		system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-	--prim-font-mono:
-		ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+	/* Cores das marcas das ferramentas (Simple Icons), só nos logos da seção Ferramentas. */
+	--prim-color-marca-figma: #f24e1e;
+	--prim-color-marca-claudecode: #d97757;
+	--prim-color-marca-astro: #bc52ee;
+	--prim-color-marca-typescript: #3178c6;
+	--prim-color-marca-javascript: #f7df1e;
+	--prim-color-marca-html: #e34f26;
+	--prim-color-marca-css: #663399;
+	--prim-color-marca-react: #61dafb;
+	--prim-color-marca-nextjs: #000000;
+	--prim-color-marca-gsap: #0ae448;
+	--prim-color-marca-git: #f05032;
+	--prim-color-marca-github: #181717;
+	--prim-color-marca-vercel: #000000;
+	--prim-color-marca-sanity: #f03e2f;
 
-	/* Escala tipográfica fluida: razão 1,2 em 375px até 1,25 em 1440px, corpo de 16 a 18px. */
-	--prim-text--1: clamp(0.8333rem, 0.8099rem + 0.1002vw, 0.9rem);
-	--prim-text-0: clamp(1rem, 0.956rem + 0.1878vw, 1.125rem);
-	--prim-text-1: clamp(1.2rem, 1.1274rem + 0.3099vw, 1.4063rem);
-	--prim-text-2: clamp(1.44rem, 1.3281rem + 0.4775vw, 1.7578rem);
-	--prim-text-3: clamp(1.728rem, 1.5628rem + 0.705vw, 2.1973rem);
-	--prim-text-4: clamp(2.0736rem, 1.8366rem + 1.0111vw, 2.7466rem);
-	--prim-text-5: clamp(2.4883rem, 2.1556rem + 1.4196vw, 3.4332rem);
-	--prim-text-6: clamp(2.986rem, 2.5263rem + 1.9614vw, 4.2915rem);
+	/* Fonte auto-hospedada em public/fontes (licença SIL OFL 1.1, arquivo ao lado).
+	   Google Sans Flex variável, com os eixos de peso (1 a 1000) e largura (25 a 151). */
+	--prim-font-google-sans-flex:
+		"Google Sans Flex", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+	--prim-font-mono-sistema: ui-monospace, "Cascadia Mono", Consolas, monospace;
 
-	--prim-leading-justo: 1.1;
-	--prim-leading-base: 1.55;
-	--prim-peso-regular: 400;
-	--prim-peso-medio: 500;
-	--prim-peso-forte: 700;
+	/* Tamanhos de texto, em px de referência. */
+	--prim-text-14: 0.875rem;
+	--prim-text-16: 1rem;
+	--prim-text-20: 1.25rem;
+	--prim-text-24: 1.5rem;
+	--prim-text-32: 2rem;
+	--prim-text-40: 2.5rem;
+	--prim-text-56: 3.5rem;
+	--prim-text-80: clamp(2.5rem, 5.556vw, 5rem);
+	--prim-text-120: clamp(2.5rem, 8.333vw, 7.5rem); /* 40 no celular, 120 em 1440 */
 
-	/* Espaçamento: base de 4px. */
-	--prim-space-1: 0.25rem;
-	--prim-space-2: 0.5rem;
-	--prim-space-3: 0.75rem;
-	--prim-space-4: 1rem;
-	--prim-space-6: 1.5rem;
-	--prim-space-8: 2rem;
-	--prim-space-12: 3rem;
-	--prim-space-16: 4rem;
-	--prim-space-24: 6rem;
-	--prim-space-32: 8rem;
+	/* Entrelinha: altura da linha dividida pelo tamanho (ex.: 24/16 = 1,5). */
+	--prim-leading-1: 1;
+	--prim-leading-1-1: 1.1;
+	--prim-leading-14: 1.4286; /* 20/14 */
+	--prim-leading-16: 1.5; /* 24/16 */
+	--prim-leading-20: 1.4; /* 28/20 */
+	--prim-leading-24: 1.3333; /* 32/24 */
+	--prim-leading-32: 1.25; /* 40/32 */
 
-	/* Raios: pequenos de propósito. */
-	--prim-radius-0: 0;
-	--prim-radius-1: 2px;
-	--prim-radius-2: 4px;
-	--prim-radius-pilula: 999px;
+	--prim-peso-400: 400;
+	--prim-peso-500: 500;
+	--prim-peso-700: 700;
 
-	/* Movimento (skill movimento). O JavaScript lê estes valores. */
-	--prim-duration-fast: 0.2s;
-	--prim-duration-base: 0.4s;
-	--prim-duration-slow: 0.8s;
-	--prim-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	/* Espaço entre letras, apertado como na hugeinc.com: quanto maior o texto, mais fechado. */
+	--prim-tracking-4: -0.04em;
+	--prim-tracking-3-5: -0.035em;
+	--prim-tracking-3: -0.03em;
+	--prim-tracking-2: -0.02em;
+	--prim-tracking-1: -0.01em;
+
+	/* Eixo de largura da fonte: 100 é o normal; abaixo disso, condensada. */
+
+	/* Espaço: escala da especificação. */
+	--prim-space-0: 0;
+	--prim-space-2: 0.125rem;
+	--prim-space-4: 0.25rem;
+	--prim-space-8: 0.5rem;
+	--prim-space-12: 0.75rem;
+	--prim-space-16: 1rem;
+	--prim-space-20: 1.25rem;
+	--prim-space-24: 1.5rem;
+	--prim-space-32: 2rem;
+	--prim-space-40: 2.5rem;
+	--prim-space-48: 3rem;
+	--prim-space-80: 5rem;
+	--prim-space-margem-larga: clamp(1.5rem, 2.78vw, 2.5rem);
+	--prim-space-80-120: clamp(5rem, 8.333vw, 7.5rem); /* 80 px até 960, 120 px em 1440 */
+
+	/* Medidas de estrutura. */
+	--prim-borda-1: 1px;
+	--prim-borda-1pt: 1pt;
+	--prim-size-6: 0.375rem;
+	--prim-size-8: 0.5rem;
+	--prim-size-10: 0.625rem;
+	--prim-size-20: 1.25rem;
+	--prim-size-24: 1.5rem;
+	--prim-size-32: 2rem;
+	--prim-size-40: 2.5rem;
+	--prim-size-44: 2.75rem;
+	--prim-size-48: 3rem;
+	--prim-size-52: 3.25rem;
+	--prim-size-56: 3.5rem;
+	--prim-size-80: 5rem;
+	--prim-size-96: 6rem;
+	--prim-size-160: 10rem;
+	--prim-size-1800: 112.5rem;
+	--prim-colunas-12: 12;
+	--prim-desfoque-2: blur(2px);
+	--prim-desfoque-15: blur(15px);
+	--prim-desfoque-20: blur(20px);
+
+	/* Raios. */
+	--prim-radius-8: 0.5rem;
+	--prim-radius-24: 1.5rem;
+	--prim-radius-pilula: 9999px;
+
+	/* Movimento: interface até 300 ms, ease-out forte, nunca ease-in (direção de arte v3). */
+	--prim-duration-150: 0.15s;
+	--prim-duration-160: 0.16s;
+	--prim-duration-200: 0.2s;
+	--prim-duration-280: 0.28s;
+	--prim-duration-300: 0.3s;
+	--prim-duration-380: 0.38s;
+	--prim-duration-1000: 1s;
+	--prim-duration-2000: 2s;
+	--prim-duration-8000: 8s;
+	--prim-duration-18000: 18s; /* letreiro de Ferramentas: uma ida */
+	--prim-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--prim-ease-in-out-suave: ease-in-out; /* movimento longo e contínuo: desacelera nas pontas */
+	/* Mola leve: passa 3% do destino e assenta. Curva desenhada ponto a ponto, sem biblioteca. */
+	--prim-ease-mola: linear(0, 0.3 8%, 0.69 18%, 0.93 29%, 1.025 39%, 1.03 47%, 1.01 62%, 1);
+	--prim-escala-pressionado: 0.97;
+	--prim-escala-pressionado-suave: 0.98; /* blocos grandes: 0,97 pareceria um tranco */
+	--prim-perspectiva-1200: 75rem;
 }
 
 /* ---------- 2. Semânticos ---------- */
 :root {
-	--color-fundo: var(--prim-color-branco-quente);
-	--color-texto: var(--prim-color-preto);
+	--color-fundo: var(--prim-color-cinza-50);
+	--color-fundo-secundario: var(--prim-color-cinza-100);
+	--color-texto: var(--prim-color-cinza-900);
 	--color-texto-secundario: var(--prim-color-cinza-700);
-	--color-texto-terciario: var(--prim-color-cinza-600);
-	--color-destaque: var(--prim-color-vermelho);
-	--color-linha: var(--prim-color-cinza-200);
-	--color-sobre-destaque: var(--prim-color-branco);
+	--color-borda: var(--prim-color-cinza-300);
+	--color-forma-decorativa: var(--prim-color-cinza-500); /* ilustrações, nunca texto */
+	--color-marca: var(--prim-color-vermelho);
+	--color-destaque-case: var(--prim-color-azul);
+	--color-inverso-fundo: var(--prim-color-cinza-900);
+	--color-inverso-texto: var(--prim-color-cinza-50);
+	--color-fundo-translucido: var(--prim-color-cinza-50-translucido);
+	--color-escuro-fundo: var(--prim-color-preto);
+	--color-escuro-texto: var(--prim-color-cinza-50);
+	--color-escuro-texto-secundario: var(--prim-color-cinza-300);
+	--color-status: var(--prim-color-verde);
+	--color-vidro-fundo: var(--prim-color-preto-70);
+	--color-vidro-texto: var(--prim-color-branco);
+	--color-vidro-texto-secundario: var(--prim-color-cinza-200);
 
-	--font-texto: var(--prim-font-grotesca);
-	--font-tecnica: var(--prim-font-mono);
+	--font-texto: var(--prim-font-google-sans-flex);
+	--font-tecnica: var(--prim-font-mono-sistema);
 
-	--text-pequeno: var(--prim-text--1);
-	--text-corpo: var(--prim-text-0);
-	--text-subtitulo: var(--prim-text-1);
-	--text-titulo-3: var(--prim-text-2);
-	--text-titulo-2: var(--prim-text-3);
-	--text-titulo-1: var(--prim-text-4);
-	--text-display: var(--prim-text-6);
+	--text-abertura: var(--prim-text-80);
+	--text-entrada: var(--prim-text-40);
+	--text-titulo-case: var(--prim-text-120);
+	--text-intro-case: var(--prim-text-24);
+	--text-subtitulo: var(--prim-text-24);
+	--text-rotulo: var(--prim-text-20);
+	--text-corpo: var(--prim-text-16);
+	--text-pequeno: var(--prim-text-14);
 
-	--leading-titulo: var(--prim-leading-justo);
-	--leading-corpo: var(--prim-leading-base);
-	--peso-corpo: var(--prim-peso-regular);
-	--peso-titulo: var(--prim-peso-medio);
-	--peso-forte: var(--prim-peso-forte);
+	--leading-titulo: var(--prim-leading-1);
+	--leading-titulo-ajustado: var(
+		--prim-leading-1-1
+	); /* títulos de 2 linhas: com 1, o g e o j encostam */
+	--leading-intro-case: var(--prim-leading-24); /* 32/24 */
+	--leading-subtitulo: var(--prim-leading-24);
+	--leading-rotulo: var(--prim-leading-20);
+	--leading-corpo: var(--prim-leading-16);
+	--leading-pequeno: var(--prim-leading-14);
 
-	--space-minimo: var(--prim-space-1);
-	--space-pequeno: var(--prim-space-2);
-	--space-medio: var(--prim-space-4);
-	--space-grande: var(--prim-space-8);
-	--space-bloco: var(--prim-space-12);
-	--space-secao: var(--prim-space-24);
-	--space-margem-pagina: clamp(var(--prim-space-4), 5vw, var(--prim-space-16));
+	--peso-corpo: var(--prim-peso-400);
+	--peso-titulo: var(--prim-peso-500);
+	--peso-forte: var(--prim-peso-700);
 
-	--largura-leitura: 68ch;
-	--largura-pagina: 90rem;
+	--tracking-abertura: var(--prim-tracking-3-5); /* 80 px; ajustável, a pedido da Taiane */
+	--tracking-entrada: var(--prim-tracking-3); /* 56 px */
+	--tracking-titulo-case: var(--prim-tracking-4); /* 120 px */
+	--tracking-intro-case: var(--prim-tracking-2); /* 24 px */
+	--tracking-subtitulo: var(--prim-tracking-2); /* 24 px */
+	--tracking-texto: var(--prim-tracking-1); /* 20 px para baixo */
 
-	--radius-nenhum: var(--prim-radius-0);
-	--radius-sutil: var(--prim-radius-1);
-	--radius-controle: var(--prim-radius-2);
+	/*
+	 * Hierarquia tipográfica única (rodada 1e). Seções novas ou revistas usam SÓ estes papéis:
+	 *   título de entrada  --text-entrada (56/56, 40 no celular), peso 500
+	 *   título de cartão   --text-titulo-cartao (32/40), peso 500
+	 *   intro de case      --text-intro-case (24/32), peso 400 (rodada 1f)
+	 *   texto de destaque  --text-destaque (20/28), peso 400
+	 *   texto e rótulo     --text-corpo (16/24); o rótulo em cor secundária
+	 *   pequeno            --text-pequeno (14/20), peso 400 ou 500
+	 */
+	--text-titulo-cartao: var(--prim-text-32);
+	--leading-titulo-cartao: var(--prim-leading-32);
+	--tracking-titulo-cartao: var(--prim-tracking-2);
+	--text-destaque: var(--prim-text-20);
+	--leading-destaque: var(--prim-leading-20);
+	--tracking-destaque: var(--prim-tracking-1);
+	--peso-medio: var(--prim-peso-500);
+
+	--space-nenhum: var(--prim-space-0);
+	--space-fio: var(--prim-space-2);
+	--space-minimo: var(--prim-space-4);
+	--space-pequeno: var(--prim-space-8);
+	--space-medio: var(--prim-space-16);
+	--space-grande: var(--prim-space-24);
+	--space-maior: var(--prim-space-32);
+	--space-bloco: var(--prim-space-40);
+	--space-largo: var(--prim-space-48);
+	--space-maximo: var(--prim-space-80);
+	--space-secao: var(--prim-space-40);
+	--space-margem-pagina: var(--prim-space-16);
+
+	--grade-colunas: var(--prim-colunas-12);
+	--grade-espaco: var(--prim-space-24);
+	--largura-pagina: var(--prim-size-1800);
+	--linha-espessura: var(--prim-borda-1);
+	--alvo-toque: var(--prim-size-40);
+
+	--radius-medio: var(--prim-radius-8);
+	--radius-grande: var(--prim-radius-24);
 	--radius-pilula: var(--prim-radius-pilula);
+	/* Regra da Taiane (rodada 1c): 24 px nos cartões e molduras; 8 px nas imagens dentro deles. */
+	--radius-cartao: var(--prim-radius-24);
+	--radius-imagem-interna: var(--prim-radius-8);
 
-	--motion-duration-fast: var(--prim-duration-fast);
-	--motion-duration-base: var(--prim-duration-base);
-	--motion-duration-slow: var(--prim-duration-slow);
+	--motion-duration-pressionar: var(--prim-duration-160);
+	--motion-duration-rapida: var(--prim-duration-200);
+	--motion-duration-base: var(--prim-duration-280);
+	--motion-duration-abrir: var(--prim-duration-300);
+	--motion-duration-virar: var(--prim-duration-380); /* cartão que vira, decisão da Taiane */
+	--motion-duration-esmaecer: var(
+		--prim-duration-150
+	); /* troca sem movimento (movimento reduzido) */
+	--motion-duration-pulso: var(--prim-duration-2000);
+	--motion-duration-piscar: var(--prim-duration-1000); /* dois-pontos da hora */
+	--motion-duration-relogio: var(--prim-duration-8000); /* uma volta do ponteiro do rodapé */
+	--motion-duration-letreiro: var(--prim-duration-18000);
 	--motion-ease-out: var(--prim-ease-out);
+	--motion-ease-in-out-suave: var(--prim-ease-in-out-suave);
+	--motion-ease-mola: var(--prim-ease-mola);
+	--motion-escala-pressionado: var(--prim-escala-pressionado);
+	--motion-escala-pressionado-suave: var(--prim-escala-pressionado-suave);
+	--motion-desfoque-troca: var(--prim-desfoque-2); /* conteúdo que sai e entra na troca */
 }
 
 /* ---------- 3. Componentes ---------- */
 :root {
-	--focus-cor: var(--color-destaque);
+	--focus-cor: var(--color-texto);
 	--focus-espessura: 2px;
 	--focus-afastamento: 3px;
 
 	--link-cor: var(--color-texto);
-	--link-cor-hover: var(--color-destaque);
-	--link-sublinhado: 1px;
+	--link-sublinhado: var(--prim-borda-1pt);
 	--link-sublinhado-afastamento: 0.2em;
 
-	--skip-link-fundo: var(--color-texto);
-	--skip-link-texto: var(--color-fundo);
+	--skip-link-fundo: var(--color-inverso-fundo);
+	--skip-link-texto: var(--color-inverso-texto);
 	--skip-link-espaco: var(--space-pequeno) var(--space-medio);
-	--skip-link-raio: var(--radius-controle);
+	--skip-link-raio: var(--radius-medio);
+
+	--divisoria: var(--linha-espessura) solid var(--color-borda);
+
+	--cabecalho-altura: var(--prim-size-56);
+	--cabecalho-folga: var(--space-medio); /* faixa com desfoque abaixo da ilha */
+	--cabecalho-fundo: var(--color-fundo-translucido);
+	--cabecalho-desfoque: var(--prim-desfoque-15);
+	--cabecalho-camada: 100;
+	--topo-camada: 90; /* botão Voltar ao topo, abaixo do cabeçalho e da ilha */
+	--topo-tamanho: var(--prim-size-44);
+	--topo-fundo: var(--color-fundo);
+	--topo-fundo-hover: var(--color-fundo-secundario);
+	--topo-texto: var(--color-texto);
+	--cabecalho-status-tamanho: var(
+		--text-pequeno
+	); /* "Remoto" no celular, para equilibrar com "Tai" */
+
+	--circulo-pequeno: var(--prim-size-40);
+	--circulo-grande: var(--prim-size-48);
+	--seta-tamanho: var(--prim-size-20);
+
+	--retrato-proporcao: 3 / 4;
+	--abertura-altura-minima: 18rem; /* abaixo disso (janela muito baixa), a dobra rola em vez de espremer */
+	--retrato-raio: var(--radius-grande);
+	--selo-tamanho: var(--prim-size-96);
+	--selo-cor: var(--color-marca);
+	--selo-fundo: var(--color-fundo);
+
+	--entrada-intervalo: var(
+		--space-maior
+	); /* 32 px entre a linha e a divisória, medido na debora.wiki */
+	--ponto-grande: var(--prim-size-10);
+
+	--rodape-fundo: var(--color-escuro-fundo);
+	--rodape-texto: var(--color-escuro-texto);
+	--rodape-texto-secundario: var(--color-escuro-texto-secundario);
+	--rodape-focus-cor: var(--color-escuro-texto);
+	--rodape-piscar-opacidade: 0.25;
+	--rodape-item-altura: var(--prim-size-32); /* 24 de texto + 8 de respiro (rodada 1f) */
+
+	--ilha-fundo: var(--color-vidro-fundo);
+	--ilha-desfoque: var(--prim-desfoque-20);
+	--ilha-texto: var(--color-vidro-texto);
+	--ilha-texto-secundario: var(--color-vidro-texto-secundario);
+	--ilha-altura: var(--prim-size-44);
+	--ilha-topo: var(--prim-space-12); /* da borda de cima da janela até a pílula e o painel */
+	--ilha-espaco: var(--prim-space-20); /* laterais da pílula */
+	--ilha-painel-espaco-bloco: var(--prim-space-20);
+	--ilha-painel-espaco-inline: var(--prim-space-24);
+	--ilha-painel-intervalo: var(--space-medio); /* entre Seções/Fechar e a lista */
+	--ilha-linha-altura: var(--prim-size-52);
+	--ilha-ponto: var(--prim-size-6);
+	--ilha-raio-aberta: var(--radius-grande);
+	--ilha-largura-aberta: 20rem;
+	--ilha-focus-cor: var(--color-vidro-texto);
+
+	--status-ponto: var(--prim-size-8);
+	--status-cor: var(--color-status);
+
+	--etiqueta-espaco: var(--space-fio) var(--space-pequeno);
+	--pilula-fundo: var(--color-fundo-secundario);
+	--pilula-espaco: var(--space-minimo) var(--space-medio);
+	--capa-raio: var(--radius-cartao);
+	--destaque-proporcao: 16 / 9;
+	--ficha-rotulo-largura: 6rem;
+	--ferramenta-logo: var(--prim-size-24);
+	--ferramenta-logo-cor: var(--color-texto-secundario);
+	--ferramenta-intervalo: var(--space-bloco);
+	--ferramenta-duracao: var(--motion-duration-letreiro);
+	--ferramenta-curva: var(--motion-ease-in-out-suave);
+	/* Pontas esmaecidas na largura da margem da página; o meio, opaco. */
+	--ferramenta-mascara: linear-gradient(
+		to right,
+		transparent,
+		var(--prim-color-preto) var(--space-margem-pagina),
+		var(--prim-color-preto) calc(100% - var(--space-margem-pagina)),
+		transparent
+	);
+	--ferramenta-marca-figma: var(--prim-color-marca-figma);
+	--ferramenta-marca-claudecode: var(--prim-color-marca-claudecode);
+	--ferramenta-marca-astro: var(--prim-color-marca-astro);
+	--ferramenta-marca-typescript: var(--prim-color-marca-typescript);
+	--ferramenta-marca-javascript: var(--prim-color-marca-javascript);
+	--ferramenta-marca-html: var(--prim-color-marca-html);
+	--ferramenta-marca-css: var(--prim-color-marca-css);
+	--ferramenta-marca-react: var(--prim-color-marca-react);
+	--ferramenta-marca-nextjs: var(--prim-color-marca-nextjs);
+	--ferramenta-marca-gsap: var(--prim-color-marca-gsap);
+	--ferramenta-marca-git: var(--prim-color-marca-git);
+	--ferramenta-marca-github: var(--prim-color-marca-github);
+	--ferramenta-marca-vercel: var(--prim-color-marca-vercel);
+	--ferramenta-marca-sanity: var(--prim-color-marca-sanity);
+	--sobre-vao: var(--prim-space-80-120); /* os dois vãos entre as colunas do Sobre */
+	--sobre-resumo-linha: 60ch;
+	--skill-pilula-espaco: var(--space-pequeno) var(--space-medio); /* 14/20 + 8 + 8 = 36 px */
+	--skill-pilula-intervalo: var(--space-pequeno);
+	--skill-pilula-fundo: var(--color-fundo-secundario);
+	--skill-pilula-texto: var(--color-texto);
+	/* Cartões de Projetos (ajuste rápido depois da 1f): frente sem fundo, contorno de 1 px e os
+	   textos nas cores do site. */
+	--projeto-texto: var(--color-texto);
+	--projeto-texto-secundario: var(--color-texto-secundario);
+	--projeto-etiqueta-fundo: var(--prim-color-amarelo-claro);
+	--projeto-etiqueta-texto: var(--prim-color-marrom);
+	--projeto-raio: var(--radius-cartao);
+	--projeto-espaco: var(--space-grande);
+	--projeto-imagem-fundo: var(--prim-color-branco); /* o mesmo branco do fundo da imagem */
+	--projeto-imagem-respiro: var(--space-medio);
+	--projeto-simbolo: var(--prim-size-80);
+	--projeto-simbolo-grande: var(--prim-size-160); /* versão A, no espaço do meio */
+	--projeto-simbolo-area: var(--prim-size-96);
+	--projeto-simbolo-cor: var(--color-forma-decorativa); /* símbolo decorativo, sem texto */
+	--projeto-imagem-raio: var(--radius-imagem-interna);
+	--projeto-escala-pressionado: var(--motion-escala-pressionado-suave);
+	--projeto-perspectiva: var(--prim-perspectiva-1200);
+	--projeto-verso-fundo: var(--color-inverso-fundo);
+	--projeto-verso-texto: var(--color-inverso-texto);
+	--projeto-verso-texto-secundario: var(--color-escuro-texto-secundario); /* 11,4:1 sobre o verso */
+	--projeto-verso-focus-cor: var(--color-inverso-texto);
+	--ilustracao-fundo: var(--color-fundo-secundario);
+	--ilustracao-forma-clara: var(--color-fundo);
+	--ilustracao-forma-media: var(--color-borda);
+	--ilustracao-forma-escura: var(--color-forma-decorativa);
+	--moldura-raio: var(--radius-grande);
+	--moldura-fundo: var(--color-fundo-secundario);
+	--moldura-espaco: var(--space-maior);
+	/* Títulos em até 2 linhas: largura da coluna x fator / caracteres do título mais longo.
+	   Fator 4 = 2 linhas x 92% de aproveitamento / 0,46 (largura média da letra, em em). */
+	--titulo-ajustado-fator: 4;
+	--titulo-ajustado-minimo: var(--text-pequeno);
+	--titulo-ajustado-maximo: var(--text-entrada);
+}
+
+/* ---------- 4. Ajustes por largura ---------- */
+@media (min-width: 768px) {
+	:root {
+		--text-entrada: var(--prim-text-56);
+		--space-secao: var(--prim-space-80);
+		--space-margem-pagina: var(--prim-space-24);
+	}
+}
+
+@media (min-width: 1200px) {
+	:root {
+		--space-margem-pagina: var(--prim-space-margem-larga);
+	}
 }

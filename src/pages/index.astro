@@ -1,16 +1,36 @@
 ---
-// Página provisória. Será substituída na etapa 0.2.0.
+/**
+ * Página inicial. Ordem de leitura: abertura, projetos, artigos, sobre e skills (com a faixa de ferramentas).
+ * O rodapé, com "Me chama!", vem do LayoutBase.
+ */
+import Abertura from "../components/blocos/Abertura.astro";
+import ListaDeEntradas from "../components/blocos/ListaDeEntradas.astro";
+import Projetos from "../components/blocos/Projetos.astro";
+import Skills from "../components/blocos/Skills.astro";
+import Sobre from "../components/blocos/Sobre.astro";
 import LayoutBase from "../components/layout/LayoutBase.astro";
+import { perfil } from "../dados/perfil";
+import { paginaDePerfil } from "../dados/dados-estruturados";
+import { artigos } from "../dados/artigos";
+import { projetosDosCases } from "../dados/projetos";
+
+const projetos = await projetosDosCases();
 ---
 
-<LayoutBase titulo="taiane.cc" descricao="Portfólio de Taiane Cris Campos, em construção." noindex>
-	<div class="envoltorio inicio">
-		<h1>taiane.cc, em construção</h1>
-	</div>
+<LayoutBase
+	titulo={`${perfil.nome} · ${perfil.cargo}`}
+	descricao={`${perfil.nome}, ${perfil.cargo}. ${perfil.frase}`}
+	dadosEstruturados={paginaDePerfil}
+>
+	<Abertura />
+	<Projetos projetos={projetos} />
+	<ListaDeEntradas
+		id="artigos"
+		rotulo="Artigos"
+		entradas={artigos}
+		titulosEmDuasLinhas
+		vazio="Os artigos entram aqui em breve."
+	/>
+	<Sobre />
+	<Skills />
 </LayoutBase>
-
-<style>
-	.inicio {
-		padding-block: var(--space-secao);
-	}
-</style>

@@ -1,0 +1,238 @@
+---
+/**
+ * Topo do case, com a personalidade inspirada na kora.framer.media: título grande, em toda a
+ * largura, com espaço entre letras apertado.
+ * Abaixo, em duas colunas: à esquerda, a intro de case (24/32, peso 400; resumo de até
+ * 3 frases, ADR 0002) e, logo abaixo, as disciplinas em pílulas; à direita, a ficha (empresa,
+ * ano, papel, duração, tempo de leitura e, nos confidenciais, "Case sob sigilo").
+ * Depois, a capa direto na página, sem moldura, com raio de 24 px.
+ * Ficha sem linha acima do primeiro item, alinhada ao começo do texto da introdução.
+ * Os resultados e Minha atuação, Desafio e Solução ficaram no tópico "Visão geral"
+ * (VisaoGeralCase.astro), dentro do texto do case.
+ * Conteúdo de exemplo: os campos listados em `rascunhos` ganham data-rascunho (docs/rascunhos.md).
+ * Sem capa, uma ilustração neutra de exemplo. Sem duração conhecida, a ficha não mostra a linha.
+ */
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import Ilustracao from "../ui/Ilustracao.astro";
+
+interface Props {
+	titulo: string;
+	resumo: string;
+	empresa: string;
+	ano: number;
+	papel: string;
+	duracao?: string;
+	disciplinas: string[];
+	/** Capa do case, no bloco de destaque. */
+	imagem?: { src: ImageMetadata; alt: string };
+	minutos: number;
+	sigilo: "publico" | "confidencial";
+	/** Campos com conteúdo de exemplo. */
+	rascunhos?: string[];
+	nivel?: 1 | 2;
+}
+
+const {
+	titulo,
+	resumo,
+	empresa,
+	ano,
+	papel,
+	duracao,
+	disciplinas,
+	imagem,
+	minutos,
+	sigilo,
+	rascunhos = [],
+	nivel = 1,
+} = Astro.props;
+const Titulo = `h${nivel}` as const;
+/** data-rascunho no elemento quando o campo ainda é conteúdo de exemplo. */
+const rascunho = (campo: string) => (rascunhos.includes(campo) ? "" : undefined);
+
+const ficha = [
+	{ rotulo: "Empresa", valor: empresa },
+	{ rotulo: "Ano", valor: String(ano) },
+	{ rotulo: "Papel", valor: papel },
+	{ rotulo: "Duração", valor: duracao, campo: "duracao" },
+	{ rotulo: "Leitura", valor: `${minutos} ${minutos === 1 ? "minuto" : "minutos"} de leitura` },
+].filter((item): item is { rotulo: string; valor: string; campo?: string } => !!item.valor);
+---
+
+<header class="cabecalho-case">
+	<Titulo class="cabecalho-case__titulo">{titulo}</Titulo>
+
+	<div class="cabecalho-case__intro">
+		<div class="cabecalho-case__texto-intro">
+			<p class="cabecalho-case__resumo" data-rascunho={rascunho("resumo")}>
+				{resumo}
+			</p>
+			{disciplinas.length > 0 && (
+				<ul
+					class="cabecalho-case__pilulas"
+					role="list"
+					aria-label="Disciplinas"
+					data-rascunho={rascunho("disciplinas")}
+				>
+					{disciplinas.map((d) => (
+						<li class="cabecalho-case__pilula">{d}</li>
+					))}
+				</ul>
+			)}
+		</div>
+
+		<div class="cabecalho-case__lado">
+			<dl class="cabecalho-case__ficha">
+				{ficha.map((item) => (
+					<div class="cabecalho-case__ficha-linha">
+						<dt>{item.rotulo}</dt>
+						<dd data-rascunho={item.campo ? rascunho(item.campo) : undefined}>
+							{item.rotulo === "Ano" ? <time datetime={item.valor}>{item.valor}</time> : item.valor}
+						</dd>
+					</div>
+				))}
+			</dl>
+			{sigilo === "confidencial" && <p class="cabecalho-case__sigilo">Case sob sigilo</p>}
+		</div>
+	</div>
+
+	<div class="cabecalho-case__destaque">
+		<div class="cabecalho-case__imagem">
+			{imagem ? (
+				<Image
+					src={imagem.src}
+					alt={imagem.alt}
+					widths={[480, 800, 1200, 1600]}
+					sizes="(min-width: 1440px) 1360px, 95vw"
+					loading="eager"
+				/>
+			) : (
+				<Ilustracao variante={1} />
+			)}
+		</div>
+	</div>
+</header>
+
+<style>
+	.cabecalho-case {
+		display: grid;
+		gap: var(--space-largo);
+	}
+
+	.cabecalho-case__titulo {
+		font-size: var(--text-titulo-case);
+		letter-spacing: var(--tracking-titulo-case);
+		line-height: var(--leading-titulo);
+		text-wrap: balance;
+	}
+
+	.cabecalho-case__intro {
+		display: grid;
+		gap: var(--space-bloco);
+	}
+
+	/* Introdução e, logo abaixo, as pílulas de disciplina. */
+	.cabecalho-case__texto-intro {
+		display: grid;
+		align-content: start;
+		gap: var(--space-grande);
+	}
+
+	.cabecalho-case__resumo {
+		font-size: var(--text-intro-case);
+		font-weight: var(--peso-corpo);
+		letter-spacing: var(--tracking-intro-case);
+		line-height: var(--leading-intro-case);
+	}
+
+	.cabecalho-case__lado {
+		display: grid;
+		align-content: start;
+		gap: var(--space-grande);
+	}
+
+	.cabecalho-case__pilulas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-pequeno);
+		padding: 0;
+		list-style: none;
+	}
+
+	.cabecalho-case__pilula {
+		padding: var(--pilula-espaco);
+		border-radius: var(--radius-pilula);
+		background: var(--pilula-fundo);
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+	}
+
+	.cabecalho-case__ficha {
+		display: grid;
+		gap: var(--space-pequeno);
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+	}
+
+	.cabecalho-case__ficha-linha {
+		display: grid;
+		grid-template-columns: var(--ficha-rotulo-largura) minmax(0, 1fr);
+		gap: var(--space-medio);
+		padding-block-start: var(--space-pequeno);
+		border-block-start: var(--divisoria);
+	}
+
+	/* Sem linha acima de "Empresa": as linhas só separam os itens entre si (rodada 1f). */
+	.cabecalho-case__ficha-linha:first-child {
+		padding-block-start: 0;
+		border-block-start: 0;
+	}
+
+	.cabecalho-case__ficha dt,
+	.cabecalho-case__sigilo {
+		color: var(--color-texto-secundario);
+	}
+
+	.cabecalho-case__ficha dd {
+		margin: 0;
+	}
+
+	.cabecalho-case__sigilo {
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+	}
+
+	/* ---------- capa ---------- */
+	.cabecalho-case__destaque {
+		display: grid;
+		gap: var(--space-largo);
+	}
+
+	/* A capa direto na página: sem moldura nem fundo, só o raio. */
+	.cabecalho-case__imagem {
+		overflow: hidden;
+		border-radius: var(--capa-raio);
+	}
+
+	.cabecalho-case__imagem img {
+		display: block;
+		inline-size: 100%;
+		block-size: auto;
+	}
+
+	@media (min-width: 1200px) {
+		.cabecalho-case__intro {
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+			column-gap: var(--grade-espaco);
+		}
+
+		.cabecalho-case__texto-intro {
+			grid-column: 1 / span 7;
+		}
+
+		.cabecalho-case__lado {
+			grid-column: 9 / -1;
+		}
+	}
+</style>

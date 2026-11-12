@@ -5,6 +5,7 @@
 @layer reset, tokens, base, componentes, utilitarios;
 
 @import "./tokens.css" layer(tokens);
+@import "./fontes.css";
 
 /* ---------- reset ---------- */
 @layer reset {
@@ -54,16 +55,27 @@
 	html {
 		color-scheme: light;
 		background: var(--color-fundo);
+		/* As âncoras param abaixo do cabeçalho fixo. */
+		scroll-padding-block-start: var(--cabecalho-altura);
+		/* Sem o flash cinza do toque no celular: cada controle tem a própria resposta. */
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	/* Toque responde na hora, sem esperar um possível segundo toque de zoom. */
+	a,
+	button {
+		touch-action: manipulation;
 	}
 
 	body {
 		min-height: 100dvh;
-		background: var(--color-fundo);
+		background-color: var(--color-fundo);
 		color: var(--color-texto);
 		font-family: var(--font-texto);
 		font-size: var(--text-corpo);
 		font-weight: var(--peso-corpo);
 		line-height: var(--leading-corpo);
+		letter-spacing: var(--tracking-texto);
 		-webkit-font-smoothing: antialiased;
 	}
 
@@ -71,25 +83,13 @@
 	h2,
 	h3,
 	h4 {
+		font-size: inherit;
 		font-weight: var(--peso-titulo);
 		line-height: var(--leading-titulo);
 		text-wrap: balance;
 	}
 
-	h1 {
-		font-size: var(--text-titulo-1);
-	}
-
-	h2 {
-		font-size: var(--text-titulo-2);
-	}
-
-	h3 {
-		font-size: var(--text-titulo-3);
-	}
-
 	p {
-		max-width: var(--largura-leitura);
 		text-wrap: pretty;
 	}
 
@@ -99,14 +99,9 @@
 		text-underline-offset: var(--link-sublinhado-afastamento);
 	}
 
-	a:hover {
-		color: var(--link-cor-hover);
-	}
-
 	code,
 	kbd,
-	samp,
-	time {
+	samp {
 		font-family: var(--font-tecnica);
 	}
 
@@ -116,13 +111,14 @@
 	}
 
 	::selection {
-		background: var(--color-destaque);
-		color: var(--color-sobre-destaque);
+		background: var(--color-inverso-fundo);
+		color: var(--color-inverso-texto);
 	}
 
-	/* Quem pede menos movimento não recebe animação nenhuma. */
+	/* Quem pede menos movimento não recebe animação nenhuma. A exceção é data-esmaecer: quem troca
+	   de estado por esmaecimento (o cartão que vira) mantém só a transição de opacidade, curta. */
 	@media (prefers-reduced-motion: reduce) {
-		*,
+		*:not([data-esmaecer]),
 		*::before,
 		*::after {
 			animation-duration: 0.01ms !important;
@@ -139,21 +135,79 @@
 		position: absolute;
 		top: var(--space-medio);
 		left: var(--space-medio);
-		z-index: 100;
+		z-index: calc(var(--cabecalho-camada) + 1);
 		padding: var(--skip-link-espaco);
 		border-radius: var(--skip-link-raio);
 		background: var(--skip-link-fundo);
 		color: var(--skip-link-texto);
 		text-decoration: none;
-		transform: translateY(calc(-100% - var(--space-grande)));
+		transform: translateY(calc(-100% - var(--space-maximo)));
 	}
 
 	.pular-conteudo:focus-visible {
 		transform: none;
 	}
 
-	.pular-conteudo:hover {
-		color: var(--skip-link-texto);
+	/*
+	 * Link de interface: sem sublinhado parado; no hover e no foco, um traço de 1 pt
+	 * cresce da esquerda para a direita. Só transform, como pede a regra de movimento.
+	 */
+	.link {
+		position: relative;
+		color: var(--link-cor);
+		text-decoration: none;
+	}
+
+	.link::after {
+		content: "";
+		position: absolute;
+		inset-inline: 0;
+		inset-block-end: 0;
+		block-size: var(--link-sublinhado);
+		background: currentColor;
+		transform: scaleX(0);
+		transform-origin: left center;
+		transition: transform var(--motion-duration-base) var(--motion-ease-out);
+	}
+
+	.link:focus-visible::after {
+		transform: scaleX(1);
+	}
+
+	/* Hover só com mouse: no toque, o estado ficaria preso depois do toque. */
+	@media (hover: hover) and (pointer: fine) {
+		.link:hover::after {
+			transform: scaleX(1);
+		}
+	}
+
+	/* Seção da página inicial: rótulo pequeno e, 24 px abaixo, o conteúdo.
+	   Respiro em cima e embaixo, como na debora.wiki: 80 + 80 px entre seções (40 + 40 no celular). */
+	.secao {
+		display: grid;
+		align-content: start;
+		gap: var(--space-grande);
+		padding-block: var(--space-secao);
+	}
+
+	.secao__rotulo {
+		font-size: var(--text-rotulo);
+		font-weight: var(--peso-corpo);
+		line-height: var(--leading-rotulo);
+	}
+
+	/* Marca texto provisório: [RASCUNHO] e [TEXTO DA TAIANE]. Sai antes da 1.0.0. */
+	.marcador {
+		font-family: var(--font-tecnica);
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+		color: var(--color-texto-secundario);
+	}
+
+	/* Junta o marcador ao parágrafo a que ele se refere. */
+	.rascunho {
+		display: grid;
+		gap: var(--space-minimo);
 	}
 }
 
@@ -176,5 +230,18 @@
 		max-width: var(--largura-pagina);
 		margin-inline: auto;
 		padding-inline: var(--space-margem-pagina);
+	}
+
+	/* Grade de 12 colunas a partir do tablet; no celular, uma coluna só. */
+	.grade {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--grade-espaco);
+	}
+
+	@media (min-width: 768px) {
+		.grade {
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+		}
 	}
 }

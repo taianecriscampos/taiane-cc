@@ -6,8 +6,32 @@
  * pela integração `laboratorio` do astro.config.mjs, em todo ambiente menos a produção.
  */
 import { createHash } from "node:crypto";
+import Abertura from "../components/blocos/Abertura.astro";
+import CabecalhoCase from "../components/blocos/CabecalhoCase.astro";
+import VisaoGeralCase from "../components/blocos/VisaoGeralCase.astro";
+import ListaDeEntradas from "../components/blocos/ListaDeEntradas.astro";
+import Projetos from "../components/blocos/Projetos.astro";
+import Disponibilidade from "../components/ui/Disponibilidade.astro";
+import Selo from "../components/ui/Selo.astro";
+import Seta from "../components/ui/Seta.astro";
 import LayoutBase from "../components/layout/LayoutBase.astro";
+import {
+	artigosPiorCaso,
+	cabecalhoPiorCaso,
+	entradasPiorCaso,
+	projetosPiorCaso,
+	perfilPiorCaso,
+} from "../dados/pior-caso";
+import { projetosDosCases } from "../dados/projetos";
 import tokensCss from "../styles/tokens.css?raw";
+
+const projetosReais = await projetosDosCases();
+// O topo do case e a Visão geral são componentes separados (a Visão geral fica no texto do case).
+const {
+	resultados: resultadosPiorCaso,
+	cartoes: cartoesPiorCaso,
+	...topoPiorCaso
+} = cabecalhoPiorCaso;
 
 type Token = { nome: string; valor: string };
 
@@ -51,23 +75,37 @@ const nivel = (razao: number) =>
 const hexDoSemantico = (nome: string) =>
 	valorDe(referencia(semanticos.find((t) => t.nome === nome)?.valor ?? ""));
 const fundo = hexDoSemantico("--color-fundo");
-const destaque = hexDoSemantico("--color-destaque");
+const destaqueCase = hexDoSemantico("--color-destaque-case");
+const inverso = hexDoSemantico("--color-inverso-fundo");
 
 const cores = semanticos
 	.filter((t) => t.nome.startsWith("--color-"))
 	.map((t) => {
 		const primitivo = referencia(t.valor);
 		const hex = valorDe(primitivo);
-		// "Sobre destaque" é medido contra o vermelho; o resto, contra o fundo.
-		const base = t.nome === "--color-sobre-destaque" ? destaque : fundo;
+		// "Sobre destaque" é medido contra o azul; o texto inverso, contra o fundo escuro;
+		// o resto, contra o fundo da página.
+		const base =
+			t.nome === "--color-sobre-destaque-case"
+				? destaqueCase
+				: t.nome === "--color-inverso-texto"
+					? inverso
+					: fundo;
 		const ehFundo = t.nome === "--color-fundo";
+		const ehTranslucida = !hex.startsWith("#");
 		const razao = contraste(hex, base);
 		return {
 			...t,
 			primitivo,
 			hex,
 			ehFundo,
-			medidoContra: base === destaque ? "o destaque" : "o fundo",
+			ehTranslucida,
+			medidoContra:
+				base === destaqueCase
+					? "o azul de destaque"
+					: base === inverso
+						? "o fundo inverso"
+						: "o fundo",
 			razao: razao.toFixed(2).replace(".", ","),
 			nivel: nivel(razao),
 		};
@@ -87,6 +125,14 @@ const regra = (classe: string, propriedade: string, lista: Token[]) =>
 const cssDasAmostras = [
 	regra("lab__amostra", "background", cores),
 	regra("lab__especime", "font-size", textos),
+	// Espaço entre letras de cada nível: os títulos têm token próprio; do rótulo para baixo, o do texto.
+	textos
+		.map((t) => {
+			const nivel = t.nome.replace("--text-", "");
+			const proprio = semanticos.some((x) => x.nome === `--tracking-${nivel}`);
+			return `.lab__especime[data-token="${t.nome}"]{letter-spacing:var(--tracking-${proprio ? nivel : "texto"})}`;
+		})
+		.join(""),
 	regra("lab__barra", "inline-size", espacos),
 	regra("lab__caixa", "border-radius", raios),
 	regra("lab__ponto", "transition-duration", duracoes),
@@ -106,8 +152,8 @@ Astro.csp?.insertStyleHash(
 		<header class="lab__topo">
 			<h1>Laboratório</h1>
 			<p>
-				Todos os tokens do site, lidos direto de <code>src/styles/tokens.css</code>. Valores
-				provisórios: os oficiais saem da direção de arte, na etapa 0.3.0.
+				Todos os tokens do site, lidos direto de <code>src/styles/tokens.css</code>. Interface base
+				da etapa 0.3.0, conforme docs/especificacao-base-debora.md.
 			</p>
 		</header>
 
@@ -127,7 +173,9 @@ Astro.csp?.insertStyleHash(
 						<span class="lab__meta">
 							{c.ehFundo
 								? "Base das medições"
-								: `${c.razao}:1 contra ${c.medidoContra} · ${c.nivel}`}
+								: c.ehTranslucida
+									? "Translúcida: realce de fundo, sem texto"
+									: `${c.razao}:1 contra ${c.medidoContra} · ${c.nivel}`}
 						</span>
 					</li>
 				))}
@@ -137,8 +185,9 @@ Astro.csp?.insertStyleHash(
 		<section aria-labelledby="titulo-tipo">
 			<h2 id="titulo-tipo">Tipografia</h2>
 			<p>
-				Escala fluida: cresce suavemente entre 375 e 1440 pixels de largura. Redimensione a janela
-				para ver.
+				Google Sans Flex, pesos 400, 500 e 700, com espaço entre letras mais fechado nos tamanhos
+				maiores. Os tamanhos de título de entrada, título do case, espaço entre seções e margem da
+				página mudam em 768 e 1200 pixels: aqui aparece o valor do celular.
 			</p>
 			<ul class="lab__lista" role="list">
 				{textos.map((t) => (
@@ -151,14 +200,24 @@ Astro.csp?.insertStyleHash(
 					</li>
 				))}
 			</ul>
+			<p class="lab__peso" data-peso="400">
+				Peso 400: Design de produto com pensamento sistêmico
+			</p>
+			<p class="lab__peso" data-peso="500">
+				Peso 500: Design de produto com pensamento sistêmico
+			</p>
+			<p class="lab__peso" data-peso="700">
+				Peso 700: Design de produto com pensamento sistêmico
+			</p>
 			<p class="lab__mono">
-				<code>--font-tecnica</code>: 10/11/2026 · 23:59 · 0101 0110
+				<code>--font-tecnica</code>, fonte mono do sistema, só nos marcadores de rascunho: [TEXTO DA
+				TAIANE]
 			</p>
 		</section>
 
 		<section aria-labelledby="titulo-espaco">
 			<h2 id="titulo-espaco">Espaçamento</h2>
-			<p>Escala de 4 em 4 pixels. Os semânticos apontam para estes passos.</p>
+			<p>Escala da especificação: 0, 2, 4, 8, 16, 24, 32, 40, 48, 56 e 80 pixels.</p>
 			<ul class="lab__lista" role="list">
 				{espacos.map((t) => (
 					<li class="lab__espaco">
@@ -222,10 +281,77 @@ Astro.csp?.insertStyleHash(
 				))}
 			</ul>
 		</section>
+
+		<section aria-labelledby="titulo-avulsos">
+			<h2 id="titulo-avulsos">Componentes avulsos</h2>
+			<p>
+				Setas: diagonal só para links externos, reta para páginas do site, para baixo para rolar na
+				mesma página. O selo saiu do site na direção de arte v3 e fica aqui até a rodada 2.
+			</p>
+			<div class="lab__avulsos">
+				<Seta direcao="diagonal" />
+				<Seta direcao="direita" />
+				<Seta direcao="baixo" />
+				<Disponibilidade />
+				<Selo id="lab-selo" />
+			</div>
+		</section>
+
+		<section aria-labelledby="titulo-pior-caso" id="pior-caso">
+			<h2 id="titulo-pior-caso">Pior caso</h2>
+			<p>
+				Os mesmos componentes da página real, com dados extremos e realistas: nomes e títulos
+				longos, uma palavra sem espaços, e-mail enorme, textos no limite do schema e lista vazia.
+				Dados em <code>src/dados/pior-caso.ts</code>.
+			</p>
+		</section>
+	</div>
+
+	<div class="lab__pior-caso">
+		<Abertura perfil={perfilPiorCaso} idBase="pior-abertura" nivel={2} />
+		<Projetos
+			id="lab-icone-mao"
+			rotulo="Ver resumo com a mão (a seta curva está na página inicial)"
+			projetos={projetosReais}
+			icone="mao"
+		/>
+		<Projetos id="pior-projetos" rotulo="Projetos no limite" projetos={projetosPiorCaso} />
+		<ListaDeEntradas
+			id="pior-entradas"
+			rotulo="Entradas no limite"
+			entradas={entradasPiorCaso}
+			vazio="Lista vazia."
+		/>
+		<ListaDeEntradas
+			id="pior-artigos"
+			rotulo="Artigos no limite"
+			entradas={artigosPiorCaso}
+			vazio="Lista vazia."
+			titulosEmDuasLinhas
+		/>
+		<ListaDeEntradas
+			id="pior-vazia"
+			rotulo="Lista vazia"
+			entradas={[]}
+			vazio="Os projetos entram aqui em breve."
+		/>
+		<div class="envoltorio">
+			<div class="lab__case">
+				<CabecalhoCase {...topoPiorCaso} nivel={2} />
+				<VisaoGeralCase resultados={resultadosPiorCaso} cartoes={cartoesPiorCaso} />
+			</div>
+		</div>
 	</div>
 </LayoutBase>
 
 <style>
+	.lab__avulsos {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-grande);
+	}
+
 	.lab {
 		display: grid;
 		gap: var(--space-secao);
@@ -255,7 +381,7 @@ Astro.csp?.insertStyleHash(
 	.lab__meta {
 		font-family: var(--font-tecnica);
 		font-size: var(--text-pequeno);
-		color: var(--color-texto-terciario);
+		color: var(--color-texto-secundario);
 	}
 
 	.lab__lista,
@@ -281,8 +407,8 @@ Astro.csp?.insertStyleHash(
 	.lab__amostra {
 		block-size: var(--space-secao);
 		margin-block-end: var(--space-pequeno);
-		border-radius: var(--radius-sutil);
-		box-shadow: inset 0 0 0 1px var(--color-linha);
+		border-radius: var(--radius-medio);
+		box-shadow: inset 0 0 0 1px var(--color-borda);
 	}
 
 	/* Tipografia, espaçamento e componentes */
@@ -293,7 +419,7 @@ Astro.csp?.insertStyleHash(
 		display: grid;
 		gap: var(--space-minimo) var(--space-medio);
 		padding-block-end: var(--space-medio);
-		border-block-end: 1px solid var(--color-linha);
+		border-block-end: 1px solid var(--color-borda);
 	}
 
 	.lab__especime {
@@ -305,9 +431,44 @@ Astro.csp?.insertStyleHash(
 		font-family: var(--font-tecnica);
 	}
 
+	.lab__peso {
+		font-size: var(--text-subtitulo);
+		letter-spacing: var(--tracking-subtitulo);
+		line-height: var(--leading-subtitulo);
+		color: var(--color-texto);
+	}
+
+	.lab__peso[data-peso="400"] {
+		font-weight: var(--peso-corpo);
+	}
+
+	.lab__peso[data-peso="500"] {
+		font-weight: var(--peso-titulo);
+	}
+
+	.lab__peso[data-peso="700"] {
+		font-weight: var(--peso-forte);
+	}
+
+	.lab__pior-caso {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--space-secao);
+	}
+
+	.lab__case {
+		padding-block: var(--space-secao);
+	}
+
+	@media (min-width: 1200px) {
+		.lab__case {
+			max-inline-size: 50%;
+		}
+	}
+
 	.lab__barra {
 		block-size: var(--space-medio);
-		background: var(--color-destaque);
+		background: var(--color-marca);
 	}
 
 	@media (min-width: 48rem) {
@@ -361,14 +522,14 @@ Astro.csp?.insertStyleHash(
 	.lab__controle input {
 		inline-size: var(--space-medio);
 		block-size: var(--space-medio);
-		accent-color: var(--color-destaque);
+		accent-color: var(--color-marca);
 	}
 
 	.lab__trilho {
 		container-type: inline-size;
 		display: block;
 		block-size: var(--space-medio);
-		border-block-end: 1px solid var(--color-linha);
+		border-block-end: 1px solid var(--color-borda);
 	}
 
 	.lab__ponto {
@@ -376,7 +537,7 @@ Astro.csp?.insertStyleHash(
 		inline-size: var(--space-medio);
 		block-size: var(--space-medio);
 		border-radius: var(--radius-pilula);
-		background: var(--color-destaque);
+		background: var(--color-marca);
 		transition-property: transform;
 		transition-timing-function: var(--motion-ease-out);
 	}

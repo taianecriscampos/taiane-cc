@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#radial-gradient);
+      }
+
+      .cls-2 {
+        fill: url(#radial-gradient-3);
+      }
+
+      .cls-3 {
+        fill: url(#radial-gradient-2);
+      }
+    </style>
+    <radialGradient id="radial-gradient" cx="-358.28" cy="553.45" fx="-358.28" fy="553.45" r="16.1" gradientTransform="translate(6278.9723 11927.3259) rotate(120.4652) scale(20.0529)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00afd1"/>
+      <stop offset=".51" stop-color="#007abf"/>
+      <stop offset="1" stop-color="#284679"/>
+    </radialGradient>
+    <radialGradient id="radial-gradient-2" cx="-358.27" cy="552.75" fx="-358.27" fy="552.75" r="16.1" gradientTransform="translate(6107.8184 11613.8062) rotate(120.4649) scale(19.5166)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00afd1"/>
+      <stop offset=".51" stop-color="#007abf"/>
+      <stop offset="1" stop-color="#284679"/>
+    </radialGradient>
+    <radialGradient id="radial-gradient-3" cx="-358.27" cy="552.75" fx="-358.27" fy="552.75" r="16.1" gradientTransform="translate(6107.8184 11613.8062) rotate(120.4649) scale(19.5166)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00afd1"/>
+      <stop offset=".51" stop-color="#007abf"/>
+      <stop offset="1" stop-color="#284679"/>
+    </radialGradient>
+  </defs>
+  <path class="cls-1" d="M256.22,13.78c-133.68,0-242.22,108.54-242.22,242.22,0,29.12,5.29,56.91,14.56,82.95l4.85-3.53,20.3-15,246.63-183.1,20.3-15.45,40.59-30,18.97-14.12-1.77,19.42-6.17,67.94-3.09,33.97-18.97,210.9-.45,5.73s-.88-.88-2.2-2.64c-8.38-10.15-40.59-46.33-83.83-60.89-35.74-12.35-108.09-21.18-199.42,5.3-7.06,1.76-14.56,4.41-22.06,7.06l-2.21.88c40.15,78.53,121.77,132.8,215.75,132.8,133.68,0,242.22-108.54,242.22-242.22C498.44,122.32,389.9,13.78,256.22,13.78ZM365.2,466.89H365.2v-1.32V466.89Z"/>
+  <polygon class="cls-3" points="365.2 466.89 365.2 466.01 364.76 466.45 365.2 466.89"/>
+  <polygon class="cls-2" points="365.2 466.89 365.2 466.01 364.76 466.45 365.2 466.89"/>
+</svg>

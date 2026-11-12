@@ -1,0 +1,98 @@
+---
+/**
+ * Skills: só duas colunas, Hard skills e Soft skills, 6 colunas cada na grade de 12 a partir
+ * de 1200 px; abaixo disso, uma embaixo da outra, na largura toda (rodada 1f). Títulos em rótulo (16/24, secundário).
+ * Nas duas, pílulas lado a lado que quebram linha quando acaba o espaço: nunca uma por linha.
+ * Pílula cinza, sem borda e sem sombra, texto pequeno (14/20) e espaços da escala (8 e 16):
+ * 36 px de altura. Não são clicáveis: nada de hover.
+ * Logo abaixo das pílulas, a faixa de ferramentas (Ferramentas.astro), parte desta seção,
+ * sem título próprio, a 48 px da última pílula (rodada 1f).
+ */
+import { competencias, softSkills } from "../../dados/skills";
+import Ferramentas from "./Ferramentas.astro";
+
+const colunas = [
+	{ titulo: "Hard skills", itens: competencias },
+	{ titulo: "Soft skills", itens: softSkills },
+];
+---
+
+<section class="secao envoltorio skills-secao" id="skills" aria-labelledby="skills-titulo">
+	<h2 id="skills-titulo" class="secao__rotulo">
+		Skills
+	</h2>
+
+	<div class="skills">
+		{colunas.map((coluna) => (
+			<div class="skills__coluna">
+				<h3 class="skills__titulo">{coluna.titulo}</h3>
+				<ul class="skills__pilulas" role="list">
+					{coluna.itens.map((item) => (
+						<li class="skills__pilula">{item}</li>
+					))}
+				</ul>
+			</div>
+		))}
+	</div>
+
+	<div class="skills__ferramentas">
+		<Ferramentas />
+	</div>
+</section>
+
+<style>
+	/* Mesmo ritmo do Sobre: 40 px entre colunas empilhadas, 24 px entre o título e o conteúdo. */
+	.skills {
+		display: grid;
+		gap: var(--space-bloco);
+	}
+
+	.skills__coluna {
+		display: grid;
+		align-content: start;
+		gap: var(--space-grande);
+	}
+
+	.skills__titulo {
+		font-weight: var(--peso-corpo);
+		line-height: var(--leading-corpo);
+		color: var(--color-texto-secundario);
+	}
+
+	.skills__pilulas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--skill-pilula-intervalo);
+		padding: 0;
+		list-style: none;
+	}
+
+	.skills__pilula {
+		padding: var(--skill-pilula-espaco);
+		border-radius: var(--radius-pilula);
+		background: var(--skill-pilula-fundo);
+		color: var(--skill-pilula-texto);
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+	}
+
+	/* Entre a faixa e o rodapé, o mesmo espaço que separa duas seções: o respiro de baixo desta
+	   seção mais o de cima da seguinte (80 + 80 px; 40 + 40 no celular). */
+	.skills-secao {
+		padding-block-end: calc(2 * var(--space-secao));
+	}
+
+	/* 24 px do gap da seção + 24 px: a faixa fica a 48 px da última pílula. */
+	.skills__ferramentas {
+		margin-block-start: var(--space-grande);
+	}
+
+	/* Duas colunas só a partir de 1200 px. No tablet, cada coluna teria uns 345 px e duas
+	   pílulas longas não caberiam lado a lado: as listas ficam na largura toda (rodada 1f). */
+	@media (min-width: 1200px) {
+		.skills {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			column-gap: var(--grade-espaco);
+		}
+	}
+</style>
