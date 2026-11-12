@@ -6,8 +6,7 @@
  * dos outros, com uma etiqueta discreta "não concluída" ao lado do ano.
  * Abaixo das colunas, uma linha: "Currículo em PDF" numa ponta e "Mais informações no LinkedIn"
  * na outra, os dois em nova aba.
- * O resumo é conteúdo de exemplo (data-rascunho), a partir de docs/curriculo.md, para a Taiane
- * reescrever com as palavras dela.
+ * O Resumo vem de docs/curriculo.md, encurtado para até 4 linhas na coluna de leitura.
  */
 import { perfil } from "../../dados/perfil";
 import { experienciasDoSobre, formacaoDoSobre } from "../../dados/trajetoria";
@@ -25,14 +24,9 @@ const partes = (periodo: string) => periodo.split("–");
 	<div class="sobre">
 		<div class="sobre__coluna">
 			<h3 class="sobre__grupo-titulo">Resumo</h3>
-			<p data-rascunho>
-				Sou designer de produto há mais de 10 anos, na ponte entre estratégia de negócio,
-				experiência do usuário e engenharia. Comecei na direção de arte, passei por sistemas
-				regulatórios e plataformas SaaS e estruturei design systems em escala corporativa.
-			</p>
-			<p data-rascunho>
-				Hoje atuo como Design Engineer: uso front-end e IA generativa para encurtar o caminho entre
-				hipótese, protótipo e código funcional.
+			<p class="sobre__resumo">
+				Mais de 10 anos conectando estratégia de negócio, experiência do usuário e engenharia. Hoje,
+				como Design Engineer, encurto o caminho entre hipótese, protótipo e código.
 			</p>
 		</div>
 

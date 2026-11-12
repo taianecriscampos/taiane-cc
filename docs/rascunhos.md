@@ -4,29 +4,34 @@ Desde a rodada 1c, nenhum marcador entre colchetes aparece no site. No lugar del
 de exemplo, escrito do zero para a Taiane ver como vai ficar. Todo exemplo fica marcado no
 código com o atributo `data-rascunho`.
 
-O teste `testes/rascunhos.spec.ts` avisa, sem falhar, quantos rascunhos cada página ainda tem,
-e falha se algum colchete voltar a aparecer na tela.
+O teste `testes/rascunhos.spec.ts` falha se algum colchete aparecer na tela ou se algum
+rascunho voltar à página inicial ou ao case de Funis (meta zero desde a rodada 1d).
 
 Para trocar um rascunho: escreva o texto verdadeiro e tire o campo da lista `rascunhos` do case
 (ou o atributo `data-rascunho` do elemento). Quando a lista ficar vazia, apague esta linha daqui.
+
+## Situação na rodada 1d (12/11/2026)
+
+Zero rascunhos na página inicial e no case de Funis interativos. O que sobra está fora do ar.
 
 ## Cases
 
 Nos arquivos de `src/content/cases`, o campo `rascunhos` lista os campos do topo que são
 exemplo. No texto do case, os trechos de exemplo ficam dentro de `<div data-rascunho>`.
 
-- `azul-gpt.md`: tudo é exemplo. Chamada, resumo, duração ("8 meses"), disciplinas, os três
-  cartões, os três resultados (em palavras, sem números) e as seis seções do texto.
-- `operacao-logistica.md`: tudo é exemplo. Chamada, resumo, duração ("4 meses"), disciplinas,
-  os três cartões, os três resultados (em palavras, sem números) e as seis seções do texto.
-- `funis-interativos.md`: duração ("6 meses") e os três cartões, escritos a partir do artigo.
+- `azul-gpt.md` e `operacao-logistica.md`: sem página na 1.0.0 (`pagina: false`). Na página
+  inicial, só o cartão que vira, com chamada e verso finais (aprovados pela Taiane). O resto do
+  arquivo (resumo, duração, disciplinas, cartões, resultados e as seis seções do texto) é
+  exemplo, para a v1.1.
+- `funis-interativos.md`: sem rascunhos. A duração não aparece porque o artigo não informa.
 
 ## Imagens
 
-- `src/components/ui/Ilustracao.astro`: ilustração neutra, só formas em cinza, no lugar das
-  imagens dos cases. Aparece no destaque do topo de cada case e no cartão grande de Projetos.
+- `src/components/ui/Ilustracao.astro`: ilustração neutra, só formas em cinza. Nos cartões do
+  Azul GPT e da Operação logística ela é a imagem definitiva (cases sob sigilo não mostram telas)
+  e não conta como rascunho. Nos outros usos (Laboratório), conta.
 
 ## Textos do site
 
-- `src/components/blocos/Sobre.astro`: os dois parágrafos do Resumo.
-- `src/components/blocos/FechamentoCase.astro`: a nota de confidencialidade do fim de cada case.
+- `src/components/blocos/FechamentoCase.astro`: a nota de confidencialidade dos cases sob
+  sigilo. Só aparece quando algum deles ganhar página (v1.1).
