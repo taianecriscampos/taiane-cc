@@ -6,7 +6,7 @@ Atualize este arquivo ao final de cada tarefa.
 **Etapa atual:** 1.0.0 Lançamento
 **Fase da etapa:** 1.0.a Ajustes do celular, redirecionamento removido, pull request e etiqueta v1.0.0 · desempenho no celular abaixo da meta, anotado como pendência
 **Direção de arte (0.3.0):** aprovada pela Taiane
-**Status geral:** Publicado (conferência em produção abaixo)
+**Status geral:** Publicado em 12/11/2026 (v1.0.0, conferido em taiane.cc: página, robots, sitemap, sem noindex e cabeçalhos de segurança)
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
 ## Ciclo de cada fase (Lean UX)
