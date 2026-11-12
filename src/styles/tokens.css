@@ -394,12 +394,21 @@
 	--skill-pilula-intervalo: var(--space-pequeno);
 	--skill-pilula-fundo: var(--color-fundo-secundario);
 	--skill-pilula-texto: var(--color-texto);
-	--projeto-fundo: var(--color-fundo-secundario);
+	/* Cartões de Projetos (rodada 1f): o mesmo vidro da ilha. Sobre o fundo da página ele fica
+	   #4b4b4b: o branco dá 8,9:1 e o cinza claro dá 5:1 (AA). */
+	--projeto-fundo: var(--color-vidro-fundo);
+	--projeto-desfoque: var(--prim-desfoque-20);
+	--projeto-texto: var(--color-vidro-texto);
+	--projeto-texto-secundario: var(--color-vidro-texto-secundario);
+	--projeto-etiqueta-fundo: var(--color-fundo-secundario);
+	--projeto-etiqueta-texto: var(--color-texto);
 	--projeto-raio: var(--radius-cartao);
 	--projeto-espaco: var(--space-grande);
-	--projeto-imagem-fundo: var(
-		--color-fundo-secundario
-	); /* igual à ilustração: sem fio claro na borda */
+	--projeto-imagem-fundo: var(--prim-color-branco); /* o mesmo branco do fundo da imagem */
+	--projeto-imagem-respiro: var(--space-medio);
+	--projeto-simbolo: var(--prim-size-56);
+	--projeto-simbolo-area: var(--prim-size-96);
+	--projeto-simbolo-cor: var(--color-vidro-texto-secundario);
 	--projeto-imagem-raio: var(--radius-imagem-interna);
 	--projeto-escala-pressionado: var(--motion-escala-pressionado-suave);
 	--projeto-perspectiva: var(--prim-perspectiva-1200);

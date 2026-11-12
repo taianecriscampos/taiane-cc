@@ -17,6 +17,7 @@ export async function projetosDosCases(): Promise<Projeto[]> {
 		rascunho: data.rascunhos.includes("chamada"),
 		href: data.pagina ? `/cases/${id}` : undefined,
 		imagem: data.pagina ? data.capa : undefined,
+		protegido: data.sigilo === "confidencial",
 		verso: data.pagina ? undefined : data.verso,
 	}));
 }

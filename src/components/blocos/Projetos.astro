@@ -1,24 +1,25 @@
 ---
 /**
- * Projetos (rodada 1e): cartões de fundo cinza, raio de 24 px, sem borda e sem sombra.
- * Bento sem buraco:
+ * Projetos (rodada 1f): cartões com o mesmo material da ilha (escuro translúcido, com o mesmo
+ * desfoque), raio de 24 px, sem borda e sem sombra. Textos claros com contraste AA.
  * - Celular: empilhados.
- * - 768 a 1199 px: o primeiro cartão (o que tem imagem) ocupa a largura toda, na horizontal,
- *   imagem à esquerda e texto à direita; embaixo, os outros dois lado a lado.
- * - 1200 px ou mais: três lado a lado, 4 colunas cada da grade de 12.
- * Os cartões de uma mesma linha têm a mesma altura: se um verso precisa de mais espaço,
- * a linha inteira cresce. Nada é cortado nem comprimido.
+ * - 768 a 1199 px: os três no mesmo formato e no mesmo tamanho, um embaixo do outro, na
+ *   horizontal: visual à esquerda, texto à direita. Nenhum maior que o outro, nenhum buraco.
+ * - 1200 px ou mais: três lado a lado, 4 colunas cada da grade de 12, com a mesma altura.
+ * Se um verso precisa de mais espaço, todos crescem juntos. Nada é cortado nem comprimido.
  *
- * Hierarquia única do site: título do cartão 32/40, chamada 16/24 secundária, "ano, empresa"
- * 16/24 secundário (como em Artigos).
+ * Hierarquia única do site: título do cartão 32/40, chamada e "ano, empresa" 16/24 em cor
+ * secundária clara, etiqueta 14/20 com peso 500.
  *
  * Dois tipos de cartão:
- * - Com página: imagem no topo; o título é o link, esticado para o cartão inteiro, com a seta.
- * - Que vira (case sem página nesta versão): cartão só tipográfico. Título e chamada no topo,
- *   "ano, empresa" e "Ver resumo" colados na base; o espaço livre no meio é respiro.
- *   O botão "Ver resumo", esticado para o cartão inteiro, gira o cartão no eixo Y e mostra o
- *   verso escuro. O lado escondido fica inerte. "Voltar", Esc ou um clique no verso desviram.
- *   Com movimento reduzido, o giro vira um esmaecimento de 150 ms.
+ * - Com página: imagem inteira (object-fit: contain), com respiro de 16 px sobre fundo branco;
+ *   o título é o link, esticado para o cartão inteiro, com a seta.
+ * - Que vira (case sob sigilo, sem página nesta versão): título com a etiqueta "Case protegido",
+ *   chamada, o símbolo da marca no espaço livre (cinza; cor original no hover, só com mouse) e,
+ *   na base, "ano, empresa" e "Ver resumo". O botão "Ver resumo", esticado para o cartão
+ *   inteiro, gira o cartão no eixo Y e mostra o verso escuro e opaco. O lado escondido fica
+ *   inerte. "Voltar", Esc ou um clique no verso desviram. Com movimento reduzido, o giro vira
+ *   um esmaecimento de 150 ms.
  *
  * Ícone de "Ver resumo": seta curva aberta (Lucide redo-2, licença ISC), que diz "virar".
  * A opção da mão (Lucide pointer) fica disponível pela prop `icone`, para comparar no Laboratório.
@@ -33,6 +34,10 @@ import type { Entrada } from "../ui/Entrada.astro";
 export interface Projeto extends Entrada {
 	/** Imagem do cartão (só nos cartões com página). */
 	imagem?: { src: ImageMetadata; alt: string };
+	/** Case sob sigilo: etiqueta "Case protegido" ao lado do título. */
+	protegido?: boolean;
+	/** Símbolo da marca (SVG oficial, sem o nome escrito), no espaço livre do cartão que vira. */
+	simbolo?: { svg: string; marca: string };
 	/** Com verso, o cartão vira em vez de levar a uma página. */
 	verso?: { subtitulo: string; blocos: { rotulo: string; texto: string }[] };
 }
@@ -66,7 +71,7 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 					<div class="projeto__giro">
 						<div class="projeto__face projeto__frente" data-esmaecer>
 							{p.imagem && (
-								<div class="projeto__imagem">
+								<div class="projeto__visual projeto__imagem">
 									<Image
 										src={p.imagem.src}
 										alt={p.imagem.alt}
@@ -76,27 +81,39 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 								</div>
 							)}
 							<div class="projeto__texto">
-								<h3 class="projeto__titulo">
-									{verso ? (
-										p.titulo
-									) : (
-										<a
-											class="projeto__link"
-											href={p.href}
-											target={p.externo ? "_blank" : undefined}
-											rel={p.externo ? "noopener noreferrer" : undefined}
-										>
-											{p.titulo}
-											{p.externo && <span class="so-leitor-de-tela"> — abre em nova aba</span>}
-										</a>
-									)}
-								</h3>
+								<div class="projeto__cabeca">
+									<h3 class="projeto__titulo">
+										{verso ? (
+											p.titulo
+										) : (
+											<a
+												class="projeto__link"
+												href={p.href}
+												target={p.externo ? "_blank" : undefined}
+												rel={p.externo ? "noopener noreferrer" : undefined}
+											>
+												{p.titulo}
+												{p.externo && <span class="so-leitor-de-tela"> — abre em nova aba</span>}
+											</a>
+										)}
+									</h3>
+									{p.protegido && <p class="projeto__etiqueta">Case protegido</p>}
+								</div>
 								{p.descricao && (
 									<p class="projeto__chamada" data-rascunho={p.rascunho ? "" : undefined}>
 										{p.descricao}
 									</p>
 								)}
 							</div>
+							{verso && (
+								<div
+									class="projeto__visual projeto__simbolo"
+									data-marca={p.simbolo?.marca}
+									aria-hidden="true"
+								>
+									{p.simbolo && <Fragment set:html={p.simbolo.svg} />}
+								</div>
+							)}
 							<div class="projeto__meta">
 								<p>
 									<time datetime={String(p.ano)}>{p.ano}</time>, {p.onde}
@@ -257,9 +274,17 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		gap: var(--space-grande);
 		padding: var(--projeto-espaco);
 		border-radius: var(--projeto-raio);
-		background: var(--projeto-fundo);
 		-webkit-backface-visibility: hidden;
 		backface-visibility: hidden;
+	}
+
+	/* Frente: o vidro da ilha, com textos claros. */
+	.projeto__frente {
+		background: var(--projeto-fundo);
+		-webkit-backdrop-filter: var(--projeto-desfoque);
+		backdrop-filter: var(--projeto-desfoque);
+		color: var(--projeto-texto);
+		--link-cor: var(--projeto-texto);
 	}
 
 	/* O lado inerte não recebe clique, mesmo estando por cima. */
@@ -267,9 +292,11 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		pointer-events: none;
 	}
 
+	/* Imagem inteira, com respiro: nenhum elemento encosta na borda. */
 	.projeto__imagem {
-		overflow: hidden;
+		display: grid;
 		aspect-ratio: var(--destaque-proporcao);
+		padding: var(--projeto-imagem-respiro);
 		border-radius: var(--projeto-imagem-raio);
 		background: var(--projeto-imagem-fundo);
 	}
@@ -277,7 +304,8 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 	.projeto__imagem img {
 		inline-size: 100%;
 		block-size: 100%;
-		object-fit: cover;
+		min-block-size: 0;
+		object-fit: contain;
 	}
 
 	.projeto__texto {
@@ -285,13 +313,37 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		gap: var(--space-pequeno);
 	}
 
+	/* Título e etiqueta na mesma linha, alinhados pelo topo. */
+	.projeto__cabeca {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: var(--space-medio);
+	}
+
 	/* Título de cartão: 32/40, peso 500, em todas as larguras. */
 	.projeto__titulo {
+		min-inline-size: 0;
 		overflow-wrap: anywhere;
 		font-size: var(--text-titulo-cartao);
 		font-weight: var(--peso-titulo);
 		letter-spacing: var(--tracking-titulo-cartao);
 		line-height: var(--leading-titulo-cartao);
+	}
+
+	/* Etiqueta pequena (14/20, peso 500), clara sobre o vidro escuro. A margem de 8 px centraliza
+	   a pílula de 24 px na primeira linha do título, de 40 px. */
+	.projeto__etiqueta {
+		flex: none;
+		margin-block-start: var(--space-pequeno);
+		padding: var(--etiqueta-espaco);
+		border-radius: var(--radius-pilula);
+		background: var(--projeto-etiqueta-fundo);
+		color: var(--projeto-etiqueta-texto);
+		font-size: var(--text-pequeno);
+		font-weight: var(--peso-medio);
+		line-height: var(--leading-pequeno);
+		white-space: nowrap;
 	}
 
 	.projeto__link {
@@ -321,7 +373,22 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 
 	.projeto__chamada {
 		max-inline-size: 40ch;
-		color: var(--color-texto-secundario);
+		color: var(--projeto-texto-secundario);
+	}
+
+	/* Espaço livre do cartão que vira: o símbolo da marca, centralizado, em cinza. */
+	.projeto__simbolo {
+		flex: 1;
+		display: grid;
+		place-items: center;
+		min-block-size: var(--projeto-simbolo-area);
+		color: var(--projeto-simbolo-cor);
+	}
+
+	.projeto__simbolo :global(svg) {
+		inline-size: auto;
+		block-size: var(--projeto-simbolo);
+		fill: currentColor;
 	}
 
 	/* Colado na base do cartão. */
@@ -331,7 +398,11 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		justify-content: space-between;
 		gap: var(--space-medio);
 		margin-block-start: auto;
-		color: var(--color-texto-secundario);
+		color: var(--projeto-texto-secundario);
+	}
+
+	.projeto__frente :global(.seta) {
+		color: var(--projeto-texto);
 	}
 
 	/* "Ver resumo": no lugar da seta, com a altura mínima de toque. */
@@ -343,7 +414,7 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		padding: 0;
 		border: 0;
 		background: transparent;
-		color: var(--color-texto);
+		color: var(--projeto-texto);
 		cursor: pointer;
 		user-select: none;
 		-webkit-user-select: none;
@@ -420,10 +491,20 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 	}
 
 	/* ---------- resposta ao ponteiro ---------- */
+	/* O símbolo ganha a cor da marca por cima do cinza, só com opacity (200 ms, ease-out). */
+	.projeto__simbolo :global(.simbolo__marca) {
+		opacity: 0;
+		transition: opacity var(--motion-duration-rapida) var(--motion-ease-out);
+	}
+
 	@media (hover: hover) and (pointer: fine) {
 		.projeto:hover :global(.seta__icone),
 		.projeto:hover .projeto__icone {
 			transform: translateX(var(--space-minimo));
+		}
+
+		.projeto:hover .projeto__simbolo :global(.simbolo__marca) {
+			opacity: 1;
 		}
 	}
 
@@ -454,36 +535,52 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		}
 	}
 
-	/* Tablet: o cartão com imagem ocupa a linha toda, na horizontal; os outros, lado a lado. */
-	@media (min-width: 768px) {
-		.projetos {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-
-		.projeto__chamada {
-			max-inline-size: none;
-		}
-	}
-
+	/* Tablet: os três iguais, um embaixo do outro, na horizontal. grid-auto-rows: 1fr deixa
+	   todas as linhas com a altura da mais alta. */
 	@media (min-width: 768px) and (max-width: 1199px) {
-		.projeto[data-com-imagem] {
-			grid-column: 1 / -1;
+		.projetos {
+			grid-auto-rows: 1fr;
 		}
 
-		.projeto[data-com-imagem] .projeto__frente {
+		.projeto__frente {
 			display: grid;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
-			grid-template-rows: auto 1fr;
+			grid-template-rows: auto 1fr auto;
 			column-gap: var(--grade-espaco);
 		}
 
-		.projeto[data-com-imagem] .projeto__imagem {
+		.projeto__visual {
+			grid-column: 1;
 			grid-row: 1 / -1;
-			align-self: start;
 		}
 
-		.projeto[data-com-imagem] .projeto__meta {
-			align-self: end;
+		/* A área branca ocupa a coluna inteira; a imagem fica inteira dentro dela. */
+		.projeto__imagem {
+			position: relative;
+			aspect-ratio: auto;
+		}
+
+		/* A imagem não decide a altura do cartão: preenche a área branca, com o respiro. */
+		.projeto__imagem img {
+			position: absolute;
+			inset: var(--projeto-imagem-respiro);
+			inline-size: calc(100% - 2 * var(--projeto-imagem-respiro));
+			block-size: calc(100% - 2 * var(--projeto-imagem-respiro));
+		}
+
+		.projeto__texto,
+		.projeto__meta {
+			grid-column: 2;
+		}
+
+		.projeto__meta {
+			grid-row: 3;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.projeto__chamada {
+			max-inline-size: none;
 		}
 	}
 

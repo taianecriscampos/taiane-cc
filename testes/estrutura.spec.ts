@@ -186,7 +186,7 @@ test("o cartão vira com clique, mostra o verso e desvira com Voltar", async ({ 
 });
 
 for (const largura of [375, 1024, 1440]) {
-	test(`em ${largura} px, os cartões de Projetos não deixam buraco e não têm ilustração`, async ({
+	test(`em ${largura} px, os cartões de Projetos não deixam buraco, não têm ilustração e marcam os protegidos`, async ({
 		page,
 	}) => {
 		await page.setViewportSize({ width: largura, height: 900 });
@@ -206,16 +206,22 @@ for (const largura of [375, 1024, 1440]) {
 		// Só o cartão de Funis tem imagem; os outros dois são tipográficos.
 		await expect(page.locator("#projetos .projeto__imagem")).toHaveCount(1);
 		await expect(page.locator("#projetos .ilustracao__fundo")).toHaveCount(0);
+		await expect(page.locator("#projetos .projeto__etiqueta")).toHaveText([
+			"Case protegido",
+			"Case protegido",
+		]);
 		const [funis, azul, luft] = caixas;
 		if (largura >= 1200) {
 			// Três lado a lado, com a mesma altura.
 			expect(new Set(caixas.map((c) => c.y)).size).toBe(1);
 			expect(new Set(caixas.map((c) => c.h)).size).toBe(1);
 		} else if (largura >= 768) {
-			// Funis na largura toda; embaixo, os outros dois lado a lado e da mesma altura.
-			expect(funis.w).toBe(azul.w + luft.w + (luft.x - azul.x - azul.w));
-			expect(azul.y).toBe(luft.y);
-			expect(azul.h).toBe(luft.h);
+			// Os três iguais, um embaixo do outro: mesma posição, largura e altura.
+			for (const c of [azul, luft]) {
+				expect(c.x).toBe(funis.x);
+				expect(c.w).toBe(funis.w);
+				expect(c.h).toBe(funis.h);
+			}
 		} else {
 			expect(new Set(caixas.map((c) => c.x)).size).toBe(1);
 		}
