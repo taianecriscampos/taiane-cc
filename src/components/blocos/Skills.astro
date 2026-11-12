@@ -1,7 +1,7 @@
 ---
 /**
- * Skills (rodada 1e): só duas colunas, Hard skills e Soft skills, 6 colunas cada na grade de 12
- * a partir de 768 px; no celular, uma embaixo da outra. Títulos em rótulo (16/24, secundário).
+ * Skills: só duas colunas, Hard skills e Soft skills, 6 colunas cada na grade de 12 a partir
+ * de 1200 px; abaixo disso, uma embaixo da outra, na largura toda (rodada 1f). Títulos em rótulo (16/24, secundário).
  * Nas duas, pílulas lado a lado que quebram linha quando acaba o espaço: nunca uma por linha.
  * Pílula cinza, sem borda e sem sombra, texto pequeno (14/20) e espaços da escala (8 e 16):
  * 36 px de altura. Não são clicáveis: nada de hover.
@@ -81,7 +81,9 @@ const colunas = [
 		margin-block-start: var(--space-grande);
 	}
 
-	@media (min-width: 768px) {
+	/* Duas colunas só a partir de 1200 px. No tablet, cada coluna teria uns 345 px e duas
+	   pílulas longas não caberiam lado a lado: as listas ficam na largura toda (rodada 1f). */
+	@media (min-width: 1200px) {
 		.skills {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			column-gap: var(--grade-espaco);

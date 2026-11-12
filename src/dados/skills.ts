@@ -13,16 +13,38 @@ export interface Ferramenta {
 	marca?: string;
 }
 
+/**
+ * Hard skills (rodada 1f), alinhadas ao LinkedIn da Taiane: uma skill por pílula, sem "e" e sem
+ * parênteses, na ordem de docs/ajustes-rodada-1f.md. Linguagens e ferramentas (React, HTML, CSS...)
+ * ficam só na faixa de ferramentas.
+ */
 export const competencias: string[] = [
+	"Product Design",
 	"Product Discovery",
-	"UX Strategy e UX Research",
+	"UX Strategy",
+	"UX Research",
 	"Arquitetura da Informação",
+	"Design de Interface",
 	"Design de Interação",
-	"Design Systems e Design Tokens",
-	"Service Design e Service Blueprint",
+	"Prototipagem",
 	"Testes de Usabilidade",
-	"Design Engineering (design-to-code)",
-	"Desenvolvimento orientado por IA (agentes, MCP, skills)",
+	"Design Systems",
+	"Design Tokens",
+	"Arquitetura de Componentes",
+	"Governança de Design Systems",
+	"Service Design",
+	"Service Blueprint",
+	"Mapeamento Sistêmico",
+	"Design Engineering",
+	"Design-to-Code",
+	"Front-End",
+	"AI-Driven Development",
+	"Vibe Coding",
+	"IA Generativa",
+	"Agentes de IA",
+	"MCP",
+	"Foundation Models",
+	"Direção de Arte",
 ];
 
 export const softSkills: string[] = [

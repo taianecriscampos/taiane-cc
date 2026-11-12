@@ -391,3 +391,14 @@ for (const pagina of ["/", "/cases/funis-interativos"]) {
 		await expect(page.getByRole("link", { name: "Pular para o conteúdo" })).toBeFocused();
 	});
 }
+
+test("cada pílula de Skills tem uma skill só, sem 'e' e sem parênteses", async ({ page }) => {
+	await page.goto("/");
+	const pilulas = page.locator("#skills .skills__pilula");
+	const textos = await pilulas.allTextContents();
+	expect(textos.length).toBe(34);
+	expect(textos[0]).toBe("Product Design");
+	for (const texto of textos) {
+		expect(texto).not.toMatch(/\se\s|[()]/);
+	}
+});
