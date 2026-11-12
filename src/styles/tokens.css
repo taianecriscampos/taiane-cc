@@ -330,6 +330,7 @@
 	--ficha-rotulo-largura: 6rem;
 	--resultado-raio: var(--radius-grande);
 	--resultado-fundo: var(--color-fundo-secundario);
+	--resultado-valor-fator: 15; /* % da largura do cartão */
 	--skill-icone: var(--prim-size-16);
 	--skill-icone-cor: var(--color-texto-secundario);
 	--skill-coluna-minima: 10rem;

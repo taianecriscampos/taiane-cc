@@ -233,10 +233,13 @@ const listaDeCartoes = [
 		padding: var(--space-grande);
 		border-radius: var(--resultado-raio);
 		background: var(--resultado-fundo);
+		container-type: inline-size;
 	}
 
+	/* Acompanha a largura do cartão: um resultado em palavras ("Prioridades") cabe mesmo com
+	   três cartões lado a lado em 768 px. Nunca passa do tamanho de entrada. */
 	.cabecalho-case__valor {
-		font-size: var(--text-entrada);
+		font-size: min(var(--text-entrada), var(--resultado-valor-fator) * 1cqi);
 		font-weight: var(--peso-titulo);
 		letter-spacing: var(--tracking-entrada);
 		line-height: var(--leading-titulo);
