@@ -31,3 +31,11 @@ test("com movimento reduzido, o cartão troca por esmaecimento, sem girar", asyn
 	await expect(verso).toHaveCSS("transition-duration", "0.15s");
 	await expect(verso).toHaveCSS("opacity", "1");
 });
+
+test("com movimento reduzido, a faixa de Ferramentas fica parada e rola com o dedo", async ({
+	page,
+}) => {
+	await page.goto("/");
+	await expect(page.locator(".ferramentas__lista")).toHaveCSS("animation-name", "none");
+	await expect(page.locator(".ferramentas")).toHaveCSS("overflow-x", "auto");
+});

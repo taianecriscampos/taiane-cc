@@ -32,6 +32,22 @@
 	--prim-color-cinza-200: #c4c4c4;
 	--prim-color-verde: #12a150; /* ponto de status, decorativo: o texto ao lado diz o mesmo */
 
+	/* Cores das marcas das ferramentas (Simple Icons), só nos logos da seção Ferramentas. */
+	--prim-color-marca-figma: #f24e1e;
+	--prim-color-marca-claudecode: #d97757;
+	--prim-color-marca-astro: #bc52ee;
+	--prim-color-marca-typescript: #3178c6;
+	--prim-color-marca-javascript: #f7df1e;
+	--prim-color-marca-html: #e34f26;
+	--prim-color-marca-css: #663399;
+	--prim-color-marca-react: #61dafb;
+	--prim-color-marca-nextjs: #000000;
+	--prim-color-marca-gsap: #0ae448;
+	--prim-color-marca-git: #f05032;
+	--prim-color-marca-github: #181717;
+	--prim-color-marca-vercel: #000000;
+	--prim-color-marca-sanity: #f03e2f;
+
 	/* Fonte auto-hospedada em public/fontes (licença SIL OFL 1.1, arquivo ao lado).
 	   Google Sans Flex variável, com os eixos de peso (1 a 1000) e largura (25 a 151). */
 	--prim-font-google-sans-flex:
@@ -105,6 +121,7 @@
 	--prim-size-10: 0.625rem;
 	--prim-size-16: 1rem;
 	--prim-size-20: 1.25rem;
+	--prim-size-24: 1.5rem;
 	--prim-size-36: 2.25rem;
 	--prim-size-40: 2.5rem;
 	--prim-size-44: 2.75rem;
@@ -135,7 +152,9 @@
 	--prim-duration-1000: 1s;
 	--prim-duration-2000: 2s;
 	--prim-duration-8000: 8s;
+	--prim-duration-50000: 50s; /* letreiro de Ferramentas: uma ida */
 	--prim-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--prim-ease-in-out-suave: ease-in-out; /* movimento longo e contínuo: desacelera nas pontas */
 	/* Mola leve: passa 3% do destino e assenta. Curva desenhada ponto a ponto, sem biblioteca. */
 	--prim-ease-mola: linear(0, 0.3 8%, 0.69 18%, 0.93 29%, 1.025 39%, 1.03 47%, 1.01 62%, 1);
 	--prim-escala-pressionado: 0.97;
@@ -266,7 +285,9 @@
 	--motion-duration-pulso: var(--prim-duration-2000);
 	--motion-duration-piscar: var(--prim-duration-1000); /* dois-pontos da hora */
 	--motion-duration-relogio: var(--prim-duration-8000); /* uma volta do ponteiro do rodapé */
+	--motion-duration-letreiro: var(--prim-duration-50000);
 	--motion-ease-out: var(--prim-ease-out);
+	--motion-ease-in-out-suave: var(--prim-ease-in-out-suave);
 	--motion-ease-mola: var(--prim-ease-mola);
 	--motion-escala-pressionado: var(--prim-escala-pressionado);
 	--motion-escala-pressionado-suave: var(--prim-escala-pressionado-suave);
@@ -358,8 +379,25 @@
 	--resultado-raio: var(--radius-grande);
 	--resultado-fundo: var(--color-fundo-secundario);
 	--resultado-valor-fator: 15; /* % da largura do cartão */
-	--skill-icone: var(--prim-size-16);
-	--skill-icone-cor: var(--color-texto-secundario);
+	--ferramenta-logo: var(--prim-size-24);
+	--ferramenta-logo-cor: var(--color-texto-secundario);
+	--ferramenta-intervalo: var(--space-bloco);
+	--ferramenta-duracao: var(--motion-duration-letreiro);
+	--ferramenta-curva: var(--motion-ease-in-out-suave);
+	--ferramenta-marca-figma: var(--prim-color-marca-figma);
+	--ferramenta-marca-claudecode: var(--prim-color-marca-claudecode);
+	--ferramenta-marca-astro: var(--prim-color-marca-astro);
+	--ferramenta-marca-typescript: var(--prim-color-marca-typescript);
+	--ferramenta-marca-javascript: var(--prim-color-marca-javascript);
+	--ferramenta-marca-html: var(--prim-color-marca-html);
+	--ferramenta-marca-css: var(--prim-color-marca-css);
+	--ferramenta-marca-react: var(--prim-color-marca-react);
+	--ferramenta-marca-nextjs: var(--prim-color-marca-nextjs);
+	--ferramenta-marca-gsap: var(--prim-color-marca-gsap);
+	--ferramenta-marca-git: var(--prim-color-marca-git);
+	--ferramenta-marca-github: var(--prim-color-marca-github);
+	--ferramenta-marca-vercel: var(--prim-color-marca-vercel);
+	--ferramenta-marca-sanity: var(--prim-color-marca-sanity);
 	--skill-pilula-espaco: var(--space-pequeno) var(--space-medio); /* 14/20 + 8 + 8 = 36 px */
 	--skill-pilula-intervalo: var(--space-pequeno);
 	--skill-pilula-fundo: var(--color-fundo-secundario);

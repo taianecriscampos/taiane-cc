@@ -1,0 +1,181 @@
+---
+/**
+ * Ferramentas (rodada 1e): seção própria depois de Skills, com o mesmo rótulo de seção das
+ * outras. Não entra no menu ilha.
+ * Uma faixa horizontal com logo e nome de cada ferramenta, sem pílula e sem fundo.
+ *
+ * Letreiro de ida e volta: a lista anda até o fim e volta, sem duplicar itens, bem devagar
+ * (50 s por ida), só com transform: translateX. A distância é calculada no CSS:
+ * 100cqi (largura da faixa) menos 100% (largura da lista). Se a lista couber, não anda.
+ * Para quando o ponteiro ou o foco estão na faixa.
+ * Movimento reduzido: parada, e a faixa rola com o dedo, o trackpad ou as setas do teclado.
+ *
+ * Logos em cinza; no hover de cada ferramenta (só com mouse), o logo da cor da marca aparece
+ * por cima em 200 ms (opacity, ease-out). Com o foco do teclado na faixa, todos ganham cor.
+ * Em toque, ficam em cinza. Os logos são decorativos: o leitor de tela lê o nome.
+ */
+import { ferramentas } from "../../dados/skills";
+---
+
+<section class="secao envoltorio" id="ferramentas" aria-labelledby="ferramentas-titulo">
+	<h2 id="ferramentas-titulo" class="secao__rotulo">
+		Ferramentas
+	</h2>
+
+	<div class="ferramentas" tabindex="0" role="group" aria-labelledby="ferramentas-titulo">
+		<ul class="ferramentas__lista" role="list">
+			{ferramentas.map((f) => (
+				<li class="ferramentas__item" data-marca={f.marca}>
+					{f.icone && (
+						<svg class="ferramentas__logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+							<path class="ferramentas__logo-cinza" d={f.icone} />
+							<path class="ferramentas__logo-marca" d={f.icone} />
+						</svg>
+					)}
+					{f.nome}
+				</li>
+			))}
+		</ul>
+	</div>
+</section>
+
+<style>
+	/* A faixa é o contêiner: 100cqi é a largura dela. */
+	.ferramentas {
+		container-type: inline-size;
+		overflow: hidden;
+		border-radius: var(--radius-medio);
+	}
+
+	.ferramentas:focus-visible {
+		outline: var(--focus-espessura) solid var(--focus-cor);
+		outline-offset: var(--focus-afastamento);
+	}
+
+	.ferramentas__lista {
+		display: flex;
+		gap: var(--ferramenta-intervalo);
+		inline-size: max-content;
+		padding: 0;
+		list-style: none;
+		animation: ferramentas-vai-e-volta var(--ferramenta-duracao) var(--ferramenta-curva) infinite
+			alternate;
+	}
+
+	.ferramentas:hover .ferramentas__lista,
+	.ferramentas:focus-within .ferramentas__lista {
+		animation-play-state: paused;
+	}
+
+	@keyframes ferramentas-vai-e-volta {
+		from {
+			transform: translateX(0);
+		}
+
+		to {
+			transform: translateX(min(0px, calc(100cqi - 100%)));
+		}
+	}
+
+	.ferramentas__item {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-pequeno);
+		white-space: nowrap;
+	}
+
+	.ferramentas__logo {
+		flex: none;
+		inline-size: var(--ferramenta-logo);
+		block-size: var(--ferramenta-logo);
+	}
+
+	.ferramentas__logo-cinza {
+		fill: var(--ferramenta-logo-cor);
+	}
+
+	/* Cor de cada marca: a CSP do site bloqueia o atributo style, então cada uma tem sua regra. */
+	.ferramentas__item[data-marca="figma"] {
+		--ferramenta-marca: var(--ferramenta-marca-figma);
+	}
+
+	.ferramentas__item[data-marca="claudecode"] {
+		--ferramenta-marca: var(--ferramenta-marca-claudecode);
+	}
+
+	.ferramentas__item[data-marca="astro"] {
+		--ferramenta-marca: var(--ferramenta-marca-astro);
+	}
+
+	.ferramentas__item[data-marca="typescript"] {
+		--ferramenta-marca: var(--ferramenta-marca-typescript);
+	}
+
+	.ferramentas__item[data-marca="javascript"] {
+		--ferramenta-marca: var(--ferramenta-marca-javascript);
+	}
+
+	.ferramentas__item[data-marca="html"] {
+		--ferramenta-marca: var(--ferramenta-marca-html);
+	}
+
+	.ferramentas__item[data-marca="css"] {
+		--ferramenta-marca: var(--ferramenta-marca-css);
+	}
+
+	.ferramentas__item[data-marca="react"] {
+		--ferramenta-marca: var(--ferramenta-marca-react);
+	}
+
+	.ferramentas__item[data-marca="nextjs"] {
+		--ferramenta-marca: var(--ferramenta-marca-nextjs);
+	}
+
+	.ferramentas__item[data-marca="gsap"] {
+		--ferramenta-marca: var(--ferramenta-marca-gsap);
+	}
+
+	.ferramentas__item[data-marca="git"] {
+		--ferramenta-marca: var(--ferramenta-marca-git);
+	}
+
+	.ferramentas__item[data-marca="github"] {
+		--ferramenta-marca: var(--ferramenta-marca-github);
+	}
+
+	.ferramentas__item[data-marca="vercel"] {
+		--ferramenta-marca: var(--ferramenta-marca-vercel);
+	}
+
+	.ferramentas__item[data-marca="sanity"] {
+		--ferramenta-marca: var(--ferramenta-marca-sanity);
+	}
+
+	.ferramentas__logo-marca {
+		fill: var(--ferramenta-marca, var(--ferramenta-logo-cor));
+		opacity: 0;
+		transition: opacity var(--motion-duration-rapida) var(--motion-ease-out);
+	}
+
+	.ferramentas:focus-visible .ferramentas__logo-marca {
+		opacity: 1;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.ferramentas__item:hover .ferramentas__logo-marca {
+			opacity: 1;
+		}
+	}
+
+	/* Movimento reduzido: sem letreiro; a faixa rola com o dedo, o trackpad ou o teclado. */
+	@media (prefers-reduced-motion: reduce) {
+		.ferramentas {
+			overflow-x: auto;
+			overscroll-behavior-x: contain;
+		}
+
+		.ferramentas__lista {
+			animation: none;
+		}
+	}
+</style>
