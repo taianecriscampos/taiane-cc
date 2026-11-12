@@ -4,7 +4,7 @@ Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.1.1 (Fundação, com redirecionamento temporário do domínio)
 **Etapa atual:** 0.3.0 Direção de arte, junto com a estrutura da 0.2.0 (especificação base)
-**Fase da etapa:** 0.3.c Direção de arte v3 · ajustes 1c em andamento (protótipos de Projetos e Skills pendentes)
+**Fase da etapa:** 0.3.c Direção de arte v3 · ajustes 1d feitos, aguardando a revisão da Taiane
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -162,7 +162,33 @@ Ramificação design, sem envio ao GitHub. A qualidade roda antes de cada commit
     duas colunas com faixa). A skill prototype só roda quando a Taiane digita /prototype.
   - Qualidade: 90 testes aprovados. Prints em `.revisao/r1c-*.png`.
 
+- **Ajustes 1d** (`docs/ajustes-rodada-1d.md`), um commit por item:
+  - Cabeçalho: "Remoto" com o ponto verde no celular (14 px), "Remoto ou híbrido" a partir de
+    768 px; o leitor de tela lê "Disponível para trabalho remoto ou híbrido". Abaixo de 360 px,
+    a pílula fechada esconde o número, para nada encostar em 320 px.
+  - Projetos: três cartões iguais a partir de 1200 px, dois no tablet, um por linha no celular,
+    todos com imagem. Funis leva à página; Azul GPT e Operação logística viram no eixo Y (380 ms,
+    só CSS; esmaecimento de 150 ms com movimento reduzido) e mostram o verso aprovado. As rotas
+    desses dois saem (`pagina: false`); os arquivos ficam como rascunho para a v1.1.
+  - Sobre e Skills: contêiner ColunasSobre com subgrid; colunas com a largura do conteúdo e vãos
+    iguais (1200 px ou mais); no tablet, a primeira coluna ocupa a linha de cima. Skills com
+    pílulas, na ordem Hard skills, Ferramentas e Soft skills (decisão a confirmar).
+  - Rodapé "Me chama!".
+  - Case de Funis: capa no topo, quatro imagens do artigo com texto alternativo e versões
+    responsivas, sem duração (o artigo não informa), cartões finais, nota só nos sigilosos.
+  - Resumo do Sobre a partir do currículo, em 4 linhas. Zero rascunhos na página inicial e no
+    case de Funis; o teste agora falha se algum voltar. ADR 0003 com a confirmação do telefone.
+  - Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 80 testes aprovados.
+    Prints em `.revisao/r1d-final-*.png`.
+
 ## Pendências anotadas
+
+- **0.3.c (rodada 1d), decisões da Taiane:** ordem das colunas de Skills (Hard, Ferramentas,
+  Soft deixa os vãos do Sobre iguais; Hard, Soft, Ferramentas equilibra Skills mas desiguala o
+  Sobre); imagens em todos os cartões de Projetos no celular; ilustração neutra como imagem
+  definitiva dos cases sob sigilo; capa com título no topo do case de Funis (ou a imagem da
+  barra lateral, sem texto).
+- **0.3.c:** no rodapé em 768 px, o ícone de copiar e-mail cai para a linha de baixo.
 
 - **0.3.c:** conferir num celular de verdade o desfoque da ilha (o navegador de testes desenha o
   desfoque de forma instável com a página rolada), o toque na ilha e o botão de copiar.
