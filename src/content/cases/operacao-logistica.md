@@ -1,6 +1,6 @@
 ---
 titulo: "Operação logística"
-chamada: "Mapa sistêmico e service blueprint para alinhar armazém, transporte e atendimento numa visão só."
+chamada: "Service blueprint de uma operação que vivia no papel e no boca a boca."
 resumo: "Pela WeFit, conduzi o mapeamento sistêmico da operação da Luft Logistics, do recebimento da carga à entrega. Com entrevistas, observação em campo e oficinas, construí o service blueprint que mostrou onde as áreas perdiam informação entre si. Resultado: uma visão única da operação, usada pela liderança para priorizar as melhorias."
 empresa: "Luft Logistics, cliente atendido pela WeFit"
 cliente: "Luft · WeFit"
@@ -26,7 +26,15 @@ resultados:
     descricao: "entre armazém, transporte e atendimento"
   - valor: "Prioridades"
     descricao: "de melhoria definidas junto com a liderança"
-rascunhos: ["chamada", "resumo", "duracao", "disciplinas", "cartoes", "resultados"]
+# Sem página na 1.0.0: o resto do arquivo é rascunho para a v1.1.
+rascunhos: ["resumo", "duracao", "disciplinas", "cartoes", "resultados"]
+pagina: false
+verso:
+  - texto: "A Luft tinha processos no papel, no boca a boca e em sistemas antigos, cheios de lacunas. Antes de inovar, era preciso enxergar a operação inteira."
+  - rotulo: "Minha atuação:"
+    texto: "em dupla com outro designer, que fazia as entrevistas e a imersão em campo, eu documentei, mapeei e ilustrei as descobertas no service blueprint, trabalhando remotamente."
+  - rotulo: "O resultado:"
+    texto: "o mapa revelou pontos de contato e processos informais que a própria empresa não conhecia, e virou a base para decidir o que sistematizar primeiro, com valor para a empresa e para quem trabalha nela."
 ---
 
 <!--

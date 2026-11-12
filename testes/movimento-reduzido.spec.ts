@@ -21,3 +21,13 @@ for (const pagina of paginas) {
 		expect(erros).toEqual([]);
 	});
 }
+
+test("com movimento reduzido, o cartão troca por esmaecimento, sem girar", async ({ page }) => {
+	await page.goto("/");
+	await page.getByRole("button", { name: "Ver resumo de Azul GPT" }).click();
+	const giro = page.locator("#projetos [data-virado] .projeto__giro");
+	await expect(giro).toHaveCSS("transform", "none");
+	const verso = page.getByRole("group", { name: "Resumo de Azul GPT" });
+	await expect(verso).toHaveCSS("transition-duration", "0.15s");
+	await expect(verso).toHaveCSS("opacity", "1");
+});

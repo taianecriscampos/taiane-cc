@@ -125,10 +125,12 @@
 	--prim-radius-pilula: 9999px;
 
 	/* Movimento: interface até 300 ms, ease-out forte, nunca ease-in (direção de arte v3). */
+	--prim-duration-150: 0.15s;
 	--prim-duration-160: 0.16s;
 	--prim-duration-200: 0.2s;
 	--prim-duration-280: 0.28s;
 	--prim-duration-300: 0.3s;
+	--prim-duration-380: 0.38s;
 	--prim-duration-1000: 1s;
 	--prim-duration-2000: 2s;
 	--prim-duration-8000: 8s;
@@ -138,6 +140,7 @@
 	--prim-escala-pressionado: 0.97;
 	--prim-escala-pressionado-suave: 0.98; /* blocos grandes: 0,97 pareceria um tranco */
 	--prim-escala-entrada: 0.95;
+	--prim-perspectiva-1200: 75rem;
 }
 
 /* ---------- 2. Semânticos ---------- */
@@ -239,6 +242,10 @@
 	--motion-duration-rapida: var(--prim-duration-200);
 	--motion-duration-base: var(--prim-duration-280);
 	--motion-duration-abrir: var(--prim-duration-300);
+	--motion-duration-virar: var(--prim-duration-380); /* cartão que vira, decisão da Taiane */
+	--motion-duration-esmaecer: var(
+		--prim-duration-150
+	); /* troca sem movimento (movimento reduzido) */
 	--motion-duration-pulso: var(--prim-duration-2000);
 	--motion-duration-piscar: var(--prim-duration-1000); /* dois-pontos da hora */
 	--motion-duration-relogio: var(--prim-duration-8000); /* uma volta do ponteiro do rodapé */
@@ -337,11 +344,18 @@
 	--skill-icone: var(--prim-size-16);
 	--skill-icone-cor: var(--color-texto-secundario);
 	--skill-coluna-minima: 10rem;
-	--bento-fundo: var(--color-fundo-secundario);
-	--bento-raio: var(--radius-cartao);
-	--bento-imagem-fundo: var(--color-fundo);
-	--bento-imagem-raio: var(--radius-imagem-interna);
-	--bento-escala-pressionado: var(--motion-escala-pressionado-suave);
+	--projeto-fundo: var(--color-fundo-secundario);
+	--projeto-raio: var(--radius-cartao);
+	--projeto-espaco: var(--space-grande);
+	--projeto-imagem-fundo: var(
+		--color-fundo-secundario
+	); /* igual à ilustração: sem fio claro na borda */
+	--projeto-imagem-raio: var(--radius-imagem-interna);
+	--projeto-escala-pressionado: var(--motion-escala-pressionado-suave);
+	--projeto-perspectiva: var(--prim-perspectiva-1200);
+	--projeto-verso-fundo: var(--color-inverso-fundo);
+	--projeto-verso-texto: var(--color-inverso-texto);
+	--projeto-verso-focus-cor: var(--color-inverso-texto);
 	--ilustracao-fundo: var(--color-fundo-secundario);
 	--ilustracao-forma-clara: var(--color-fundo);
 	--ilustracao-forma-media: var(--color-borda);

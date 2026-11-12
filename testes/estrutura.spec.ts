@@ -3,9 +3,9 @@ import { paginas } from "./paginas";
 
 /** Os links do cabeçalho ficam na ilha: o botão "Menu, seção atual: ..." abre a lista. */
 async function abrirIlha(page: Page) {
-	const menu = page.getByRole("button", { name: /^Menu/ });
-	await menu.click();
-	await expect(menu).toHaveAttribute("aria-expanded", "true");
+	await page.getByRole("button", { name: /^Menu/ }).click();
+	// Aberta, a ilha esconde o botão (o painel toma o lugar dele): por isso a classe, e não o papel.
+	await expect(page.locator(".ilha__botao")).toHaveAttribute("aria-expanded", "true");
 }
 
 for (const pagina of paginas) {
@@ -15,11 +15,13 @@ for (const pagina of paginas) {
 	});
 }
 
-test("a página inicial lista os três cases, com link para cada um", async ({ page }) => {
+test("a página inicial lista os três cases: Funis leva à página, os outros dois viram", async ({
+	page,
+}) => {
 	await page.goto("/");
 	const projetos = page.getByRole("region", { name: "Projetos" });
 	await expect(projetos.getByRole("listitem")).toHaveCount(3);
-	await expect(projetos.getByText("Novo", { exact: true })).toHaveCount(0);
+	await expect(projetos.getByRole("button", { name: /^Ver resumo/ })).toHaveCount(2);
 	await projetos.getByRole("link", { name: "Funis interativos" }).click();
 	await expect(page).toHaveURL(/\/cases\/funis-interativos$/);
 	await expect(page.getByRole("heading", { level: 1 })).toHaveText("Funis interativos");
@@ -154,12 +156,45 @@ test("o case mostra ano, cliente, tempo de leitura e os três cartões de resumo
 	}
 });
 
-test("só o case confidencial avisa que está sob sigilo", async ({ page }) => {
-	await page.goto("/cases/azul-gpt");
-	await expect(page.getByText("Case sob sigilo", { exact: true })).toHaveCount(1);
+test("os cases sob sigilo ficam sem página nesta versão", async ({ page }) => {
+	for (const rota of ["/cases/azul-gpt", "/cases/operacao-logistica"]) {
+		const resposta = await page.request.get(rota);
+		expect(resposta.status()).toBe(404);
+	}
 	await page.goto("/cases/funis-interativos");
 	await expect(page.getByText("Case sob sigilo", { exact: true })).toHaveCount(0);
-	await expect(page.getByText("Sigilo", { exact: true })).toHaveCount(0);
+});
+
+test("o cartão vira com clique, mostra o verso e desvira com Voltar", async ({ page }) => {
+	await page.goto("/");
+	const botao = page.getByRole("button", { name: "Ver resumo de Azul GPT" });
+	const verso = page.getByRole("group", { name: "Resumo de Azul GPT" });
+	// De costas, o verso fica inerte: fora do foco e do leitor de tela.
+	await expect(verso).toHaveAttribute("inert", "");
+	await botao.click();
+	await expect(botao).toHaveAttribute("aria-expanded", "true");
+	await expect(verso).not.toHaveAttribute("inert");
+	await expect(verso).toBeFocused();
+	await expect(verso.getByText(/Em parceria com a OpenAI/)).toBeVisible();
+	const linkedin = verso.getByRole("link", { name: /^Me chama no LinkedIn/ });
+	await expect(linkedin).toHaveAttribute("target", "_blank");
+	await verso.getByRole("button", { name: "Voltar" }).click();
+	await expect(botao).toHaveAttribute("aria-expanded", "false");
+	await expect(botao).toBeFocused();
+});
+
+test("o cartão vira com o teclado e desvira com Esc", async ({ page }) => {
+	await page.goto("/");
+	const botao = page.getByRole("button", { name: "Ver resumo de Operação logística" });
+	await botao.focus();
+	await page.keyboard.press("Enter");
+	const verso = page.getByRole("group", { name: "Resumo de Operação logística" });
+	await expect(verso).toBeFocused();
+	await page.keyboard.press("Escape");
+	await expect(botao).toHaveAttribute("aria-expanded", "false");
+	await expect(botao).toBeFocused();
+	await page.keyboard.press("Space");
+	await expect(botao).toHaveAttribute("aria-expanded", "true");
 });
 
 test("o Sobre traz o currículo em PDF e o LinkedIn, os dois em nova aba", async ({ page }) => {

@@ -115,9 +115,10 @@
 		color: var(--color-inverso-texto);
 	}
 
-	/* Quem pede menos movimento não recebe animação nenhuma. */
+	/* Quem pede menos movimento não recebe animação nenhuma. A exceção é data-esmaecer: quem troca
+	   de estado por esmaecimento (o cartão que vira) mantém só a transição de opacidade, curta. */
 	@media (prefers-reduced-motion: reduce) {
-		*,
+		*:not([data-esmaecer]),
 		*::before,
 		*::after {
 			animation-duration: 0.01ms !important;

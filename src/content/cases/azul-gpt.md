@@ -1,6 +1,6 @@
 ---
 titulo: "Azul GPT"
-chamada: "Assistente de IA generativa para tripulantes consultarem procedimentos da operação."
+chamada: "Assistente de IA generativa para a operação consultar normas técnicas direto na fonte."
 resumo: "Pela WeFit, participei do desenvolvimento do Azul GPT, assistente de IA generativa criado com a OpenAI para tripulantes e operações críticas da Azul. Conduzi a pesquisa com tripulantes e desenhei a experiência de conversa, das perguntas sugeridas ao jeito de mostrar a fonte de cada resposta. Resultado: dúvidas do dia a dia respondidas sem procurar em vários manuais."
 empresa: "Azul Linhas Aéreas, cliente atendido pela WeFit"
 cliente: "Azul · WeFit"
@@ -26,7 +26,15 @@ resultados:
     descricao: "nas respostas, com a fonte sempre à vista"
   - valor: "Uma porta só"
     descricao: "para procedimentos que estavam em vários sistemas"
-rascunhos: ["chamada", "resumo", "duracao", "disciplinas", "cartoes", "resultados"]
+# Sem página na 1.0.0: o resto do arquivo é rascunho para a v1.1.
+rascunhos: ["resumo", "duracao", "disciplinas", "cartoes", "resultados"]
+pagina: false
+verso:
+  - texto: "Em parceria com a OpenAI, a Azul criou um assistente interno para tripulantes e times da operação. Antes, eles procuravam regras técnicas em dezenas de PDFs. Com o Azul GPT, escolhem uma base de conhecimento, perguntam e recebem a resposta a partir do documento oficial."
+  - rotulo: "Minha atuação:"
+    texto: "arquitetura da informação, design de interface e de interação, protótipos e a versão de pré-produção da interface. Desenhei os fluxos felizes, de erro e de exceção, e contribuí com o design system próprio do produto."
+  - rotulo: "O desafio:"
+    texto: "desenhar para uma tecnologia nova para todo mundo, sem legado de referência, e fazer times internos trocarem o jeito de trabalhar por ela."
 ---
 
 <!--

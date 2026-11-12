@@ -1,2 +1,2 @@
-/** Páginas testadas: inicial, um case público, um case sob sigilo e o Laboratório. */
-export const paginas = ["/", "/cases/funis-interativos", "/cases/azul-gpt", "/laboratorio"];
+/** Páginas testadas: inicial, o case de funis (o único com página na 1.0.0) e o Laboratório. */
+export const paginas = ["/", "/cases/funis-interativos", "/laboratorio"];

@@ -2,6 +2,7 @@
  * Dados de pior caso (skill break-ui). Só o /laboratorio usa este arquivo,
  * e o Laboratório fica fora da produção. Valores realistas, no limite do schema quando há limite.
  */
+import type { Projeto } from "../components/blocos/Projetos.astro";
 import type { Entrada } from "../components/ui/Entrada.astro";
 import type { Perfil } from "./perfil";
 
@@ -54,6 +55,27 @@ export const entradasPiorCaso: Entrada[] = [
 		externo: true,
 	},
 	{ titulo: "Texto ainda sem link, em construção", onde: "Substack", ano: 2026 },
+];
+
+/** Cada parágrafo do verso no limite de 320 caracteres, com o máximo de 4 parágrafos. */
+const versoNoLimite =
+	"A operação tinha processos espalhados em planilhas, e-mails, sistemas antigos e conversas de corredor, e cada área enxergava só a própria parte. Antes de propor qualquer tela, era preciso mapear quem fazia o quê, com quais dados e em que momento, para encontrar as rupturas entre atendimento, financeiro e transporte de ponta a ponta.";
+
+/** Projetos no limite: os mesmos da lista acima e um cartão que vira, com o verso mais longo possível. */
+export const projetosPiorCaso: Projeto[] = [
+	...entradasPiorCaso.slice(0, 3),
+	{
+		titulo: tituloLongo,
+		onde: "emDia · Santander · WeFit",
+		ano: 2026,
+		descricao: chamadaNoLimite,
+		verso: [
+			{ texto: versoNoLimite },
+			{ rotulo: "Minha atuação:", texto: versoNoLimite },
+			{ rotulo: "O desafio:", texto: versoNoLimite },
+			{ rotulo: "O resultado:", texto: versoNoLimite },
+		],
+	},
 ];
 
 /** Exatamente 400 caracteres, o limite de `resumo`. */

@@ -7,10 +7,7 @@ import { paginas } from "./paginas";
  * 2. Os rascunhos ainda existentes são contados e avisados, SEM falhar, até a 1.0.0.
  * O Laboratório fica de fora: ele mostra o pior caso de propósito.
  */
-const publicas = [
-	...paginas.filter((p) => !p.startsWith("/laboratorio")),
-	"/cases/operacao-logistica",
-];
+const publicas = paginas.filter((p) => !p.startsWith("/laboratorio"));
 
 for (const pagina of publicas) {
 	test(`${pagina} não mostra marcadores entre colchetes`, async ({ page }) => {

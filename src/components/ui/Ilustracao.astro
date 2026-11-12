@@ -5,13 +5,16 @@
  * É decorativa (o leitor de tela não a lê) e fica marcada com data-rascunho, para sair antes
  * da 1.0.0 (lista em docs/rascunhos.md).
  * Variantes: 1 painel com cartões, 2 lista com etapas, 3 mapa de fluxo.
+ * Nos cases sob sigilo, que não podem mostrar telas, ela é a imagem definitiva do cartão:
+ * nesse caso, `rascunho={false}`.
  */
 interface Props {
 	variante?: 1 | 2 | 3;
 	class?: string;
+	rascunho?: boolean;
 }
 
-const { variante = 1, class: classe } = Astro.props;
+const { variante = 1, class: classe, rascunho = true } = Astro.props;
 ---
 
 <svg
@@ -20,7 +23,7 @@ const { variante = 1, class: classe } = Astro.props;
 	preserveAspectRatio="xMidYMid slice"
 	aria-hidden="true"
 	focusable="false"
-	data-rascunho
+	data-rascunho={rascunho ? "" : undefined}
 >
 	<rect class="ilustracao__fundo" width="320" height="180"></rect>
 	{variante === 1 && (

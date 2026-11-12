@@ -28,6 +28,9 @@ resultados:
     descricao: "mais rápido para criar variações de campanha, com a duplicação de etapas"
 # Duração de exemplo e cartões escritos a partir do artigo: conferir antes da 1.0.0.
 rascunhos: ["duracao", "cartoes"]
+capa:
+  src: "../../assets/cases/funis-interativos/capa.jpg"
+  alt: "Capa do case: o título Otimização da Experiência ao lado dos modelos de etapa do quiz, como Página inicial, Questão de lista e Escala de Likert, aplicados no construtor de funis da Inlead."
 ---
 
 <!--
