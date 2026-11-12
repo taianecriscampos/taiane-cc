@@ -2,11 +2,11 @@
 
 Atualize este arquivo ao final de cada tarefa.
 
-**Versão atual:** 0.1.1 (Fundação, com redirecionamento temporário do domínio)
-**Etapa atual:** 0.9.0 Qualidade e encontrabilidade
-**Fase da etapa:** 0.9.a Encontrabilidade pronta (JSON-LD, sitemap, robots, llms.txt, metadados) · desempenho no celular abaixo da meta, aguardando decisão
+**Versão atual:** 1.0.0 (Lançamento)
+**Etapa atual:** 1.0.0 Lançamento
+**Fase da etapa:** 1.0.a Ajustes do celular, redirecionamento removido, pull request e etiqueta v1.0.0 · desempenho no celular abaixo da meta, anotado como pendência
 **Direção de arte (0.3.0):** aprovada pela Taiane
-**Status geral:** Em andamento
+**Status geral:** Publicado (conferência em produção abaixo)
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
 ## Ciclo de cada fase (Lean UX)
@@ -27,7 +27,7 @@ Atualize este arquivo ao final de cada tarefa.
 | 0.4.0  | Páginas e conteúdo: abertura em blocos, case de funis, cases do Azul GPT e da Luft     | Não iniciada |
 | 0.5.0  | Movimento: Lenis, títulos revelados, lista com imagem, nuvem de skills, rastro binário | Não iniciada |
 | 0.9.0  | Qualidade: acessibilidade, performance, SEO, revisão de texto                          | Em andamento |
-| 1.0.0  | Lançamento: domínio taiane.cc                                                          | Não iniciada |
+| 1.0.0  | Lançamento: domínio taiane.cc                                                          | Concluída    |
 
 ## Fases da etapa 0.1.0
 
@@ -275,6 +275,14 @@ Ramificação design. Um commit só.
   Cabeçalhos de segurança conferidos no `vercel.json` (CSP, HSTS, nosniff, Referrer-Policy,
   Permissions-Policy); falta conferir na resposta real depois do deploy.
 
+## Versão 1.0.0
+
+- Celular (até 767 px): cabeçalho só com o ponto verde animado (o leitor de tela lê "Disponível
+  para trabalho remoto ou híbrido"); rodapé todo centralizado; botão "Voltar ao topo" para
+  abaixo da linha da cidade e da hora, sem cobrir texto (espaço extra no fim do rodapé).
+- Redirecionamento temporário para o Linktree removido do `vercel.json`.
+- package.json e CHANGELOG.md em 1.0.0; pull request da design para a main e etiqueta v1.0.0.
+
 ## Pendências anotadas
 
 - **0.9.0 (decidir):** desempenho no celular abaixo de 95. Investigar o custo de estilo e layout
@@ -303,8 +311,6 @@ Ramificação design. Um commit só.
 - **0.3.c:** ano da pós da IDI: a direção v3 diz 2020; o currículo diz 2020 a 2021.
 - **0.5.0:** Rodada 2 de movimento (efeitos da direção v3 e a nuvem magnética de skills).
 
-- **1.0.0:** remover do `vercel.json` o redirecionamento temporário (307) de taiane.cc e
-  www.taiane.cc para o Linktree. Ele vale só na rota `/`, para o `security.txt` continuar acessível.
 - **0.3.0:** o Laboratório usa larguras de coluna em `rem` e linhas de `1px` soltas. Criar
   tokens para elas.
 - **0.9.0:** nota A+ no Mozilla Observatory e checagem em securityheaders.com.
