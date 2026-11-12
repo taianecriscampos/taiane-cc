@@ -308,3 +308,32 @@ test("Ferramentas é uma seção própria, fora do menu, com a faixa que para no
 	await secao.locator(".ferramentas").focus();
 	await expect(lista).toHaveCSS("animation-play-state", "paused");
 });
+
+test("no desktop, o sumário do case empilha as seções lidas e marca a atual", async ({ page }) => {
+	await page.setViewportSize({ width: 1440, height: 900 });
+	await page.goto("/cases/funis-interativos");
+	const sumario = page.getByRole("navigation", { name: "Sumário do case" });
+	await expect(sumario).toBeVisible();
+	await expect(sumario.locator('[aria-current="location"]')).toHaveText("Contexto");
+	// No fim do texto: as cinco primeiras ficam pequenas e a última é a atual.
+	await page
+		.locator(".case-secao")
+		.last()
+		.evaluate((s) => s.scrollIntoView());
+	await expect(sumario.locator('[aria-current="location"]')).toHaveText("Aprendizados");
+	await expect(sumario.locator('[data-estado="lida"]')).toHaveCount(5);
+	// Um item pequeno leva de volta à seção.
+	await sumario.getByRole("link", { name: "Problema" }).click();
+	await expect(sumario.locator('[aria-current="location"]')).toHaveText("Problema");
+	await expect(sumario.locator('[data-estado="proxima"]')).toHaveCount(4);
+});
+
+test("no celular, o case não tem sumário fixo e não repete o convite do rodapé", async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 375, height: 800 });
+	await page.goto("/cases/funis-interativos");
+	await expect(page.getByRole("navigation", { name: "Sumário do case" })).toBeHidden();
+	await expect(page.getByRole("heading", { level: 2, name: "Contexto" })).toBeVisible();
+	await expect(page.getByText("Quer saber mais detalhes?")).toHaveCount(0);
+});

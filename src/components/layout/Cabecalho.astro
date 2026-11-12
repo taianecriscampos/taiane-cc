@@ -194,11 +194,13 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 			if (aberta() && destino && !ilha.contains(destino)) fechar(true);
 		});
 
-		// Seção atual: a que cruza a faixa do meio da tela.
+		// Seção atual: a que cruza a faixa do meio da tela. Quando o link aponta para o título
+		// de uma seção (case), observa a seção inteira: no desktop o título fica oculto (1 px).
 		const secoes = links
 			.map((link) => {
 				const id = decodeURIComponent(link.hash.slice(1));
-				return { link, alvo: id ? document.getElementById(id) : null };
+				const alvo = id ? document.getElementById(id) : null;
+				return { link, alvo: alvo?.closest<HTMLElement>("section") ?? alvo };
 			})
 			.filter((s): s is { link: HTMLAnchorElement; alvo: HTMLElement } => s.alvo !== null);
 

@@ -2,14 +2,16 @@
 /**
  * Topo do case, com a personalidade inspirada na kora.framer.media: título grande, em toda a
  * largura, com espaço entre letras apertado.
- * Abaixo, em duas colunas: à esquerda, a introdução em texto grande e semibold (resumo de até
+ * Abaixo, em duas colunas: à esquerda, a introdução em texto grande, peso 400 (resumo de até
  * 3 frases, ADR 0002); à direita, as disciplinas em pílulas e a ficha (empresa, ano, papel,
  * duração, tempo de leitura e, nos confidenciais, "Case sob sigilo").
- * Depois, o bloco de destaque: a imagem grande numa moldura bem arredondada e os resultados
- * em cartões arredondados. Por fim, os três cartões: Minha atuação, Desafio e Solução.
+ * Depois, a capa direto na página, sem moldura, com raio de 24 px.
+ * Resultados e resumo (rodada 1e): sem cartões e sem fundo, em três colunas separadas por
+ * linhas verticais de 1 px; no celular, empilhadas, com as linhas na horizontal.
+ * Resultados: número em 56/56 (40 no celular), peso 500, e a descrição em 16/24.
+ * Minha atuação, Desafio e Solução: rótulo 16/24 secundário e texto de destaque 20/28.
  * Conteúdo de exemplo: os campos listados em `rascunhos` ganham data-rascunho (docs/rascunhos.md).
- * O destaque mostra a capa do case; sem capa, uma ilustração neutra de exemplo.
- * Sem duração conhecida, a ficha não mostra essa linha.
+ * Sem capa, uma ilustração neutra de exemplo. Sem duração conhecida, a ficha não mostra a linha.
  */
 import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
@@ -134,16 +136,14 @@ const listaDeCartoes = [
 		</ul>
 	</div>
 
-	<div class="cabecalho-case__cartoes-bloco">
-		<ul class="cabecalho-case__cartoes" role="list" data-rascunho={rascunho("cartoes")}>
-			{listaDeCartoes.map((cartao) => (
-				<li class="cabecalho-case__cartao">
-					<p class="cabecalho-case__rotulo">{cartao.rotulo}</p>
-					<p>{cartao.texto}</p>
-				</li>
-			))}
-		</ul>
-	</div>
+	<ul class="cabecalho-case__cartoes" role="list" data-rascunho={rascunho("cartoes")}>
+		{listaDeCartoes.map((cartao) => (
+			<li class="cabecalho-case__cartao">
+				<p class="cabecalho-case__rotulo">{cartao.rotulo}</p>
+				<p class="cabecalho-case__texto">{cartao.texto}</p>
+			</li>
+		))}
+	</ul>
 </header>
 
 <style>
@@ -166,7 +166,7 @@ const listaDeCartoes = [
 
 	.cabecalho-case__resumo {
 		font-size: var(--text-introducao);
-		font-weight: var(--peso-introducao);
+		font-weight: var(--peso-corpo);
 		letter-spacing: var(--tracking-introducao);
 		line-height: var(--leading-introducao);
 	}
@@ -222,83 +222,108 @@ const listaDeCartoes = [
 		line-height: var(--leading-pequeno);
 	}
 
-	/* ---------- destaque ---------- */
+	/* ---------- capa e resultados ---------- */
 	.cabecalho-case__destaque {
 		display: grid;
-		gap: var(--space-pequeno);
+		gap: var(--space-largo);
 	}
 
+	/* A capa direto na página: sem moldura nem fundo, só o raio. */
 	.cabecalho-case__imagem {
 		overflow: hidden;
-		aspect-ratio: var(--destaque-proporcao);
-		border-radius: var(--destaque-raio);
-		background: var(--destaque-fundo);
+		border-radius: var(--capa-raio);
 	}
 
 	.cabecalho-case__imagem img {
+		display: block;
 		inline-size: 100%;
-		block-size: 100%;
-		object-fit: cover;
+		block-size: auto;
 	}
 
-	.cabecalho-case__resultados {
+	/* Três colunas com linhas verticais (celular: empilhadas, com linhas horizontais). */
+	.cabecalho-case__resultados,
+	.cabecalho-case__cartoes {
 		display: grid;
-		gap: var(--space-pequeno);
 		padding: 0;
 		list-style: none;
 	}
 
-	.cabecalho-case__resultado {
+	.cabecalho-case__resultado,
+	.cabecalho-case__cartao {
 		display: grid;
-		align-content: space-between;
-		gap: var(--space-maior);
-		padding: var(--space-grande);
-		border-radius: var(--resultado-raio);
-		background: var(--resultado-fundo);
-		container-type: inline-size;
+		align-content: start;
+		padding-block: var(--space-grande);
 	}
 
-	/* Acompanha a largura do cartão: um resultado em palavras ("Prioridades") cabe mesmo com
-	   três cartões lado a lado em 768 px. Nunca passa do tamanho de entrada. */
+	.cabecalho-case__resultado {
+		gap: var(--space-medio);
+	}
+
+	.cabecalho-case__cartao {
+		gap: var(--space-pequeno);
+	}
+
+	.cabecalho-case__resultado:first-child,
+	.cabecalho-case__cartao:first-child {
+		padding-block-start: 0;
+	}
+
+	.cabecalho-case__resultado:last-child,
+	.cabecalho-case__cartao:last-child {
+		padding-block-end: 0;
+	}
+
+	.cabecalho-case__resultado + .cabecalho-case__resultado,
+	.cabecalho-case__cartao + .cabecalho-case__cartao {
+		border-block-start: var(--divisoria);
+	}
+
+	/* Número: título de entrada (56/56, 40 no celular), peso 500. Um valor longo quebra a linha. */
 	.cabecalho-case__valor {
-		font-size: min(var(--text-entrada), var(--resultado-valor-fator) * 1cqi);
+		overflow-wrap: anywhere;
+		font-size: var(--text-entrada);
 		font-weight: var(--peso-titulo);
 		letter-spacing: var(--tracking-entrada);
 		line-height: var(--leading-titulo);
 	}
 
-	/* ---------- cartões ---------- */
-	.cabecalho-case__cartoes-bloco {
-		display: grid;
-		gap: var(--space-minimo);
-	}
-
-	.cabecalho-case__cartoes {
-		display: grid;
-		gap: var(--space-pequeno);
-		padding: 0;
-		list-style: none;
-	}
-
-	.cabecalho-case__cartao {
-		display: grid;
-		align-content: start;
-		gap: var(--space-maior);
-		padding: var(--cartao-espaco);
-		border-radius: var(--cartao-raio);
-		background: var(--cartao-fundo);
-		font-size: var(--text-pequeno);
-		line-height: var(--leading-pequeno);
-	}
-
+	/* Rótulo 16/24 secundário; texto de destaque 20/28. */
 	.cabecalho-case__rotulo {
-		font-weight: var(--peso-titulo);
+		color: var(--color-texto-secundario);
+	}
+
+	.cabecalho-case__texto {
+		font-size: var(--text-destaque);
+		letter-spacing: var(--tracking-destaque);
+		line-height: var(--leading-destaque);
 	}
 
 	@media (min-width: 768px) {
 		.cabecalho-case__resultados,
 		.cabecalho-case__cartoes {
 			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+
+		.cabecalho-case__resultado,
+		.cabecalho-case__cartao {
+			padding-block: 0;
+			padding-inline: var(--grade-espaco);
+		}
+
+		.cabecalho-case__resultado:first-child,
+		.cabecalho-case__cartao:first-child {
+			padding-inline-start: 0;
+		}
+
+		.cabecalho-case__resultado:last-child,
+		.cabecalho-case__cartao:last-child {
+			padding-inline-end: 0;
+		}
+
+		.cabecalho-case__resultado + .cabecalho-case__resultado,
+		.cabecalho-case__cartao + .cabecalho-case__cartao {
+			border-block-start: 0;
+			border-inline-start: var(--divisoria);
 		}
 	}
 

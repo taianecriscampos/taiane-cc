@@ -1,54 +1,19 @@
 ---
 /**
- * Fechamento padrão de todo case: convite para o LinkedIn e, nos cases sob sigilo, a nota de
- * confidencialidade. A nota é conteúdo de exemplo (data-rascunho), para a Taiane trocar pelas
- * palavras dela antes de algum case sigiloso ganhar página (v1.1). Nos cases públicos não há
- * nota: o texto vem da fonte publicada, sem nada a ressalvar.
+ * Fechamento dos cases sob sigilo: só a nota de confidencialidade (rodada 1e).
+ * O convite "Quer saber mais?" saiu: o rodapé do site já faz esse papel.
+ * A nota é conteúdo de exemplo (data-rascunho), para a Taiane trocar pelas palavras dela antes
+ * de algum case sigiloso ganhar página (v1.1). Nos cases públicos não há fechamento.
  */
-import { perfil } from "../../dados/perfil";
-import LinkComSeta from "../ui/LinkComSeta.astro";
-
-interface Props {
-	sigilo: "publico" | "confidencial";
-}
-
-const { sigilo } = Astro.props;
-
-const nota =
-	sigilo === "confidencial"
-		? "Este projeto está sob acordo de confidencialidade. Telas, números internos e documentos ficaram de fora; o texto mostra o processo e o meu papel."
-		: undefined;
 ---
 
-<section class="fechamento" aria-labelledby="fechamento-titulo">
-	<h2 id="fechamento-titulo" class="fechamento__titulo">
-		Quer saber mais detalhes?
-	</h2>
-	<LinkComSeta href={perfil.linkedin} texto="Fale comigo no LinkedIn" />
-	{nota && (
-		<p class="fechamento__nota" data-rascunho>
-			{nota}
-		</p>
-	)}
-</section>
+<p class="fechamento__nota" data-rascunho>
+	Este projeto está sob acordo de confidencialidade. Telas, números internos e documentos ficaram de
+	fora; o texto mostra o processo e o meu papel.
+</p>
 
 <style>
-	.fechamento {
-		display: grid;
-		justify-items: start;
-		gap: var(--space-grande);
-	}
-
-	.fechamento__titulo {
-		font-size: var(--text-secao-case);
-		letter-spacing: var(--tracking-secao-case);
-		font-weight: var(--peso-corpo);
-		line-height: var(--leading-secao-case);
-	}
-
 	.fechamento__nota {
-		font-size: var(--text-pequeno);
-		line-height: var(--leading-pequeno);
 		color: var(--color-texto-secundario);
 	}
 </style>

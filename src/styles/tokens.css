@@ -216,7 +216,6 @@
 	--peso-corpo: var(--prim-peso-400);
 	--peso-titulo: var(--prim-peso-500);
 	--peso-forte: var(--prim-peso-700);
-	--peso-introducao: var(--prim-peso-600);
 
 	--tracking-abertura: var(--prim-tracking-3-5); /* 80 px; ajustável, a pedido da Taiane */
 	--tracking-entrada: var(--prim-tracking-3); /* 56 px */
@@ -363,22 +362,15 @@
 	--status-ponto: var(--prim-size-8);
 	--status-cor: var(--color-status);
 
-	--cartao-fundo: var(--color-fundo-secundario);
-	--cartao-raio: var(--radius-medio);
-	--cartao-espaco: var(--space-medio);
 	--etiqueta-fundo: var(--color-fundo-secundario);
 	--etiqueta-texto: var(--color-texto-secundario);
 	--etiqueta-tamanho: var(--text-legenda);
 	--etiqueta-espaco: var(--space-fio) var(--space-pequeno);
 	--pilula-fundo: var(--color-fundo-secundario);
 	--pilula-espaco: var(--space-minimo) var(--space-medio);
-	--destaque-raio: var(--radius-destaque);
-	--destaque-fundo: var(--color-fundo-secundario);
+	--capa-raio: var(--radius-cartao);
 	--destaque-proporcao: 16 / 9;
 	--ficha-rotulo-largura: 6rem;
-	--resultado-raio: var(--radius-grande);
-	--resultado-fundo: var(--color-fundo-secundario);
-	--resultado-valor-fator: 15; /* % da largura do cartão */
 	--ferramenta-logo: var(--prim-size-24);
 	--ferramenta-logo-cor: var(--color-texto-secundario);
 	--ferramenta-intervalo: var(--space-bloco);
