@@ -6,6 +6,7 @@
 import "../../styles/global.css";
 import Cabecalho, { type LinkDoCabecalho } from "./Cabecalho.astro";
 import Rodape from "./Rodape.astro";
+import VoltarAoTopo from "../ui/VoltarAoTopo.astro";
 
 /**
  * Até o lançamento (1.0.0), nenhuma página entra nos buscadores.
@@ -64,5 +65,6 @@ const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 			<slot />
 		</main>
 		<Rodape />
+		<VoltarAoTopo />
 	</body>
 </html>

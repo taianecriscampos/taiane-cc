@@ -66,13 +66,11 @@
 	--prim-text-48: 3rem;
 	--prim-text-56: 3.5rem;
 	--prim-text-80: clamp(2.5rem, 5.556vw, 5rem);
-	--prim-text-30: clamp(1.5rem, 2.083vw, 1.875rem); /* 24 no celular, 30 em 1440 */
 	--prim-text-120: clamp(2.5rem, 8.333vw, 7.5rem); /* 40 no celular, 120 em 1440 */
 
 	/* Entrelinha: altura da linha dividida pelo tamanho (ex.: 24/16 = 1,5). */
 	--prim-leading-1: 1;
 	--prim-leading-1-1: 1.1;
-	--prim-leading-1-2: 1.2;
 	--prim-leading-12: 1.5; /* 18/12 */
 	--prim-leading-12-16: 1.3333; /* 16/12 */
 	--prim-leading-14: 1.4286; /* 20/14 */
@@ -193,7 +191,7 @@
 	--text-abertura: var(--prim-text-80);
 	--text-entrada: var(--prim-text-40);
 	--text-titulo-case: var(--prim-text-120);
-	--text-introducao: var(--prim-text-30);
+	--text-intro-case: var(--prim-text-24);
 	--text-secao-case: var(--prim-text-32);
 	--text-subtitulo: var(--prim-text-24);
 	--text-rotulo: var(--prim-text-20);
@@ -207,7 +205,7 @@
 		--prim-leading-1-1
 	); /* títulos de 2 linhas: com 1, o g e o j encostam */
 	--leading-secao-case: var(--prim-leading-32);
-	--leading-introducao: var(--prim-leading-1-2);
+	--leading-intro-case: var(--prim-leading-24); /* 32/24 */
 	--leading-subtitulo: var(--prim-leading-24);
 	--leading-rotulo: var(--prim-leading-20);
 	--leading-grande: var(--prim-leading-18);
@@ -223,7 +221,7 @@
 	--tracking-abertura: var(--prim-tracking-3-5); /* 80 px; ajustável, a pedido da Taiane */
 	--tracking-entrada: var(--prim-tracking-3); /* 56 px */
 	--tracking-titulo-case: var(--prim-tracking-4); /* 120 px */
-	--tracking-introducao: var(--prim-tracking-2); /* 30 px */
+	--tracking-intro-case: var(--prim-tracking-2); /* 24 px */
 	--tracking-secao-case: var(--prim-tracking-2); /* 32 px */
 	--tracking-subtitulo: var(--prim-tracking-2); /* 24 px */
 	--tracking-texto: var(--prim-tracking-1); /* 20 px para baixo */
@@ -232,6 +230,7 @@
 	 * Hierarquia tipográfica única (rodada 1e). Seções novas ou revistas usam SÓ estes papéis:
 	 *   título de entrada  --text-entrada (56/56, 40 no celular), peso 500
 	 *   título de cartão   --text-titulo-cartao (32/40), peso 500
+	 *   intro de case      --text-intro-case (24/32), peso 400 (rodada 1f)
 	 *   texto de destaque  --text-destaque (20/28), peso 400
 	 *   texto e rótulo     --text-corpo (16/24); o rótulo em cor secundária
 	 *   pequeno            --text-pequeno (14/20), peso 400 ou 500
@@ -319,6 +318,11 @@
 	--cabecalho-fundo: var(--color-fundo-translucido);
 	--cabecalho-desfoque: var(--prim-desfoque-15);
 	--cabecalho-camada: 100;
+	--topo-camada: 90; /* botão Voltar ao topo, abaixo do cabeçalho e da ilha */
+	--topo-tamanho: var(--prim-size-44);
+	--topo-fundo: var(--color-fundo);
+	--topo-fundo-hover: var(--color-fundo-secundario);
+	--topo-texto: var(--color-texto);
 	--cabecalho-status-tamanho: var(
 		--text-pequeno
 	); /* "Remoto" no celular, para equilibrar com "Tai" */

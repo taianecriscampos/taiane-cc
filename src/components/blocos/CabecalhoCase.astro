@@ -2,14 +2,15 @@
 /**
  * Topo do case, com a personalidade inspirada na kora.framer.media: título grande, em toda a
  * largura, com espaço entre letras apertado.
- * Abaixo, em duas colunas: à esquerda, a introdução em texto grande, peso 400 (resumo de até
+ * Abaixo, em duas colunas: à esquerda, a intro de case (24/32, peso 400; resumo de até
  * 3 frases, ADR 0002); à direita, as disciplinas em pílulas e a ficha (empresa, ano, papel,
  * duração, tempo de leitura e, nos confidenciais, "Case sob sigilo").
  * Depois, a capa direto na página, sem moldura, com raio de 24 px.
- * Resultados e resumo (rodada 1e): sem cartões e sem fundo, em três colunas separadas por
- * linhas verticais de 1 px; no celular, empilhadas, com as linhas na horizontal.
- * Resultados: número em 56/56 (40 no celular), peso 500, e a descrição em 16/24.
- * Minha atuação, Desafio e Solução: rótulo 16/24 secundário e texto de destaque 20/28.
+ * Resultados (rodada 1f): três cartões no estilo dos cartões da página inicial (vidro da ilha,
+ * textos claros), número em 56/56 (40 no celular), peso 500, e a descrição em 16/24.
+ * Minha atuação, Desafio e Solução: sem cartões, em três colunas separadas por linhas
+ * verticais de 1 px (no celular, horizontais); rótulo 16/24 secundário e texto 20/28.
+ * Ficha sem linha acima do primeiro item.
  * Conteúdo de exemplo: os campos listados em `rascunhos` ganham data-rascunho (docs/rascunhos.md).
  * Sem capa, uma ilustração neutra de exemplo. Sem duração conhecida, a ficha não mostra a linha.
  */
@@ -165,10 +166,10 @@ const listaDeCartoes = [
 	}
 
 	.cabecalho-case__resumo {
-		font-size: var(--text-introducao);
+		font-size: var(--text-intro-case);
 		font-weight: var(--peso-corpo);
-		letter-spacing: var(--tracking-introducao);
-		line-height: var(--leading-introducao);
+		letter-spacing: var(--tracking-intro-case);
+		line-height: var(--leading-intro-case);
 	}
 
 	.cabecalho-case__lado {
@@ -208,6 +209,12 @@ const listaDeCartoes = [
 		border-block-start: var(--divisoria);
 	}
 
+	/* Sem linha acima de "Empresa": as linhas só separam os itens entre si (rodada 1f). */
+	.cabecalho-case__ficha-linha:first-child {
+		padding-block-start: 0;
+		border-block-start: 0;
+	}
+
 	.cabecalho-case__ficha dt,
 	.cabecalho-case__sigilo {
 		color: var(--color-texto-secundario);
@@ -240,47 +247,58 @@ const listaDeCartoes = [
 		block-size: auto;
 	}
 
-	/* Três colunas com linhas verticais (celular: empilhadas, com linhas horizontais). */
-	.cabecalho-case__resultados,
+	/* Resultados (rodada 1f): cartões no mesmo estilo dos cartões da página inicial, com o vidro
+	   da ilha e textos claros. */
+	.cabecalho-case__resultados {
+		display: grid;
+		gap: var(--grade-espaco);
+		padding: 0;
+		list-style: none;
+	}
+
+	.cabecalho-case__resultado {
+		display: grid;
+		align-content: start;
+		gap: var(--space-medio);
+		padding: var(--projeto-espaco);
+		border-radius: var(--projeto-raio);
+		background: var(--projeto-fundo);
+		-webkit-backdrop-filter: var(--projeto-desfoque);
+		backdrop-filter: var(--projeto-desfoque);
+		color: var(--projeto-texto-secundario);
+	}
+
+	/* Minha atuação, Desafio e Solução: três colunas com linhas verticais (celular: empilhadas,
+	   com linhas horizontais). */
 	.cabecalho-case__cartoes {
 		display: grid;
 		padding: 0;
 		list-style: none;
 	}
 
-	.cabecalho-case__resultado,
 	.cabecalho-case__cartao {
 		display: grid;
 		align-content: start;
+		gap: var(--space-pequeno);
 		padding-block: var(--space-grande);
 	}
 
-	.cabecalho-case__resultado {
-		gap: var(--space-medio);
-	}
-
-	.cabecalho-case__cartao {
-		gap: var(--space-pequeno);
-	}
-
-	.cabecalho-case__resultado:first-child,
 	.cabecalho-case__cartao:first-child {
 		padding-block-start: 0;
 	}
 
-	.cabecalho-case__resultado:last-child,
 	.cabecalho-case__cartao:last-child {
 		padding-block-end: 0;
 	}
 
-	.cabecalho-case__resultado + .cabecalho-case__resultado,
 	.cabecalho-case__cartao + .cabecalho-case__cartao {
 		border-block-start: var(--divisoria);
 	}
 
-	/* Número: título de entrada (56/56, 40 no celular), peso 500. Um valor longo quebra a linha. */
+	/* Número: título de entrada (56/56, 40 no celular), peso 500, claro. Um valor longo quebra. */
 	.cabecalho-case__valor {
 		overflow-wrap: anywhere;
+		color: var(--projeto-texto);
 		font-size: var(--text-entrada);
 		font-weight: var(--peso-titulo);
 		letter-spacing: var(--tracking-entrada);
@@ -304,23 +322,19 @@ const listaDeCartoes = [
 			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
 
-		.cabecalho-case__resultado,
 		.cabecalho-case__cartao {
 			padding-block: 0;
 			padding-inline: var(--grade-espaco);
 		}
 
-		.cabecalho-case__resultado:first-child,
 		.cabecalho-case__cartao:first-child {
 			padding-inline-start: 0;
 		}
 
-		.cabecalho-case__resultado:last-child,
 		.cabecalho-case__cartao:last-child {
 			padding-inline-end: 0;
 		}
 
-		.cabecalho-case__resultado + .cabecalho-case__resultado,
 		.cabecalho-case__cartao + .cabecalho-case__cartao {
 			border-block-start: 0;
 			border-inline-start: var(--divisoria);

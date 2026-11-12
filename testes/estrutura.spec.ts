@@ -372,3 +372,22 @@ for (const largura of [375, 1440]) {
 		}
 	});
 }
+
+for (const pagina of ["/", "/cases/funis-interativos"]) {
+	test(`em ${pagina}, o botão Voltar ao topo aparece depois de uma tela e leva o foco ao início`, async ({
+		page,
+	}) => {
+		await page.goto(pagina);
+		const botao = page.locator("[data-topo]");
+		// No topo, escondido e fora do Tab.
+		await expect(botao).toHaveAttribute("inert", "");
+		await page.evaluate(() => scrollTo(0, innerHeight * 1.5));
+		const visivel = page.getByRole("button", { name: "Voltar ao topo" });
+		await expect(visivel).toBeVisible();
+		await expect(visivel).toHaveCSS("width", "44px");
+		await visivel.click();
+		await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+		await page.keyboard.press("Tab");
+		await expect(page.getByRole("link", { name: "Pular para o conteúdo" })).toBeFocused();
+	});
+}
