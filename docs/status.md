@@ -4,7 +4,7 @@ Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.1.1 (Fundação, com redirecionamento temporário do domínio)
 **Etapa atual:** 0.3.0 Direção de arte, junto com a estrutura da 0.2.0 (especificação base)
-**Fase da etapa:** 0.3.c Direção de arte v3 · ajustes 1e feitos, aguardando a revisão da Taiane
+**Fase da etapa:** 0.3.c Direção de arte v3 · ajustes 1f feitos (menos o item 5, que espera os símbolos), aguardando a revisão da Taiane
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -202,7 +202,31 @@ Ramificação design, sem envio ao GitHub. A qualidade roda antes de cada commit
   - Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 94 testes aprovados.
     Prints em `.revisao/r1e-final-*.png` (375, 768, 1024 e 1440).
 
+- **Ajustes 1f** (`docs/ajustes-rodada-1f.md`), um commit por grupo de itens:
+  - Projetos: frente com o vidro da ilha e textos claros AA; no tablet, os três iguais, um
+    embaixo do outro, na horizontal; imagem de Funis inteira, com 16 px de respiro sobre branco;
+    etiqueta "Case protegido" nos cases sob sigilo; espaço do símbolo da marca pronto.
+  - Item 5 (símbolos da Azul e da Luft): não há SVG oficial público. O site da Azul bloqueia o
+    acesso automático; o da Luft só tem um PNG branco do logo com o nome. Esperando os arquivos.
+  - Cabeçalho: faixa com desfoque 16 px abaixo da ilha. A ilha do case agora mede onde cada
+    seção começa (linha de 45%, a mesma do sumário) e marca até as seções curtas.
+  - Sobre: três colunas de margem a margem a partir de 1200 px, vãos iguais de 80 a 120 px,
+    Resumo com até 60 caracteres por linha; no tablet, Resumo em cima e as outras duas lado a
+    lado. Etiqueta "não concluída" em 12/16.
+  - Skills: a faixa de ferramentas virou parte da seção, sem título, a 48 px da última pílula,
+    18 s por ida, com as pontas esmaecidas na margem da página. Hard skills na lista nova (26,
+    uma por pílula); duas colunas só a partir de 1200 px.
+  - Case: intro de case 24/32 (registrada na tabela), ficha sem a primeira linha, resultados
+    em cartões de vidro, botão "Voltar ao topo" em todas as páginas.
+  - Rodapé: metade do espaço entre os itens e entre o título e o primeiro item.
+  - Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 104 testes aprovados.
+    Prints em `.revisao/r1f-final-*.png` (375, 768, 1024 e 1440).
+
 ## Pendências anotadas
+
+- **0.3.c (rodada 1f):** item 5 espera os SVGs dos símbolos da Azul e da Luft. No celular, as
+  pílulas longas de Skills às vezes ficam sozinhas na linha, porque duas não cabem em 343 px.
+  No tablet, o Sobre deixou de ter três colunas (decisão a confirmar).
 
 - **0.3.c (rodada 1e), decisões da Taiane:** ícone de "Ver resumo" (seta curva ou mão); no
   tablet, a frente dos cartões que viram fica com um respiro grande (cerca de 300 px), porque o
