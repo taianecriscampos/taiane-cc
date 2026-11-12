@@ -14,6 +14,10 @@ export interface Perfil {
 	especialidadeCurta: string;
 	/** Modelo de trabalho, ao lado do ponto verde de status. */
 	modalidade: string;
+	/** Versão curta da modalidade, no cabeçalho do celular. */
+	modalidadeCurta: string;
+	/** Frase completa que o leitor de tela lê no lugar do status. */
+	modalidadeCompleta: string;
 	cidade: string;
 	estado: string;
 	/** Como a localização aparece no rodapé. */
@@ -38,6 +42,8 @@ export const perfil: Perfil = {
 	especialidade: "Senior Product Designer | Design Engineering",
 	especialidadeCurta: "Design Engineer",
 	modalidade: "Remoto ou híbrido",
+	modalidadeCurta: "Remoto",
+	modalidadeCompleta: "Disponível para trabalho remoto ou híbrido",
 	cidade: "Ribeirão Preto",
 	estado: "SP",
 	localizacao: "Ribeirão Preto / São Paulo, Brasil",

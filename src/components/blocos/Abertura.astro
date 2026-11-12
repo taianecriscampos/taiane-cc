@@ -8,13 +8,11 @@
  * Frase na mesma fonte do site, largura e caixa normais, com espaço entre letras próprio.
  * Faixa de baixo em duas colunas: a especialidade com seta para baixo (leva a Projetos) e o
  * LinkedIn com seta diagonal. No celular, os dois textos ficam curtos para caber.
- * No celular, o modelo de trabalho com o ponto verde fica acima da foto; a partir de 768 px,
- * ele está no cabeçalho.
+ * O modelo de trabalho com o ponto verde fica no cabeçalho, em todas as larguras.
  */
 import { Image } from "astro:assets";
 import retrato from "../../assets/taiane-retrato.png";
 import { perfil as perfilPadrao, type Perfil } from "../../dados/perfil";
-import Disponibilidade from "../ui/Disponibilidade.astro";
 import LinkComSeta from "../ui/LinkComSeta.astro";
 
 interface Props {
@@ -33,9 +31,6 @@ const Titulo = `h${nivel}` as const;
 		<Titulo id={`${idBase}-titulo`} class="abertura__frase">
 			{perfil.frase}
 		</Titulo>
-		<div class="abertura__status">
-			<Disponibilidade texto={perfil.modalidade} />
-		</div>
 		<div class="abertura__foto">
 			<Image
 				class="abertura__retrato"
@@ -136,10 +131,6 @@ const Titulo = `h${nivel}` as const;
 		.abertura__frase {
 			grid-column: 1 / span 7;
 			grid-row: 1;
-		}
-
-		.abertura__status {
-			display: none;
 		}
 
 		/* A foto fica em pé (3 por 4) enquanto houver altura; numa tela baixa, ela se ajusta. */

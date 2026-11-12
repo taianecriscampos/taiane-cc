@@ -2,7 +2,8 @@
 /**
  * Cabeçalho de todas as páginas: fixo no topo, translúcido, sem linha embaixo.
  * Esquerda: o nome leva ao início ("Tai" no celular). Centro: a ilha. Direita: o modelo de
- * trabalho com o ponto verde (no celular ele fica na abertura, acima da foto).
+ * trabalho com o ponto verde ("Remoto ou híbrido"; no celular, só "Remoto", em 14 px). O leitor
+ * de tela lê a frase completa: "Disponível para trabalho remoto ou híbrido".
  *
  * A ilha é uma pílula de vidro escuro (preto translúcido com desfoque do que está atrás) com o
  * número e o nome da seção atual e um ponto branco. Ao clicar, ela cresce até o painel (morph:
@@ -99,7 +100,11 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		</nav>
 
 		<div class="cabecalho__status">
-			<Disponibilidade />
+			<Disponibilidade
+				texto={perfil.modalidade}
+				textoCurto={perfil.modalidadeCurta}
+				rotulo={perfil.modalidadeCompleta}
+			/>
 		</div>
 	</div>
 </header>
@@ -259,10 +264,6 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		white-space: nowrap;
 	}
 
-	.cabecalho__status {
-		display: none;
-	}
-
 	/* No celular, o resto do nome fica sem tamanho, mas continua em linha com o apelido:
 	   assim o nome lido é "Taiane Cris Campos", sem espaço no meio. */
 	.cabecalho__nome-resto,
@@ -270,10 +271,12 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		font-size: 0;
 	}
 
-	/* No cabeçalho, o modelo de trabalho fica numa linha só; na abertura, ele pode quebrar. */
+	/* O modelo de trabalho fica numa linha só, na ponta direita. */
 	.cabecalho__status {
 		justify-self: end;
 		white-space: nowrap;
+		font-size: var(--cabecalho-status-tamanho);
+		line-height: var(--leading-pequeno);
 	}
 
 	/* ---------- ilha ---------- */
@@ -500,13 +503,22 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		}
 	}
 
+	/* Telas bem estreitas (320 px): sem o número na pílula fechada, nome, ilha e status não se
+	   encostam. O número é decorativo e continua no painel aberto. */
+	@media (max-width: 359px) {
+		.ilha__conteudo .ilha__numero {
+			display: none;
+		}
+	}
+
 	@media (min-width: 768px) {
 		.cabecalho__nome-resto {
 			font-size: inherit;
 		}
 
 		.cabecalho__status {
-			display: block;
+			font-size: inherit;
+			line-height: inherit;
 		}
 	}
 </style>

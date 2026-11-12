@@ -3,19 +3,36 @@
  * Modelo de trabalho com o ponto verde de "online", que pulsa devagar e sem parar.
  * O pulso é um anel que cresce e some (só transform e opacity). Com redução de movimento,
  * o ponto fica parado. O ponto é decorativo: o texto ao lado diz o mesmo.
+ *
+ * Com `textoCurto`, o celular (até 767 px) mostra só ele e, de 768 px em diante, o texto inteiro.
+ * Com `rotulo`, o leitor de tela lê a frase completa no lugar do que aparece na tela.
+ * (Um aria-label num parágrafo seria ignorado por vários leitores de tela, por isso o texto
+ * escondido da tela.)
  */
 import { perfil } from "../../dados/perfil";
 
 interface Props {
 	texto?: string;
+	textoCurto?: string;
+	rotulo?: string;
 }
 
-const { texto = perfil.modalidade } = Astro.props;
+const { texto = perfil.modalidade, textoCurto, rotulo } = Astro.props;
 ---
 
 <p class="disponibilidade">
 	<span class="disponibilidade__ponto" aria-hidden="true"></span>
-	{texto}
+	<span aria-hidden={rotulo ? "true" : undefined}>
+		{textoCurto ? (
+			<>
+				<span class="disponibilidade__curto">{textoCurto}</span>
+				<span class="disponibilidade__longo">{texto}</span>
+			</>
+		) : (
+			texto
+		)}
+	</span>
+	{rotulo && <span class="so-leitor-de-tela">{rotulo}</span>}
 </p>
 
 <style>
@@ -23,6 +40,10 @@ const { texto = perfil.modalidade } = Astro.props;
 		display: inline-flex;
 		align-items: center;
 		gap: var(--space-pequeno);
+	}
+
+	.disponibilidade__longo {
+		display: none;
 	}
 
 	.disponibilidade__ponto {
@@ -58,6 +79,16 @@ const { texto = perfil.modalidade } = Astro.props;
 		.disponibilidade__ponto::after {
 			animation: none;
 			opacity: 0;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.disponibilidade__curto {
+			display: none;
+		}
+
+		.disponibilidade__longo {
+			display: inline;
 		}
 	}
 </style>

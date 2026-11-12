@@ -271,6 +271,9 @@
 	--cabecalho-fundo: var(--color-fundo-translucido);
 	--cabecalho-desfoque: var(--prim-desfoque-15);
 	--cabecalho-camada: 100;
+	--cabecalho-status-tamanho: var(
+		--text-pequeno
+	); /* "Remoto" no celular, para equilibrar com "Tai" */
 	--painel-fundo: var(--color-fundo);
 
 	--circulo-pequeno: var(--prim-size-40);

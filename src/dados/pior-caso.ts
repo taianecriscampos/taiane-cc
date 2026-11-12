@@ -15,6 +15,9 @@ export const perfilPiorCaso: Perfil = {
 		"Senior Product Designer | Design Engineering | Research Operations | Design Systems",
 	especialidadeCurta: "Design Engineering e Research Operations",
 	modalidade: "Remoto, híbrido ou presencial em São José do Rio Preto",
+	modalidadeCurta: "Remoto ou híbrido",
+	modalidadeCompleta:
+		"Disponível para trabalho remoto, híbrido ou presencial em São José do Rio Preto",
 	cidade: "São José do Rio Preto",
 	estado: "SP",
 	localizacao: "São José do Rio Preto / São Paulo, Brasil",
