@@ -1,13 +1,12 @@
 ---
 /**
  * Sobre: três colunas de mesma largura a partir de 768 px, com títulos no mesmo estilo:
- * Resumo (o texto e, abaixo dele, a foto), Experiência profissional e Formação acadêmica.
+ * Resumo, Experiência profissional e Formação acadêmica. Curso não concluído: a mesma estrutura
+ * dos outros, com uma etiqueta discreta "não concluída" ao lado do ano.
  * Abaixo das colunas, uma linha: "Currículo em PDF" numa ponta e "Mais informações no LinkedIn"
  * na outra, os dois em nova aba.
  * Texto em RASCUNHO, a partir de docs/curriculo.md, para a Taiane reescrever com as palavras dela.
  */
-import { Image } from "astro:assets";
-import retrato from "../../assets/taiane-retrato.png";
 import { perfil } from "../../dados/perfil";
 import { experienciasDoSobre, formacaoDoSobre } from "../../dados/trajetoria";
 import LinkComSeta from "../ui/LinkComSeta.astro";
@@ -32,13 +31,6 @@ const partes = (periodo: string) => periodo.split("–");
 					generativa para encurtar o caminho entre hipótese, protótipo e código funcional.
 				</p>
 			</div>
-			<Image
-				class="sobre__retrato"
-				src={retrato}
-				alt=""
-				widths={[320, 640]}
-				sizes="(min-width: 768px) 16rem, 70vw"
-			/>
 		</div>
 
 		<div class="sobre__coluna">
@@ -70,12 +62,12 @@ const partes = (periodo: string) => periodo.split("–");
 			<h3 class="sobre__grupo-titulo">Formação acadêmica</h3>
 			<ol class="sobre__lista" role="list">
 				{formacaoDoSobre.map((item) => (
-					<li class:list={[{ "sobre__item-secundario": !item.concluida }]}>
+					<li>
 						<p class="sobre__forte">{item.instituicao}</p>
 						<p>{item.curso}</p>
-						<p class="sobre__secundario">
+						<p class="sobre__secundario sobre__ano">
 							{item.periodo}
-							{!item.concluida && " (não concluída)"}
+							{!item.concluida && <span class="sobre__etiqueta">não concluída</span>}
 						</p>
 					</li>
 				))}
@@ -106,14 +98,6 @@ const partes = (periodo: string) => periodo.split("–");
 		gap: var(--space-grande);
 	}
 
-	.sobre__retrato {
-		inline-size: min(100%, 16rem);
-		aspect-ratio: var(--retrato-proporcao);
-		object-fit: cover;
-		object-position: 50% 30%;
-		border-radius: var(--retrato-raio);
-	}
-
 	.sobre__grupo-titulo {
 		font-weight: var(--peso-corpo);
 		line-height: var(--leading-corpo);
@@ -135,15 +119,21 @@ const partes = (periodo: string) => periodo.split("–");
 		color: var(--color-texto-secundario);
 	}
 
-	/* Curso não concluído: tudo em cinza e em texto pequeno, com menos destaque. */
-	.sobre__item-secundario {
-		color: var(--color-texto-secundario);
-		font-size: var(--text-pequeno);
-		line-height: var(--leading-pequeno);
+	.sobre__ano {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-pequeno);
 	}
 
-	.sobre__item-secundario .sobre__forte {
-		font-weight: var(--peso-titulo);
+	/* Etiqueta discreta: pílula pequena, cinza claro, texto secundário. */
+	.sobre__etiqueta {
+		padding: var(--etiqueta-espaco);
+		border-radius: var(--radius-pilula);
+		background: var(--etiqueta-fundo);
+		color: var(--etiqueta-texto);
+		font-size: var(--etiqueta-tamanho);
+		line-height: var(--leading-legenda);
 	}
 
 	.sobre__links {

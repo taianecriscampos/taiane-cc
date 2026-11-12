@@ -310,6 +310,10 @@
 	--cartao-fundo: var(--color-fundo-secundario);
 	--cartao-raio: var(--radius-medio);
 	--cartao-espaco: var(--space-medio);
+	--etiqueta-fundo: var(--color-fundo-secundario);
+	--etiqueta-texto: var(--color-texto-secundario);
+	--etiqueta-tamanho: var(--text-legenda);
+	--etiqueta-espaco: var(--space-fio) var(--space-pequeno);
 	--pilula-fundo: var(--color-fundo-secundario);
 	--pilula-espaco: var(--space-minimo) var(--space-medio);
 	--destaque-raio: var(--radius-destaque);
