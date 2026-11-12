@@ -5,6 +5,7 @@ resumo: "Na Inlead, propus e liderei a reorganização da criação de funis int
 empresa: "Inlead"
 cliente: "Inlead"
 ano: 2025
+publicadoEm: 2026-01-30
 papel: "Senior Product Designer"
 disciplinas:
   - "Product Discovery"

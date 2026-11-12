@@ -3,8 +3,9 @@
 Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.1.1 (Fundação, com redirecionamento temporário do domínio)
-**Etapa atual:** 0.3.0 Direção de arte, junto com a estrutura da 0.2.0 (especificação base)
-**Fase da etapa:** 0.3.c Direção de arte v3 · ajustes 1f e ajustes rápidos aprovados (home aprovada), aguardando a revisão do case
+**Etapa atual:** 0.9.0 Qualidade e encontrabilidade
+**Fase da etapa:** 0.9.a Encontrabilidade pronta (JSON-LD, sitemap, robots, llms.txt, metadados) · desempenho no celular abaixo da meta, aguardando decisão
+**Direção de arte (0.3.0):** aprovada pela Taiane
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -22,10 +23,10 @@ Atualize este arquivo ao final de cada tarefa.
 | 0.1.0  | Fundação: Astro, Git, tokens provisórios, Laboratório, qualidade automatizada          | Concluída    |
 | 0.1.1  | Ajuste: taiane.cc redireciona para o Linktree até a 1.0.0; briefing de design          | Concluída    |
 | 0.2.0  | Estrutura: mapa do site, páginas com conteúdo real sem estilo, 3 larguras              | Em andamento |
-| 0.3.0  | Direção de arte: 3 propostas no Laboratório, escolha, tokens oficiais                  | Em andamento |
+| 0.3.0  | Direção de arte: 3 propostas no Laboratório, escolha, tokens oficiais                  | Concluída    |
 | 0.4.0  | Páginas e conteúdo: abertura em blocos, case de funis, cases do Azul GPT e da Luft     | Não iniciada |
 | 0.5.0  | Movimento: Lenis, títulos revelados, lista com imagem, nuvem de skills, rastro binário | Não iniciada |
-| 0.9.0  | Qualidade: acessibilidade, performance, SEO, revisão de texto                          | Não iniciada |
+| 0.9.0  | Qualidade: acessibilidade, performance, SEO, revisão de texto                          | Em andamento |
 | 1.0.0  | Lançamento: domínio taiane.cc                                                          | Não iniciada |
 
 ## Fases da etapa 0.1.0
@@ -238,7 +239,50 @@ Ramificação design, sem envio ao GitHub. A qualidade roda antes de cada commit
   - 38 tokens sem uso removidos de `tokens.css` (`.revisao/tokens-sem-uso.mjs` lista os que sobrarem).
   - Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 104 testes aprovados.
 
+## Direção de arte aprovada e efeitos da v1.1
+
+Direção de arte (0.3.0) aprovada pela Taiane em 12/11/2026. Efeitos da v1.1, só estes três:
+
+- revelação suave de textos e imagens ao rolar;
+- mola na ilha e nas cartas;
+- texto grande do hero.
+
+Os outros efeitos da direção v3 (incluída a nuvem magnética de skills) ficam para decidir depois.
+
+## Fase 0.9.a
+
+Ramificação design. Um commit só.
+
+- **Dados estruturados (JSON-LD):** ProfilePage + Person na home (nome, cargo, descrição, cidade,
+  competências, empresas e escolas em `alumniOf`, links do LinkedIn, Substack, GitHub e
+  designDivergente) e Article no case de Funis (autora, data 30/01/2026, capa). Tudo gerado de
+  `src/dados`, em `dados-estruturados.ts`.
+- **Arquivos para buscadores e IAs:** `/sitemap.xml`, `/robots.txt` e `/llms.txt`, gerados
+  na compilação. Em produção, o robots libera Googlebot, Bingbot, GPTBot, OAI-SearchBot, ClaudeBot,
+  PerplexityBot e Google-Extended. Fora de produção, bloqueia tudo.
+- **Metadados em toda página:** título, descrição, canonical, Open Graph e Twitter Card.
+  Imagem 1200x630 com nome e "Design Engineer" em `public/og/padrao.png` (fundo claro, fonte do
+  site, sem foto); o case de Funis usa a capa.
+- **Indexação:** `indexacaoLiberada` agora vale `true` só quando `VERCEL_ENV=production`
+  (`src/dados/site.ts`). Prévias e a design seguem com noindex. O Laboratório tem noindex sempre.
+- **Qualidade:** `npm run qualidade` completo: audit sem vulnerabilidades, check sem erros,
+  formatação ok, build ok, 112 testes aprovados (8 novos de encontrabilidade).
+- **Auditoria, na compilação de produção:** acessibilidade, boas práticas e SEO 100 na home e no
+  case, celular e desktop. Desempenho no desktop 97 (home) e 100 (case). No celular, 71 (home) e
+  79 (case): FCP 0,9 s, LCP 1,8 s e CLS 0, mas o tempo de bloqueio (TBT) é alto, quase todo de
+  estilo e layout. A medição foi num computador lento (índice de CPU 770 a 890) e com variação
+  grande entre rodadas. Links: externos ok (LinkedIn bloqueia robôs, código 999); internos e âncoras ok.
+  Cabeçalhos de segurança conferidos no `vercel.json` (CSP, HSTS, nosniff, Referrer-Policy,
+  Permissions-Policy); falta conferir na resposta real depois do deploy.
+
 ## Pendências anotadas
+
+- **0.9.0 (decidir):** desempenho no celular abaixo de 95. Investigar o custo de estilo e layout
+  (desfoque da ilha, faixa de Ferramentas) e medir de novo num celular de verdade ou com a
+  Vercel.
+- **0.9.0:** a imagem de compartilhamento do case é a capa em 1200 px; avaliar uma imagem 1200x630 própria.
+- **0.9.0:** `alumniOf` guarda empresas e escolas; confirmar se a Taiane prefere outra forma de
+  listar as empresas.
 
 - **0.3.c (rodada 1f):** no celular, as
   pílulas longas de Skills às vezes ficam sozinhas na linha, porque duas não cabem em 343 px.
@@ -264,8 +308,9 @@ Ramificação design, sem envio ao GitHub. A qualidade roda antes de cada commit
 - **0.3.0:** o Laboratório usa larguras de coluna em `rem` e linhas de `1px` soltas. Criar
   tokens para elas.
 - **0.9.0:** nota A+ no Mozilla Observatory e checagem em securityheaders.com.
-- **1.0.0:** liberar os buscadores: trocar `indexacaoLiberada` para `true` em
-  `src/components/layout/LayoutBase.astro`. O Laboratório continua com `noindex`.
+- **1.0.0:** conferir na produção que `/robots.txt` libera os robôs e que as páginas saem sem
+  noindex (a liberação já está pronta, ligada a `VERCEL_ENV=production`). Enviar o sitemap no
+  Search Console e no Bing Webmaster Tools.
 - **0.4.0:** imagens do case de funis, com texto alternativo; trocar todos os "[RASCUNHO]",
   "[TEXTO DA TAIANE]" e "[A DEFINIR]".
 - **0.4.0:** chamadas dos cases do Azul GPT e da Luft; enquanto forem "[TEXTO DA TAIANE]", a

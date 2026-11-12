@@ -7,12 +7,13 @@ import "../../styles/global.css";
 import Cabecalho, { type LinkDoCabecalho } from "./Cabecalho.astro";
 import Rodape from "./Rodape.astro";
 import VoltarAoTopo from "../ui/VoltarAoTopo.astro";
+import { imagemPadrao, producao, urlAbsoluta } from "../../dados/site";
 
 /**
- * Até o lançamento (1.0.0), nenhuma página entra nos buscadores.
- * Na 1.0.0, troque para true: só as páginas com `noindex` explícito continuam de fora.
+ * A indexação está liberada, mas só vale em produção (taiane.cc). Prévias e a ramificação design
+ * continuam com noindex. Só as páginas com `noindex` explícito (o Laboratório) ficam de fora sempre.
  */
-const indexacaoLiberada = false;
+const indexacaoLiberada = producao;
 
 interface Props {
 	titulo: string;
@@ -21,10 +22,24 @@ interface Props {
 	noindex?: boolean;
 	/** Nos cases, o cabeçalho mostra as seções do case no lugar das seções da página inicial. */
 	secoesDoCase?: LinkDoCabecalho[];
+	/** Imagem de compartilhamento (Open Graph). Sem ela, vale a imagem padrão com nome e cargo. */
+	imagem?: { url: string; alt: string };
+	/** "article" nos cases; "website" nas demais páginas. */
+	tipo?: "website" | "article";
+	/** Dados estruturados (JSON-LD) da página. */
+	dadosEstruturados?: object;
 }
 
-const { titulo, descricao, secoesDoCase } = Astro.props;
+const { titulo, descricao, secoesDoCase, tipo = "website", dadosEstruturados } = Astro.props;
 const noindex = Astro.props.noindex ?? !indexacaoLiberada;
+// Endereço canônico: sempre o do domínio oficial, mesmo numa prévia da Vercel.
+const canonica = urlAbsoluta(Astro.url.pathname);
+const imagem = Astro.props.imagem ?? {
+	url: urlAbsoluta(imagemPadrao.caminho),
+	alt: imagemPadrao.alt,
+};
+// "<" vira < para o conteúdo nunca fechar o script antes da hora.
+const jsonLd = dadosEstruturados && JSON.stringify(dadosEstruturados).replace(/</g, "\\u003c");
 ---
 
 <!doctype html>
@@ -37,6 +52,21 @@ const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 		<title>{titulo}</title>
 		<meta name="description" content={descricao} />
 		{noindex && <meta name="robots" content="noindex, nofollow" />}
+		<link rel="canonical" href={canonica} />
+		<meta property="og:type" content={tipo} />
+		<meta property="og:site_name" content="Taiane Cris Campos" />
+		<meta property="og:locale" content="pt_BR" />
+		<meta property="og:title" content={titulo} />
+		<meta property="og:description" content={descricao} />
+		<meta property="og:url" content={canonica} />
+		<meta property="og:image" content={imagem.url} />
+		<meta property="og:image:alt" content={imagem.alt} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={titulo} />
+		<meta name="twitter:description" content={descricao} />
+		<meta name="twitter:image" content={imagem.url} />
+		<meta name="twitter:image:alt" content={imagem.alt} />
+		{jsonLd && <script is:inline type="application/ld+json" set:html={jsonLd} />}
 		<link
 			rel="preload"
 			href="/fontes/google-sans-flex-variavel-latin.woff2"

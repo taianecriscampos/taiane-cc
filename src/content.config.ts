@@ -21,6 +21,8 @@ const cases = defineCollection({
 			/** Nome curto para as listas e os metadados: "Inlead", "Azul · WeFit". */
 			cliente: z.string().min(1).max(24),
 			ano: z.number().int().min(2000).max(2100),
+			/** Data de publicação do texto original (YYYY-MM-DD), para o Article dos dados estruturados. */
+			publicadoEm: z.coerce.date().optional(),
 			papel: z.string().min(1),
 			/**
 			 * Quanto tempo durou o projeto: "6 meses". Até 40 caracteres, para caber na ficha.

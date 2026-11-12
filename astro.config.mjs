@@ -26,6 +26,7 @@ function laboratorio() {
 
 // https://astro.build/config
 export default defineConfig({
+	site: "https://taiane.cc",
 	integrations: [laboratorio()],
 	// Imagens responsivas também no Markdown dos cases: várias larguras (srcset), e o navegador
 	// baixa só a que precisa. Sem os estilos automáticos: cada componente cuida do próprio CSS.

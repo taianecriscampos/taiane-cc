@@ -10,6 +10,7 @@ import Skills from "../components/blocos/Skills.astro";
 import Sobre from "../components/blocos/Sobre.astro";
 import LayoutBase from "../components/layout/LayoutBase.astro";
 import { perfil } from "../dados/perfil";
+import { paginaDePerfil } from "../dados/dados-estruturados";
 import { artigos } from "../dados/artigos";
 import { projetosDosCases } from "../dados/projetos";
 
@@ -19,6 +20,7 @@ const projetos = await projetosDosCases();
 <LayoutBase
 	titulo={`${perfil.nome} · ${perfil.cargo}`}
 	descricao={`${perfil.nome}, ${perfil.cargo}. ${perfil.frase}`}
+	dadosEstruturados={paginaDePerfil}
 >
 	<Abertura />
 	<Projetos projetos={projetos} />

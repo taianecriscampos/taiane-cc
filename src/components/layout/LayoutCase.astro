@@ -22,7 +22,10 @@
  */
 import type { MarkdownHeading } from "astro";
 import type { CollectionEntry } from "astro:content";
+import { getImage } from "astro:assets";
 import { perfil } from "../../dados/perfil";
+import { artigoDoCase } from "../../dados/dados-estruturados";
+import { imagemPadrao, urlAbsoluta } from "../../dados/site";
 import CabecalhoCase from "../blocos/CabecalhoCase.astro";
 import FechamentoCase from "../blocos/FechamentoCase.astro";
 import VisaoGeralCase from "../blocos/VisaoGeralCase.astro";
@@ -41,6 +44,15 @@ const secoes = headings
 
 /** O sumário começa pela Visão geral (resultados e resumo), depois os tópicos do texto. */
 const sumario = [{ texto: "Visão geral", href: "#visao-geral" }, ...secoes];
+
+// Imagem de compartilhamento: a capa do case em 1200 px; sem capa, a imagem padrão.
+const capaOg = dados.capa
+	? await getImage({ src: dados.capa.src, width: 1200, format: "jpg", quality: 80 })
+	: undefined;
+const imagemOg = capaOg
+	? { url: urlAbsoluta(capaOg.src), alt: dados.capa!.alt }
+	: { url: urlAbsoluta(imagemPadrao.caminho), alt: imagemPadrao.alt };
+const caminho = `/cases/${entrada.id}/`;
 
 // Tempo de leitura: 200 palavras por minuto, sem contar marcação e comentários.
 const palavras = (entrada.body ?? "")
@@ -70,6 +82,15 @@ const corpo = html
 	titulo={`${dados.titulo} · ${perfil.nome}`}
 	descricao={dados.resumo}
 	secoesDoCase={secoes}
+	tipo="article"
+	imagem={imagemOg}
+	dadosEstruturados={artigoDoCase({
+		titulo: dados.titulo,
+		resumo: dados.resumo,
+		caminho,
+		imagem: imagemOg.url,
+		publicadoEm: dados.publicadoEm,
+	})}
 >
 	<article class="case envoltorio">
 		<div class="case__topo">
