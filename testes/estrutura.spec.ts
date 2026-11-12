@@ -269,10 +269,10 @@ test("a seção Skills traz só hard e soft skills, em duas colunas", async ({ p
 	await expect(skills.getByText("Figma", { exact: true })).toHaveCount(0);
 });
 
-test("no Sobre, Resumo e Formação têm a mesma largura e os dois vãos são iguais", async ({
+test("no Sobre, as três colunas vão de margem a margem, com vãos iguais de 80 a 120 px", async ({
 	page,
 }) => {
-	for (const largura of [1024, 1440]) {
+	for (const largura of [1200, 1440]) {
 		await page.setViewportSize({ width: largura, height: 900 });
 		await page.goto("/");
 		const caixa = (seletor: string) =>
@@ -284,9 +284,19 @@ test("no Sobre, Resumo e Formação têm a mesma largura e os dois vãos são ig
 		const experiencia = await caixa(".sobre__coluna--experiencia");
 		const formacao = await caixa(".sobre__coluna--formacao");
 		expect(Math.abs(resumo.fim - resumo.inicio - (formacao.fim - formacao.inicio))).toBeLessThan(1);
-		expect(
-			Math.abs(experiencia.inicio - resumo.fim - (formacao.inicio - experiencia.fim)),
-		).toBeLessThan(1);
+		const vao = experiencia.inicio - resumo.fim;
+		expect(Math.abs(vao - (formacao.inicio - experiencia.fim))).toBeLessThan(1);
+		expect(vao).toBeGreaterThanOrEqual(80);
+		expect(vao).toBeLessThanOrEqual(120);
+		// Da margem esquerda à direita: a Formação termina onde termina o rótulo da seção.
+		const secao = await caixa("#sobre-titulo");
+		const margemDireita = await page
+			.locator("#sobre")
+			.evaluate(
+				(el) => el.getBoundingClientRect().right - parseFloat(getComputedStyle(el).paddingRight),
+			);
+		expect(Math.abs(resumo.inicio - secao.inicio)).toBeLessThan(1);
+		expect(Math.abs(formacao.fim - margemDireita)).toBeLessThan(1);
 		// Os dois links na mesma linha.
 		const curriculo = await caixa(".sobre__link--curriculo");
 		const linkedin = await caixa(".sobre__link--linkedin");

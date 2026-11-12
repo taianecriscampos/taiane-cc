@@ -74,6 +74,7 @@
 	--prim-leading-1-1: 1.1;
 	--prim-leading-1-2: 1.2;
 	--prim-leading-12: 1.5; /* 18/12 */
+	--prim-leading-12-16: 1.3333; /* 16/12 */
 	--prim-leading-14: 1.4286; /* 20/14 */
 	--prim-leading-16: 1.5; /* 24/16 */
 	--prim-leading-18: 1.4444; /* 26/18 */
@@ -112,6 +113,7 @@
 	--prim-space-56: 3.5rem;
 	--prim-space-80: 5rem;
 	--prim-space-margem-larga: clamp(1.5rem, 2.78vw, 2.5rem);
+	--prim-space-80-120: clamp(5rem, 8.333vw, 7.5rem); /* 80 px até 960, 120 px em 1440 */
 
 	/* Medidas de estrutura. */
 	--prim-borda-1: 1px;
@@ -212,6 +214,7 @@
 	--leading-corpo: var(--prim-leading-16);
 	--leading-pequeno: var(--prim-leading-14);
 	--leading-legenda: var(--prim-leading-12);
+	--leading-etiqueta: var(--prim-leading-12-16);
 
 	--peso-corpo: var(--prim-peso-400);
 	--peso-titulo: var(--prim-peso-500);
@@ -391,6 +394,8 @@
 	--ferramenta-marca-github: var(--prim-color-marca-github);
 	--ferramenta-marca-vercel: var(--prim-color-marca-vercel);
 	--ferramenta-marca-sanity: var(--prim-color-marca-sanity);
+	--sobre-vao: var(--prim-space-80-120); /* os dois vãos entre as colunas do Sobre */
+	--sobre-resumo-linha: 60ch;
 	--skill-pilula-espaco: var(--space-pequeno) var(--space-medio); /* 14/20 + 8 + 8 = 36 px */
 	--skill-pilula-intervalo: var(--space-pequeno);
 	--skill-pilula-fundo: var(--color-fundo-secundario);
