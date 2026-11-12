@@ -4,7 +4,7 @@ Atualize este arquivo ao final de cada tarefa.
 
 **Versão atual:** 0.1.1 (Fundação, com redirecionamento temporário do domínio)
 **Etapa atual:** 0.3.0 Direção de arte, junto com a estrutura da 0.2.0 (especificação base)
-**Fase da etapa:** 0.3.c Direção de arte v3 · ajustes 1d feitos, aguardando a revisão da Taiane
+**Fase da etapa:** 0.3.c Direção de arte v3 · ajustes 1e feitos, aguardando a revisão da Taiane
 **Status geral:** Em andamento
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
 
@@ -181,13 +181,35 @@ Ramificação design, sem envio ao GitHub. A qualidade roda antes de cada commit
   - Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 80 testes aprovados.
     Prints em `.revisao/r1d-final-*.png`.
 
+- **Ajustes 1e** (`docs/ajustes-rodada-1e.md`), um commit por item (Sobre e Skills juntos):
+  - Hierarquia tipográfica única nos tokens: título de entrada 56/56 (40 no celular), título de
+    cartão 32/40, texto de destaque 20/28, texto e rótulo 16/24, pequeno 14/20.
+  - Projetos: sem ilustrações; Azul GPT e Operação logística viram cartões tipográficos; verso
+    com título, subtítulo, blocos com rótulo e o rodapé "Quer saber mais? Me chama no LinkedIn"
+    com "Voltar" (uma linha em 1440 px; em 1200 px o convite quebra dentro do próprio lado).
+    No tablet, Funis na largura toda e na horizontal. Ícone de "Ver resumo": seta curva aberta;
+    a opção da mão está no Laboratório. Capa de Funis: a imagem da barra lateral, sem texto.
+  - Sobre: grade 1fr auto 1fr com vãos iguais, Resumo de antes da 1d, Currículo abaixo do
+    Resumo e LinkedIn na coluna da Formação, na mesma linha. Etiqueta em 14/20, peso 500.
+  - Skills: só Hard e Soft skills, 6 colunas cada, pílulas em 14/20 que quebram linha.
+  - Ferramentas: seção própria com letreiro de ida e volta (CSS, 50 s por ida), logos que ganham
+    a cor da marca no hover; parada e rolável com movimento reduzido.
+  - Case de Funis: intro em peso 400 (mantida em 30 px, decisão da Taiane); capa sem moldura;
+    resultados e resumo em três colunas com linhas verticais; sem linha antes de Contexto;
+    sumário que se empilha a partir de 1200 px (decisão da Taiane); sem o convite do fim.
+    A ilha passou a observar a seção inteira e usa a mesma linha do sumário.
+  - Ilha mostra "01 Início" no topo da página inicial (conferido).
+  - Qualidade: audit sem vulnerabilidades, check sem erros, formatação ok, 94 testes aprovados.
+    Prints em `.revisao/r1e-final-*.png` (375, 768, 1024 e 1440).
+
 ## Pendências anotadas
 
-- **0.3.c (rodada 1d), decisões da Taiane:** ordem das colunas de Skills (Hard, Ferramentas,
-  Soft deixa os vãos do Sobre iguais; Hard, Soft, Ferramentas equilibra Skills mas desiguala o
-  Sobre); imagens em todos os cartões de Projetos no celular; ilustração neutra como imagem
-  definitiva dos cases sob sigilo; capa com título no topo do case de Funis (ou a imagem da
-  barra lateral, sem texto).
+- **0.3.c (rodada 1e), decisões da Taiane:** ícone de "Ver resumo" (seta curva ou mão); no
+  tablet, a frente dos cartões que viram fica com um respiro grande (cerca de 300 px), porque o
+  verso é mais alto; a imagem da barra lateral aparece na capa e de novo na seção Solução;
+  "ano, empresa" ficou em 16/24 como em Artigos (a tabela pede 14/20 para metadados); subtítulos
+  dentro das seções do case em 20/28, peso 500 (a tabela não tem esse papel).
+
 - **0.3.c:** no rodapé em 768 px, o ícone de copiar e-mail cai para a linha de baixo.
 
 - **0.3.c:** conferir num celular de verdade o desfoque da ilha (o navegador de testes desenha o
