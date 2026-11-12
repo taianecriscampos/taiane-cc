@@ -1,29 +1,52 @@
 ---
 /**
- * Topo do case, na coluna central: título, metadados ("2025 • Inlead • 6 minutos de leitura"),
- * resumo de até 3 frases (ADR 0002) e os três cartões: Minha atuação, Desafio e Solução.
- * "Case sob sigilo" entra nos metadados só nos confidenciais.
+ * Topo do case, com a personalidade inspirada na kora.framer.media: título grande, em toda a
+ * largura, com espaço entre letras apertado.
+ * Abaixo, em duas colunas: à esquerda, a introdução em texto grande e semibold (resumo de até
+ * 3 frases, ADR 0002); à direita, as disciplinas em pílulas e a ficha (empresa, ano, papel,
+ * duração, tempo de leitura e, nos confidenciais, "Case sob sigilo").
+ * Depois, o bloco de destaque: a imagem grande numa moldura bem arredondada e os resultados
+ * em cartões arredondados. Por fim, os três cartões: Minha atuação, Desafio e Solução.
  * Texto entre colchetes, como [TEXTO DA TAIANE], aparece com o estilo de marcador.
  */
 interface Props {
 	titulo: string;
 	resumo: string;
-	cliente: string;
+	empresa: string;
 	ano: number;
+	papel: string;
+	duracao: string;
+	disciplinas: string[];
 	minutos: number;
 	sigilo: "publico" | "confidencial";
+	resultados: { valor: string; descricao: string }[];
 	cartoes: { atuacao: string; desafio: string; solucao: string; rascunho: boolean };
 	nivel?: 1 | 2;
 }
 
-const { titulo, resumo, cliente, ano, minutos, sigilo, cartoes, nivel = 1 } = Astro.props;
+const {
+	titulo,
+	resumo,
+	empresa,
+	ano,
+	papel,
+	duracao,
+	disciplinas,
+	minutos,
+	sigilo,
+	resultados,
+	cartoes,
+	nivel = 1,
+} = Astro.props;
 const Titulo = `h${nivel}` as const;
 const ehMarcador = (texto: string) => texto.startsWith("[");
 
-const metadados = [
-	cliente,
-	`${minutos} ${minutos === 1 ? "minuto" : "minutos"} de leitura`,
-	...(sigilo === "confidencial" ? ["Case sob sigilo"] : []),
+const ficha = [
+	{ rotulo: "Empresa", valor: empresa },
+	{ rotulo: "Ano", valor: String(ano) },
+	{ rotulo: "Papel", valor: papel },
+	{ rotulo: "Duração", valor: duracao },
+	{ rotulo: "Leitura", valor: `${minutos} ${minutos === 1 ? "minuto" : "minutos"} de leitura` },
 ];
 
 const listaDeCartoes = [
@@ -36,19 +59,47 @@ const listaDeCartoes = [
 <header class="cabecalho-case">
 	<Titulo class="cabecalho-case__titulo">{titulo}</Titulo>
 
-	<ul class="cabecalho-case__meta" role="list">
-		<li>
-			<time datetime={String(ano)}>{ano}</time>
-		</li>
-		{metadados.map((item) => (
-			<li>
-				<span class="cabecalho-case__ponto" aria-hidden="true" />
-				{item}
-			</li>
-		))}
-	</ul>
+	<div class="cabecalho-case__intro">
+		<p class:list={["cabecalho-case__resumo", { marcador: ehMarcador(resumo) }]}>{resumo}</p>
 
-	<p class:list={["cabecalho-case__resumo", { marcador: ehMarcador(resumo) }]}>{resumo}</p>
+		<div class="cabecalho-case__lado">
+			{disciplinas.length > 0 ? (
+				<ul class="cabecalho-case__pilulas" role="list" aria-label="Disciplinas">
+					{disciplinas.map((d) => (
+						<li class="cabecalho-case__pilula">{d}</li>
+					))}
+				</ul>
+			) : (
+				<p class="marcador">[DISCIPLINAS: TEXTO DA TAIANE]</p>
+			)}
+
+			<dl class="cabecalho-case__ficha">
+				{ficha.map((item) => (
+					<div class="cabecalho-case__ficha-linha">
+						<dt>{item.rotulo}</dt>
+						<dd class:list={{ marcador: ehMarcador(item.valor) }}>
+							{item.rotulo === "Ano" ? <time datetime={item.valor}>{item.valor}</time> : item.valor}
+						</dd>
+					</div>
+				))}
+			</dl>
+			{sigilo === "confidencial" && <p class="cabecalho-case__sigilo">Case sob sigilo</p>}
+		</div>
+	</div>
+
+	<div class="cabecalho-case__destaque">
+		<div class="cabecalho-case__imagem">
+			<p class="marcador">[IMAGEM DO CASE]</p>
+		</div>
+		<ul class="cabecalho-case__resultados" role="list" aria-label="Resultados">
+			{resultados.map((r) => (
+				<li class="cabecalho-case__resultado">
+					<p class:list={["cabecalho-case__valor", { marcador: ehMarcador(r.valor) }]}>{r.valor}</p>
+					<p class:list={{ marcador: ehMarcador(r.descricao) }}>{r.descricao}</p>
+				</li>
+			))}
+		</ul>
+	</div>
 
 	<div class="cabecalho-case__cartoes-bloco">
 		{cartoes.rascunho && <p class="marcador">[RASCUNHO]</p>}
@@ -66,55 +117,132 @@ const listaDeCartoes = [
 <style>
 	.cabecalho-case {
 		display: grid;
-		align-content: start;
+		gap: var(--space-largo);
 	}
 
 	.cabecalho-case__titulo {
 		font-size: var(--text-titulo-case);
 		letter-spacing: var(--tracking-titulo-case);
+		line-height: var(--leading-titulo);
+		text-wrap: balance;
 	}
 
-	.cabecalho-case__meta {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-pequeno);
-		margin-block-start: var(--space-grande);
-		padding: 0;
-		list-style: none;
-		font-size: var(--text-pequeno);
-		line-height: var(--leading-pequeno);
-		color: var(--color-texto-secundario);
-	}
-
-	.cabecalho-case__meta li {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--space-pequeno);
-	}
-
-	.cabecalho-case__ponto {
-		inline-size: var(--ponto-grande);
-		block-size: var(--ponto-grande);
-		border-radius: var(--radius-pilula);
-		background: var(--color-borda);
+	.cabecalho-case__intro {
+		display: grid;
+		gap: var(--space-bloco);
 	}
 
 	.cabecalho-case__resumo {
-		margin-block-start: var(--space-largo);
-		font-size: var(--text-grande);
-		line-height: var(--leading-grande);
+		font-size: var(--text-introducao);
+		font-weight: var(--peso-introducao);
+		letter-spacing: var(--tracking-introducao);
+		line-height: var(--leading-introducao);
 	}
 
 	.cabecalho-case__resumo.marcador {
 		font-size: var(--text-pequeno);
+		font-weight: var(--peso-corpo);
+		letter-spacing: var(--tracking-texto);
 		line-height: var(--leading-pequeno);
 	}
 
+	.cabecalho-case__lado {
+		display: grid;
+		align-content: start;
+		gap: var(--space-grande);
+	}
+
+	.cabecalho-case__pilulas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-pequeno);
+		padding: 0;
+		list-style: none;
+	}
+
+	.cabecalho-case__pilula {
+		padding: var(--pilula-espaco);
+		border-radius: var(--radius-pilula);
+		background: var(--pilula-fundo);
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+	}
+
+	.cabecalho-case__ficha {
+		display: grid;
+		gap: var(--space-pequeno);
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+	}
+
+	.cabecalho-case__ficha-linha {
+		display: grid;
+		grid-template-columns: var(--ficha-rotulo-largura) minmax(0, 1fr);
+		gap: var(--space-medio);
+		padding-block-start: var(--space-pequeno);
+		border-block-start: var(--divisoria);
+	}
+
+	.cabecalho-case__ficha dt,
+	.cabecalho-case__sigilo {
+		color: var(--color-texto-secundario);
+	}
+
+	.cabecalho-case__ficha dd {
+		margin: 0;
+	}
+
+	.cabecalho-case__sigilo {
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+	}
+
+	/* ---------- destaque ---------- */
+	.cabecalho-case__destaque {
+		display: grid;
+		gap: var(--space-pequeno);
+	}
+
+	.cabecalho-case__imagem {
+		display: grid;
+		place-items: center;
+		aspect-ratio: var(--destaque-proporcao);
+		border-radius: var(--destaque-raio);
+		background: var(--destaque-fundo);
+	}
+
+	.cabecalho-case__resultados {
+		display: grid;
+		gap: var(--space-pequeno);
+		padding: 0;
+		list-style: none;
+	}
+
+	.cabecalho-case__resultado {
+		display: grid;
+		align-content: space-between;
+		gap: var(--space-maior);
+		padding: var(--space-grande);
+		border-radius: var(--resultado-raio);
+		background: var(--resultado-fundo);
+	}
+
+	.cabecalho-case__valor {
+		font-size: var(--text-entrada);
+		font-weight: var(--peso-titulo);
+		letter-spacing: var(--tracking-entrada);
+		line-height: var(--leading-titulo);
+	}
+
+	.cabecalho-case__valor.marcador {
+		font-size: var(--text-pequeno);
+		letter-spacing: var(--tracking-texto);
+	}
+
+	/* ---------- cartões ---------- */
 	.cabecalho-case__cartoes-bloco {
 		display: grid;
 		gap: var(--space-minimo);
-		margin-block-start: var(--space-grande);
 	}
 
 	.cabecalho-case__cartoes {
@@ -140,8 +268,24 @@ const listaDeCartoes = [
 	}
 
 	@media (min-width: 768px) {
+		.cabecalho-case__resultados,
 		.cabecalho-case__cartoes {
 			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.cabecalho-case__intro {
+			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+			column-gap: var(--grade-espaco);
+		}
+
+		.cabecalho-case__resumo {
+			grid-column: 1 / span 7;
+		}
+
+		.cabecalho-case__lado {
+			grid-column: 9 / -1;
 		}
 	}
 </style>

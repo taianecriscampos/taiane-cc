@@ -6,6 +6,13 @@ empresa: "Inlead"
 cliente: "Inlead"
 ano: 2025
 papel: "Senior Product Designer"
+duracao: "[QUANTO TEMPO DUROU O PROJETO]"
+disciplinas:
+  - "Product Discovery"
+  - "Arquitetura da Informação"
+  - "Benchmarking"
+  - "Design de Interação"
+  - "Alinhamento design-código"
 sigilo: "publico"
 ordem: 1
 cartoes:

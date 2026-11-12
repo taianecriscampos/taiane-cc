@@ -6,6 +6,7 @@ empresa: "Azul Linhas Aéreas, cliente atendido pela WeFit"
 cliente: "Azul · WeFit"
 ano: 2024
 papel: "Senior Product Designer pela WeFit"
+duracao: "[TEXTO DA TAIANE]"
 sigilo: "confidencial"
 ordem: 2
 cartoes:

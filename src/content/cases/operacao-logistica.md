@@ -6,6 +6,7 @@ empresa: "Luft Logistics, cliente atendido pela WeFit"
 cliente: "Luft · WeFit"
 ano: 2023
 papel: "Senior Product Designer pela WeFit"
+duracao: "[TEXTO DA TAIANE]"
 sigilo: "confidencial"
 ordem: 3
 cartoes:

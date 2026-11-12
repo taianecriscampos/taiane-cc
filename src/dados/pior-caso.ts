@@ -61,8 +61,26 @@ const cartaoNoLimite =
 export const cabecalhoPiorCaso = {
 	titulo: tituloLongo,
 	resumo: resumoNoLimite,
-	cliente: "Hapvida Saúde · WeFit SP", // 24 caracteres, o limite
+	empresa: "Hapvida NotreDame Intermédica, cliente atendido pela WeFit",
 	ano: 2026,
+	papel: "Senior Product Designer, UX Strategy e Service Design pela WeFit",
+	duracao: "1 ano e 7 meses, em duas fases de entrega", // 40 caracteres, o limite
+	disciplinas: [
+		"Pesquisa com usuários",
+		"Arquitetura da Informação",
+		"Design de Serviço e mapeamento de jornada", // 40 caracteres, o limite
+		"UX Writing",
+		"Design System",
+		"Acessibilidade",
+	],
+	resultados: [
+		{
+			valor: "R$ 1.284.000,00",
+			descricao: "economizados por ano em retrabalho do time de atendimento",
+		},
+		{ valor: "−37%", descricao: "chamados" },
+		{ valor: "[A DEFINIR]", descricao: "[TEXTO DA TAIANE]" },
+	],
 	minutos: 1,
 	sigilo: "confidencial" as const,
 	cartoes: { atuacao: cartaoNoLimite, desafio: "Ok.", solucao: cartaoNoLimite, rascunho: true },

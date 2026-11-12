@@ -1,9 +1,10 @@
 ---
 /**
- * Layout da página de case.
- * Topo e fechamento na coluna central (colunas 4 a 9 a partir de 1200 px).
- * Corpo em linhas de 3, 6 e 3 colunas: o título de cada seção fica à esquerda, fixo ao rolar
- * até a próxima seção, e o texto na coluna central. No celular, uma coluna, sem fixar.
+ * Layout da página de case (personalidade inspirada na kora.framer.media).
+ * Topo em toda a largura. Fechamento na coluna central (colunas 4 a 9 a partir de 1200 px).
+ * Corpo em linhas de 4, 6 e 2 colunas: o título grande de cada seção fica à esquerda, fixo ao
+ * rolar até a próxima seção, e o texto na coluna central. No celular, uma coluna, sem fixar.
+ * Imagens do texto ficam em molduras arredondadas com fundo de cor suave.
  * O cabeçalho do site mostra as seções do case.
  */
 import type { MarkdownHeading } from "astro";
@@ -54,14 +55,18 @@ const corpo = html
 	secoesDoCase={secoes}
 >
 	<article class="case envoltorio">
-		<div class="case__central">
+		<div class="case__topo">
 			<CabecalhoCase
 				titulo={dados.titulo}
 				resumo={dados.resumo}
-				cliente={dados.cliente}
+				empresa={dados.empresa}
 				ano={dados.ano}
+				papel={dados.papel}
+				duracao={dados.duracao}
+				disciplinas={dados.disciplinas}
 				minutos={minutos}
 				sigilo={dados.sigilo}
+				resultados={dados.resultados}
 				cartoes={dados.cartoes}
 			/>
 		</div>
@@ -95,11 +100,21 @@ const corpo = html
 		gap: var(--space-grande);
 	}
 
+	/* Títulos de seção grandes, no tamanho dos títulos das listas. */
 	.case__corpo :global(h2) {
-		font-size: var(--text-secao-case);
-		letter-spacing: var(--tracking-secao-case);
-		font-weight: var(--peso-corpo);
-		line-height: var(--leading-secao-case);
+		font-size: var(--text-entrada);
+		letter-spacing: var(--tracking-entrada);
+		font-weight: var(--peso-titulo);
+		line-height: var(--leading-titulo);
+	}
+
+	/* Moldura das imagens do texto: cantos arredondados e fundo de cor suave. */
+	.case__corpo :global(figure),
+	.case__corpo :global(p > img:only-child) {
+		margin: 0;
+		padding: var(--moldura-espaco);
+		border-radius: var(--moldura-raio);
+		background: var(--moldura-fundo);
 	}
 
 	/* Texto corrido do Markdown. :global porque o HTML vem do conteúdo, não deste arquivo. */
@@ -139,6 +154,10 @@ const corpo = html
 		line-height: var(--leading-grande);
 	}
 
+	.case__topo {
+		grid-column: 1 / -1;
+	}
+
 	@media (min-width: 768px) {
 		.case {
 			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
@@ -165,14 +184,15 @@ const corpo = html
 			align-items: start;
 		}
 
+		/* 4 colunas: no tamanho grande, "Aprendizados" não cabe em 3 sem quebrar a palavra. */
 		.case__corpo :global(.case-secao > h2) {
-			grid-column: 1 / span 3;
+			grid-column: 1 / span 4;
 			position: sticky;
 			inset-block-start: calc(var(--cabecalho-altura) + var(--space-grande));
 		}
 
 		.case__corpo :global(.case-secao__texto) {
-			grid-column: 4 / span 6;
+			grid-column: 5 / span 6;
 		}
 	}
 </style>

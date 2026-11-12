@@ -45,10 +45,13 @@
 	--prim-text-48: 3rem;
 	--prim-text-56: 3.5rem;
 	--prim-text-80: clamp(2.5rem, 5.556vw, 5rem);
+	--prim-text-30: clamp(1.5rem, 2.083vw, 1.875rem); /* 24 no celular, 30 em 1440 */
+	--prim-text-120: clamp(2.5rem, 8.333vw, 7.5rem); /* 40 no celular, 120 em 1440 */
 
 	/* Entrelinha: altura da linha dividida pelo tamanho (ex.: 24/16 = 1,5). */
 	--prim-leading-1: 1;
 	--prim-leading-1-1: 1.1;
+	--prim-leading-1-2: 1.2;
 	--prim-leading-12: 1.5; /* 18/12 */
 	--prim-leading-14: 1.4286; /* 20/14 */
 	--prim-leading-16: 1.5; /* 24/16 */
@@ -59,6 +62,7 @@
 
 	--prim-peso-400: 400;
 	--prim-peso-500: 500;
+	--prim-peso-600: 600;
 	--prim-peso-700: 700;
 
 	/* Espaço entre letras, apertado como na hugeinc.com: quanto maior o texto, mais fechado. */
@@ -103,6 +107,7 @@
 	--prim-radius-0: 0;
 	--prim-radius-8: 0.5rem;
 	--prim-radius-24: 1.5rem;
+	--prim-radius-32: 2rem;
 	--prim-radius-pilula: 9999px;
 
 	/* Movimento: interface até 300 ms, ease-out forte, nunca ease-in (direção de arte v3). */
@@ -141,7 +146,8 @@
 
 	--text-abertura: var(--prim-text-80);
 	--text-entrada: var(--prim-text-40);
-	--text-titulo-case: var(--prim-text-40);
+	--text-titulo-case: var(--prim-text-120);
+	--text-introducao: var(--prim-text-30);
 	--text-secao-case: var(--prim-text-32);
 	--text-subtitulo: var(--prim-text-24);
 	--text-rotulo: var(--prim-text-20);
@@ -153,6 +159,7 @@
 	--leading-titulo: var(--prim-leading-1);
 	--leading-titulo-resumido: var(--prim-leading-1-1); /* título cortado em 2 linhas */
 	--leading-secao-case: var(--prim-leading-32);
+	--leading-introducao: var(--prim-leading-1-2);
 	--leading-subtitulo: var(--prim-leading-24);
 	--leading-rotulo: var(--prim-leading-20);
 	--leading-grande: var(--prim-leading-18);
@@ -163,10 +170,12 @@
 	--peso-corpo: var(--prim-peso-400);
 	--peso-titulo: var(--prim-peso-500);
 	--peso-forte: var(--prim-peso-700);
+	--peso-introducao: var(--prim-peso-600);
 
 	--tracking-abertura: var(--prim-tracking-4); /* 80 px */
 	--tracking-entrada: var(--prim-tracking-3); /* 56 px */
-	--tracking-titulo-case: var(--prim-tracking-3); /* 48 px */
+	--tracking-titulo-case: var(--prim-tracking-4); /* 120 px */
+	--tracking-introducao: var(--prim-tracking-2); /* 30 px */
 	--tracking-secao-case: var(--prim-tracking-2); /* 32 px */
 	--tracking-subtitulo: var(--prim-tracking-2); /* 24 px */
 	--tracking-texto: var(--prim-tracking-1); /* 20 px para baixo */
@@ -197,6 +206,7 @@
 	--radius-nenhum: var(--prim-radius-0);
 	--radius-medio: var(--prim-radius-8);
 	--radius-grande: var(--prim-radius-24);
+	--radius-destaque: var(--prim-radius-32);
 	--radius-pilula: var(--prim-radius-pilula);
 
 	--motion-duration-pressionar: var(--prim-duration-160);
@@ -268,6 +278,17 @@
 	--cartao-fundo: var(--color-fundo-secundario);
 	--cartao-raio: var(--radius-medio);
 	--cartao-espaco: var(--space-medio);
+	--pilula-fundo: var(--color-fundo-secundario);
+	--pilula-espaco: var(--space-minimo) var(--space-medio);
+	--destaque-raio: var(--radius-destaque);
+	--destaque-fundo: var(--color-fundo-secundario);
+	--destaque-proporcao: 16 / 9;
+	--ficha-rotulo-largura: 6rem;
+	--resultado-raio: var(--radius-grande);
+	--resultado-fundo: var(--color-fundo-secundario);
+	--moldura-raio: var(--radius-grande);
+	--moldura-fundo: var(--color-fundo-secundario);
+	--moldura-espaco: var(--space-maior);
 	--marcador-midia-tamanho: var(--prim-size-20);
 	--marcador-midia-fundo: var(--color-destaque-case);
 	--marcador-midia-texto: var(--color-sobre-destaque-case);
@@ -277,7 +298,6 @@
 @media (min-width: 768px) {
 	:root {
 		--text-entrada: var(--prim-text-56);
-		--text-titulo-case: var(--prim-text-48);
 		--space-secao: var(--prim-space-80);
 		--space-margem-pagina: var(--prim-space-24);
 	}
