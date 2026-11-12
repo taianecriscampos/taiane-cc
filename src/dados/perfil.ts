@@ -23,7 +23,7 @@ export interface Perfil {
 	designDivergente: string;
 	curriculo: {
 		href: string;
-		/** false até o PDF público entrar, na etapa 0.4.0. */
+		/** false esconde o link e mostra "em breve". */
 		disponivel: boolean;
 	};
 }
@@ -43,5 +43,5 @@ export const perfil: Perfil = {
 	substack: "https://taianecriscampos.substack.com/",
 	github: "https://github.com/taianecriscampos",
 	designDivergente: "https://designdivergente.blog/",
-	curriculo: { href: "/curriculo.pdf", disponivel: false },
+	curriculo: { href: "/curriculo.pdf", disponivel: true },
 };

@@ -1,8 +1,9 @@
 ---
 /**
- * Sobre: três colunas de mesma largura a partir de 768 px (Descrição, Experiência profissional,
- * Formação acadêmica). A foto abre a coluna da descrição; na rodada 2 ela desce da abertura até aqui.
- * Abaixo das colunas, "Mais informações no LinkedIn".
+ * Sobre: três colunas de mesma largura a partir de 768 px, com títulos no mesmo estilo:
+ * Resumo (o texto e, abaixo dele, a foto), Experiência profissional e Formação acadêmica.
+ * Abaixo das colunas, uma linha: "Currículo em PDF" numa ponta e "Mais informações no LinkedIn"
+ * na outra, os dois em nova aba.
  * Texto em RASCUNHO, a partir de docs/curriculo.md, para a Taiane reescrever com as palavras dela.
  */
 import { Image } from "astro:assets";
@@ -22,13 +23,7 @@ const partes = (periodo: string) => periodo.split("–");
 
 	<div class="sobre">
 		<div class="sobre__coluna">
-			<Image
-				class="sobre__retrato"
-				src={retrato}
-				alt=""
-				widths={[320, 640]}
-				sizes="(min-width: 768px) 16rem, 70vw"
-			/>
+			<h3 class="sobre__grupo-titulo">Resumo</h3>
 			<div class="rascunho">
 				<p class="marcador">[RASCUNHO]</p>
 				<p>
@@ -37,11 +32,13 @@ const partes = (periodo: string) => periodo.split("–");
 					generativa para encurtar o caminho entre hipótese, protótipo e código funcional.
 				</p>
 			</div>
-			{perfil.curriculo.disponivel ? (
-				<LinkComSeta href={perfil.curriculo.href} texto="Acessar currículo em PDF" externo />
-			) : (
-				<p class="sobre__secundario">Currículo em PDF, em breve</p>
-			)}
+			<Image
+				class="sobre__retrato"
+				src={retrato}
+				alt=""
+				widths={[320, 640]}
+				sizes="(min-width: 768px) 16rem, 70vw"
+			/>
 		</div>
 
 		<div class="sobre__coluna">
@@ -86,7 +83,12 @@ const partes = (periodo: string) => periodo.split("–");
 		</div>
 	</div>
 
-	<div>
+	<div class="sobre__links">
+		{perfil.curriculo.disponivel ? (
+			<LinkComSeta href={perfil.curriculo.href} texto="Currículo em PDF" externo />
+		) : (
+			<p class="sobre__secundario">Currículo em PDF, em breve</p>
+		)}
 		<LinkComSeta href={perfil.linkedin} texto="Mais informações no LinkedIn" externo />
 	</div>
 </section>
@@ -142,6 +144,13 @@ const partes = (periodo: string) => periodo.split("–");
 
 	.sobre__item-secundario .sobre__forte {
 		font-weight: var(--peso-titulo);
+	}
+
+	.sobre__links {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: var(--space-pequeno) var(--space-medio);
 	}
 
 	@media (min-width: 768px) {

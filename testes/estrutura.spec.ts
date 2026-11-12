@@ -138,3 +138,21 @@ test("só o case confidencial avisa que está sob sigilo", async ({ page }) => {
 	await expect(page.getByText("Case sob sigilo", { exact: true })).toHaveCount(0);
 	await expect(page.getByText("Sigilo", { exact: true })).toHaveCount(0);
 });
+
+test("o Sobre traz o currículo em PDF e o LinkedIn, os dois em nova aba", async ({ page }) => {
+	await page.goto("/");
+	const sobre = page.getByRole("region", { name: "Sobre" });
+	for (const titulo of ["Resumo", "Experiência profissional", "Formação acadêmica"]) {
+		await expect(sobre.getByRole("heading", { name: titulo, exact: true })).toHaveCount(1);
+	}
+	const curriculo = sobre.getByRole("link", { name: /^Currículo em PDF/ });
+	await expect(curriculo).toHaveAttribute("href", "/curriculo.pdf");
+	await expect(curriculo).toHaveAttribute("target", "_blank");
+	const resposta = await page.request.get("/curriculo.pdf");
+	expect(resposta.ok()).toBe(true);
+	expect(resposta.headers()["content-type"]).toContain("pdf");
+	await expect(sobre.getByRole("link", { name: /^Mais informações no LinkedIn/ })).toHaveAttribute(
+		"target",
+		"_blank",
+	);
+});
