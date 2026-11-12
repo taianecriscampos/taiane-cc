@@ -120,6 +120,7 @@
 	/* Mola leve: passa 3% do destino e assenta. Curva desenhada ponto a ponto, sem biblioteca. */
 	--prim-ease-mola: linear(0, 0.3 8%, 0.69 18%, 0.93 29%, 1.025 39%, 1.03 47%, 1.01 62%, 1);
 	--prim-escala-pressionado: 0.97;
+	--prim-escala-pressionado-suave: 0.98; /* blocos grandes: 0,97 pareceria um tranco */
 	--prim-escala-entrada: 0.95;
 }
 
@@ -217,6 +218,7 @@
 	--motion-ease-out: var(--prim-ease-out);
 	--motion-ease-mola: var(--prim-ease-mola);
 	--motion-escala-pressionado: var(--prim-escala-pressionado);
+	--motion-escala-pressionado-suave: var(--prim-escala-pressionado-suave);
 	--motion-escala-entrada: var(--prim-escala-entrada);
 }
 
@@ -286,6 +288,11 @@
 	--ficha-rotulo-largura: 6rem;
 	--resultado-raio: var(--radius-grande);
 	--resultado-fundo: var(--color-fundo-secundario);
+	--bento-fundo: var(--color-fundo-secundario);
+	--bento-raio: var(--radius-grande);
+	--bento-imagem-fundo: var(--color-fundo);
+	--bento-imagem-raio: var(--radius-medio);
+	--bento-escala-pressionado: var(--motion-escala-pressionado-suave);
 	--moldura-raio: var(--radius-grande);
 	--moldura-fundo: var(--color-fundo-secundario);
 	--moldura-espaco: var(--space-maior);

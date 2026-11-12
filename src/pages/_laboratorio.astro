@@ -9,6 +9,7 @@ import { createHash } from "node:crypto";
 import Abertura from "../components/blocos/Abertura.astro";
 import CabecalhoCase from "../components/blocos/CabecalhoCase.astro";
 import ListaDeEntradas from "../components/blocos/ListaDeEntradas.astro";
+import ProjetosBento from "../components/blocos/ProjetosBento.astro";
 import Disponibilidade from "../components/ui/Disponibilidade.astro";
 import Selo from "../components/ui/Selo.astro";
 import Seta from "../components/ui/Seta.astro";
@@ -297,6 +298,7 @@ Astro.csp?.insertStyleHash(
 
 	<div class="lab__pior-caso">
 		<Abertura perfil={perfilPiorCaso} idBase="pior-abertura" nivel={2} />
+		<ProjetosBento id="pior-projetos" rotulo="Projetos no limite" entradas={entradasPiorCaso} />
 		<ListaDeEntradas
 			id="pior-entradas"
 			rotulo="Entradas no limite"
@@ -432,6 +434,7 @@ Astro.csp?.insertStyleHash(
 
 	.lab__pior-caso {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: var(--space-secao);
 	}
 
