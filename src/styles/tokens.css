@@ -122,6 +122,7 @@
 	--prim-size-16: 1rem;
 	--prim-size-20: 1.25rem;
 	--prim-size-24: 1.5rem;
+	--prim-size-32: 2rem;
 	--prim-size-36: 2.25rem;
 	--prim-size-40: 2.5rem;
 	--prim-size-44: 2.75rem;
@@ -350,6 +351,7 @@
 	--rodape-texto-secundario: var(--color-escuro-texto-secundario);
 	--rodape-focus-cor: var(--color-escuro-texto);
 	--rodape-piscar-opacidade: 0.25;
+	--rodape-item-altura: var(--prim-size-32); /* 24 de texto + 8 de respiro (rodada 1f) */
 
 	--ilha-fundo: var(--color-vidro-fundo);
 	--ilha-desfoque: var(--prim-desfoque-20);

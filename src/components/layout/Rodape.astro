@@ -204,10 +204,12 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 		line-height: var(--leading-titulo);
 	}
 
+	/* Rodada 1f: metade do respiro. Título até o primeiro texto: 4 px + 4 px (metade da sobra
+	   da linha de 32 px) = 8 px, antes 16. */
 	.rodape__grupo {
 		display: grid;
 		align-content: start;
-		gap: var(--space-pequeno);
+		gap: var(--space-minimo);
 	}
 
 	.rodape__grupo-titulo {
@@ -216,7 +218,9 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 		color: var(--rodape-texto-secundario);
 	}
 
-	/* Mesmo ritmo nas três colunas: cada item numa linha de 40 px, sem espaço extra entre eles. */
+	/* Mesmo ritmo nas três colunas: cada item numa linha de 32 px, sem espaço extra entre eles.
+	   Entre um texto e outro sobram 8 px (antes 16, rodada 1f). 32 px ainda passa do alvo
+	   mínimo de toque das WCAG 2.2 (24 px). */
 	.rodape__lista {
 		display: grid;
 		justify-items: start;
@@ -227,11 +231,12 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 	.rodape__lista > li {
 		display: flex;
 		align-items: center;
-		min-block-size: var(--alvo-toque);
+		min-block-size: var(--rodape-item-altura);
 	}
 
-	/* A seta acompanha o texto claro do rodapé. */
+	/* A seta acompanha o texto claro do rodapé e a altura da linha. */
 	.rodape :global(.seta) {
+		block-size: var(--rodape-item-altura);
 		color: var(--rodape-texto);
 	}
 
@@ -240,7 +245,7 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 		flex-wrap: wrap;
 		align-items: center;
 		gap: var(--space-minimo) var(--space-pequeno);
-		min-block-size: var(--alvo-toque);
+		min-block-size: var(--rodape-item-altura);
 	}
 
 	/* O e-mail pode quebrar em qualquer ponto numa tela estreita. */
@@ -253,7 +258,7 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 		place-items: center;
 		flex: none;
 		inline-size: var(--alvo-toque);
-		block-size: var(--alvo-toque);
+		block-size: var(--rodape-item-altura);
 		padding: 0;
 		border: 0;
 		border-radius: var(--radius-pilula);
