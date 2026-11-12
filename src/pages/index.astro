@@ -1,12 +1,13 @@
 ---
 /**
- * Página inicial. Ordem de leitura: abertura, projetos, artigos e sobre.
+ * Página inicial. Ordem de leitura: abertura, projetos, artigos, sobre e skills.
  * O rodapé, com "Vamos conversar?", vem do LayoutBase.
  */
 import { getCollection } from "astro:content";
 import Abertura from "../components/blocos/Abertura.astro";
 import ListaDeEntradas from "../components/blocos/ListaDeEntradas.astro";
 import ProjetosBento from "../components/blocos/ProjetosBento.astro";
+import Skills from "../components/blocos/Skills.astro";
 import Sobre from "../components/blocos/Sobre.astro";
 import LayoutBase from "../components/layout/LayoutBase.astro";
 import type { Entrada } from "../components/ui/Entrada.astro";
@@ -38,4 +39,5 @@ const projetos: Entrada[] = cases.map(({ id, data }) => ({
 		vazio="Os artigos entram aqui em breve."
 	/>
 	<Sobre />
+	<Skills />
 </LayoutBase>

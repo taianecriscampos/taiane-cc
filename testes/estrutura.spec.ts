@@ -60,7 +60,7 @@ test("o cabeçalho leva às seções da página inicial e de volta ao início", 
 	await page.goto("/");
 	await abrirIlha(page);
 	const navegacao = page.getByRole("navigation", { name: "Principal" });
-	const nomes = ["Início", "Projetos", "Artigos", "Sobre"];
+	const nomes = ["Início", "Projetos", "Artigos", "Sobre", "Skills"];
 	const links = navegacao.getByRole("link");
 	await expect(links).toHaveCount(nomes.length);
 	for (const [i, nome] of nomes.entries()) await expect(links.nth(i)).toHaveAccessibleName(nome);
@@ -155,4 +155,16 @@ test("o Sobre traz o currículo em PDF e o LinkedIn, os dois em nova aba", async
 		"target",
 		"_blank",
 	);
+});
+
+test("a seção Skills traz hard e soft skills, com ícones só de enfeite", async ({ page }) => {
+	await page.goto("/");
+	const skills = page.getByRole("region", { name: "Skills" });
+	await expect(skills.getByRole("heading", { name: "Hard skills" })).toBeVisible();
+	await expect(skills.getByRole("heading", { name: "Soft skills" })).toBeVisible();
+	await expect(skills.getByText("Figma", { exact: true })).toBeVisible();
+	// Ícones decorativos: escondidos do leitor de tela, que lê só o nome.
+	for (const icone of await skills.locator("svg").all()) {
+		await expect(icone).toHaveAttribute("aria-hidden", "true");
+	}
 });
