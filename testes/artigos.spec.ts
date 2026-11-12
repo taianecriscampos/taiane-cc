@@ -35,6 +35,6 @@ test("em 375 px, os títulos de artigo usam o tamanho de entrada do site", async
 	const tamanhos = await page
 		.locator("#artigos .entrada__titulo")
 		.evaluateAll((lista) => lista.map((t) => getComputedStyle(t).fontSize));
-	// 40 px: o mesmo título de entrada dos Projetos e do "Me chama?" no celular.
+	// 40 px: o mesmo título de entrada dos Projetos e do "Me chama!" no celular.
 	for (const t of tamanhos) expect(t).toBe("40px");
 });

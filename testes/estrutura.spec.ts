@@ -50,7 +50,7 @@ test("os artigos abrem em nova aba e avisam o leitor de tela, com o título inte
 test("o rodapé traz o convite, o e-mail e a hora local", async ({ page }) => {
 	await page.goto("/");
 	const rodape = page.getByRole("contentinfo");
-	await expect(rodape.getByRole("heading", { name: "Me chama?" })).toBeVisible();
+	await expect(rodape.getByRole("heading", { name: "Me chama!" })).toBeVisible();
 	await expect(rodape.getByRole("link", { name: "taianecriscampos@gmail.com" })).toHaveAttribute(
 		"href",
 		"mailto:taianecriscampos@gmail.com",
