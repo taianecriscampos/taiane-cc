@@ -85,6 +85,7 @@
 	--prim-space-2: 0.125rem;
 	--prim-space-4: 0.25rem;
 	--prim-space-8: 0.5rem;
+	--prim-space-12: 0.75rem;
 	--prim-space-16: 1rem;
 	--prim-space-20: 1.25rem;
 	--prim-space-24: 1.5rem;
@@ -104,6 +105,7 @@
 	--prim-size-16: 1rem;
 	--prim-size-20: 1.25rem;
 	--prim-size-40: 2.5rem;
+	--prim-size-44: 2.75rem;
 	--prim-size-48: 3rem;
 	--prim-size-52: 3.25rem;
 	--prim-size-56: 3.5rem;
@@ -290,8 +292,12 @@
 	--ilha-desfoque: var(--prim-desfoque-20);
 	--ilha-texto: var(--color-vidro-texto);
 	--ilha-texto-secundario: var(--color-vidro-texto-secundario);
-	--ilha-altura: var(--prim-size-48);
-	--ilha-espaco: var(--prim-space-20);
+	--ilha-altura: var(--prim-size-44);
+	--ilha-topo: var(--prim-space-12); /* da borda de cima da janela até a pílula e o painel */
+	--ilha-espaco: var(--prim-space-20); /* laterais da pílula */
+	--ilha-painel-espaco-bloco: var(--prim-space-20);
+	--ilha-painel-espaco-inline: var(--prim-space-24);
+	--ilha-painel-intervalo: var(--space-medio); /* entre Seções/Fechar e a lista */
 	--ilha-linha-altura: var(--prim-size-52);
 	--ilha-ponto: var(--prim-size-6);
 	--ilha-raio-aberta: var(--radius-grande);

@@ -250,6 +250,8 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		align-items: center;
 		gap: var(--space-medio);
 		block-size: var(--cabecalho-altura);
+		/* A pílula fica a 12 px do topo; nome e status alinham pelo centro dela. */
+		padding-block-start: var(--ilha-topo);
 	}
 
 	.cabecalho__nome {
@@ -354,7 +356,7 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		inset-inline-start: 50%;
 		margin-inline-start: calc(var(--ilha-painel-largura) / -2);
 		inline-size: var(--ilha-painel-largura);
-		padding: 0 var(--ilha-espaco) var(--space-pequeno);
+		padding: var(--ilha-painel-espaco-bloco) var(--ilha-painel-espaco-inline);
 		border-radius: var(--ilha-raio-aberta);
 		background: var(--ilha-fundo);
 		-webkit-backdrop-filter: var(--ilha-desfoque);
@@ -381,14 +383,15 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		block-size: var(--ilha-altura);
+		margin-block-end: var(--ilha-painel-intervalo);
 		color: var(--ilha-texto-secundario);
 		font-size: var(--text-pequeno);
 		line-height: var(--leading-pequeno);
 	}
 
+	/* Área de toque maior que o texto, sem mudar o alinhamento nem a altura da linha. */
 	.ilha__fechar {
-		margin-inline-end: calc(-1 * var(--space-pequeno));
+		margin: calc(-1 * var(--space-pequeno));
 		padding: var(--space-pequeno);
 		border: 0;
 		border-radius: var(--radius-medio);
