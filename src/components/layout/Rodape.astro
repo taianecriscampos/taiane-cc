@@ -347,6 +347,31 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 		}
 	}
 
+	/* Celular (até 767 px): todo o texto centralizado. O botão "Voltar ao topo" é fixo e
+	   centralizado a --space-grande da borda de baixo; o espaço extra no fim do rodapé o deixa
+	   parar abaixo da linha da cidade e da hora, sem cobrir nenhum texto. */
+	@media (max-width: 767px) {
+		.rodape__grade {
+			text-align: center;
+			justify-items: center;
+			padding-block-end: calc(
+				var(--topo-tamanho) + max(var(--space-grande), env(safe-area-inset-bottom)) +
+					var(--space-medio)
+			);
+		}
+
+		.rodape__lista {
+			justify-items: center;
+		}
+
+		.rodape__lista > li,
+		.rodape__email,
+		.rodape__base,
+		.rodape__local {
+			justify-content: center;
+		}
+	}
+
 	@media (min-width: 768px) {
 		.rodape__grade {
 			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));

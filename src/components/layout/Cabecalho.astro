@@ -2,7 +2,7 @@
 /**
  * Cabeçalho de todas as páginas: fixo no topo, translúcido, sem linha embaixo.
  * Esquerda: o nome leva ao início ("Tai" no celular). Centro: a ilha. Direita: o modelo de
- * trabalho com o ponto verde ("Remoto ou híbrido"; no celular, só "Remoto", em 14 px). O leitor
+ * trabalho com o ponto verde ("Remoto ou híbrido"; no celular, só o ponto). O leitor
  * de tela lê a frase completa: "Disponível para trabalho remoto ou híbrido".
  *
  * A ilha é uma pílula de vidro escuro (preto translúcido com desfoque do que está atrás) com o
@@ -102,7 +102,7 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		<div class="cabecalho__status">
 			<Disponibilidade
 				texto={perfil.modalidade}
-				textoCurto={perfil.modalidadeCurta}
+				soPontoNoCelular
 				rotulo={perfil.modalidadeCompleta}
 			/>
 		</div>

@@ -5,6 +5,7 @@
  * o ponto fica parado. O ponto é decorativo: o texto ao lado diz o mesmo.
  *
  * Com `textoCurto`, o celular (até 767 px) mostra só ele e, de 768 px em diante, o texto inteiro.
+ * Com `soPontoNoCelular`, o celular mostra só o ponto e o texto inteiro vem de 768 px em diante.
  * Com `rotulo`, o leitor de tela lê a frase completa no lugar do que aparece na tela.
  * (Um aria-label num parágrafo seria ignorado por vários leitores de tela, por isso o texto
  * escondido da tela.)
@@ -14,16 +15,19 @@ import { perfil } from "../../dados/perfil";
 interface Props {
 	texto?: string;
 	textoCurto?: string;
+	soPontoNoCelular?: boolean;
 	rotulo?: string;
 }
 
-const { texto = perfil.modalidade, textoCurto, rotulo } = Astro.props;
+const { texto = perfil.modalidade, textoCurto, soPontoNoCelular = false, rotulo } = Astro.props;
 ---
 
-<p class="disponibilidade">
+<p class:list={["disponibilidade", { "disponibilidade--so-ponto": soPontoNoCelular }]}>
 	<span class="disponibilidade__ponto" aria-hidden="true"></span>
 	<span aria-hidden={rotulo ? "true" : undefined}>
-		{textoCurto ? (
+		{soPontoNoCelular ? (
+			<span class="disponibilidade__longo">{texto}</span>
+		) : textoCurto ? (
 			<>
 				<span class="disponibilidade__curto">{textoCurto}</span>
 				<span class="disponibilidade__longo">{texto}</span>
@@ -44,6 +48,11 @@ const { texto = perfil.modalidade, textoCurto, rotulo } = Astro.props;
 
 	.disponibilidade__longo {
 		display: none;
+	}
+
+	/* Só o ponto no celular: sem o texto, o vão ao lado do ponto também some. */
+	.disponibilidade--so-ponto {
+		gap: 0;
 	}
 
 	.disponibilidade__ponto {
@@ -83,6 +92,10 @@ const { texto = perfil.modalidade, textoCurto, rotulo } = Astro.props;
 	}
 
 	@media (min-width: 768px) {
+		.disponibilidade--so-ponto {
+			gap: var(--space-pequeno);
+		}
+
 		.disponibilidade__curto {
 			display: none;
 		}
