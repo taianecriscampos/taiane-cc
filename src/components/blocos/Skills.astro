@@ -5,9 +5,11 @@
  * Nas duas, pílulas lado a lado que quebram linha quando acaba o espaço: nunca uma por linha.
  * Pílula cinza, sem borda e sem sombra, texto pequeno (14/20) e espaços da escala (8 e 16):
  * 36 px de altura. Não são clicáveis: nada de hover.
- * As ferramentas saíram daqui e ganharam seção própria (Ferramentas.astro).
+ * Logo abaixo das pílulas, a faixa de ferramentas (Ferramentas.astro), parte desta seção,
+ * sem título próprio, a 48 px da última pílula (rodada 1f).
  */
 import { competencias, softSkills } from "../../dados/skills";
+import Ferramentas from "./Ferramentas.astro";
 
 const colunas = [
 	{ titulo: "Hard skills", itens: competencias },
@@ -31,6 +33,10 @@ const colunas = [
 				</ul>
 			</div>
 		))}
+	</div>
+
+	<div class="skills__ferramentas">
+		<Ferramentas />
 	</div>
 </section>
 
@@ -68,6 +74,11 @@ const colunas = [
 		color: var(--skill-pilula-texto);
 		font-size: var(--text-pequeno);
 		line-height: var(--leading-pequeno);
+	}
+
+	/* 24 px do gap da seção + 24 px: a faixa fica a 48 px da última pílula. */
+	.skills__ferramentas {
+		margin-block-start: var(--space-grande);
 	}
 
 	@media (min-width: 768px) {

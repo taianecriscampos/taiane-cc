@@ -1,14 +1,17 @@
 ---
 /**
- * Ferramentas (rodada 1e): seção própria depois de Skills, com o mesmo rótulo de seção das
- * outras. Não entra no menu ilha.
- * Uma faixa horizontal com logo e nome de cada ferramenta, sem pílula e sem fundo.
+ * Faixa de ferramentas (rodada 1f): parte da seção Skills, logo abaixo das pílulas, sem título
+ * visível (o leitor de tela lê o grupo "Ferramentas"). Logo e nome de cada ferramenta, sem
+ * pílula e sem fundo.
  *
- * Letreiro de ida e volta: a lista anda até o fim e volta, sem duplicar itens, bem devagar
- * (50 s por ida), só com transform: translateX. A distância é calculada no CSS:
+ * Letreiro de ida e volta: a lista anda até o fim e volta, sem duplicar itens, em 18 s por ida,
+ * suave nas pontas, só com transform: translateX. A distância é calculada no CSS:
  * 100cqi (largura da faixa) menos 100% (largura da lista). Se a lista couber, não anda.
  * Para quando o ponteiro ou o foco estão na faixa.
  * Movimento reduzido: parada, e a faixa rola com o dedo, o trackpad ou as setas do teclado.
+ *
+ * Pontas esmaecidas: a faixa ocupa também a margem da página, e a máscara esmaece só a margem.
+ * Assim nenhum logo aparece cortado seco, e o primeiro fica alinhado com as pílulas.
  *
  * Logos em cinza; no hover de cada ferramenta (só com mouse), o logo da cor da marca aparece
  * por cima em 200 ms (opacity, ease-out). Com o foco do teclado na faixa, todos ganham cor.
@@ -17,46 +20,44 @@
 import { ferramentas } from "../../dados/skills";
 ---
 
-<section class="secao envoltorio" id="ferramentas" aria-labelledby="ferramentas-titulo">
-	<h2 id="ferramentas-titulo" class="secao__rotulo">
-		Ferramentas
-	</h2>
-
-	<div class="ferramentas" tabindex="0" role="group" aria-labelledby="ferramentas-titulo">
-		<ul class="ferramentas__lista" role="list">
-			{ferramentas.map((f) => (
-				<li class="ferramentas__item" data-marca={f.marca}>
-					{f.icone && (
-						<svg class="ferramentas__logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-							<path class="ferramentas__logo-cinza" d={f.icone} />
-							<path class="ferramentas__logo-marca" d={f.icone} />
-						</svg>
-					)}
-					{f.nome}
-				</li>
-			))}
-		</ul>
-	</div>
-</section>
+<div class="ferramentas" tabindex="0" role="group" aria-label="Ferramentas">
+	<ul class="ferramentas__lista" role="list">
+		{ferramentas.map((f) => (
+			<li class="ferramentas__item" data-marca={f.marca}>
+				{f.icone && (
+					<svg class="ferramentas__logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+						<path class="ferramentas__logo-cinza" d={f.icone} />
+						<path class="ferramentas__logo-marca" d={f.icone} />
+					</svg>
+				)}
+				{f.nome}
+			</li>
+		))}
+	</ul>
+</div>
 
 <style>
 	/* A faixa é o contêiner: 100cqi é a largura dela. */
+	/* Ocupa também a margem da página, dos dois lados, e esmaece só essa margem. */
 	.ferramentas {
 		container-type: inline-size;
 		overflow: hidden;
-		border-radius: var(--radius-medio);
+		margin-inline: calc(-1 * var(--space-margem-pagina));
+		-webkit-mask-image: var(--ferramenta-mascara);
+		mask-image: var(--ferramenta-mascara);
 	}
 
+	/* O foco fica por dentro da faixa, que vai até a borda da janela. */
 	.ferramentas:focus-visible {
 		outline: var(--focus-espessura) solid var(--focus-cor);
-		outline-offset: var(--focus-afastamento);
+		outline-offset: calc(-1 * var(--focus-espessura));
 	}
 
 	.ferramentas__lista {
 		display: flex;
 		gap: var(--ferramenta-intervalo);
 		inline-size: max-content;
-		padding: 0;
+		padding: 0 var(--space-margem-pagina);
 		list-style: none;
 		animation: ferramentas-vai-e-volta var(--ferramenta-duracao) var(--ferramenta-curva) infinite
 			alternate;

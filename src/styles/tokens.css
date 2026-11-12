@@ -154,7 +154,7 @@
 	--prim-duration-1000: 1s;
 	--prim-duration-2000: 2s;
 	--prim-duration-8000: 8s;
-	--prim-duration-50000: 50s; /* letreiro de Ferramentas: uma ida */
+	--prim-duration-18000: 18s; /* letreiro de Ferramentas: uma ida */
 	--prim-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 	--prim-ease-in-out-suave: ease-in-out; /* movimento longo e contínuo: desacelera nas pontas */
 	/* Mola leve: passa 3% do destino e assenta. Curva desenhada ponto a ponto, sem biblioteca. */
@@ -287,7 +287,7 @@
 	--motion-duration-pulso: var(--prim-duration-2000);
 	--motion-duration-piscar: var(--prim-duration-1000); /* dois-pontos da hora */
 	--motion-duration-relogio: var(--prim-duration-8000); /* uma volta do ponteiro do rodapé */
-	--motion-duration-letreiro: var(--prim-duration-50000);
+	--motion-duration-letreiro: var(--prim-duration-18000);
 	--motion-ease-out: var(--prim-ease-out);
 	--motion-ease-in-out-suave: var(--prim-ease-in-out-suave);
 	--motion-ease-mola: var(--prim-ease-mola);
@@ -380,6 +380,14 @@
 	--ferramenta-intervalo: var(--space-bloco);
 	--ferramenta-duracao: var(--motion-duration-letreiro);
 	--ferramenta-curva: var(--motion-ease-in-out-suave);
+	/* Pontas esmaecidas na largura da margem da página; o meio, opaco. */
+	--ferramenta-mascara: linear-gradient(
+		to right,
+		transparent,
+		var(--prim-color-preto) var(--space-margem-pagina),
+		var(--prim-color-preto) calc(100% - var(--space-margem-pagina)),
+		transparent
+	);
 	--ferramenta-marca-figma: var(--prim-color-marca-figma);
 	--ferramenta-marca-claudecode: var(--prim-color-marca-claudecode);
 	--ferramenta-marca-astro: var(--prim-color-marca-astro);

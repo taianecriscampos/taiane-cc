@@ -260,13 +260,14 @@ test("o Sobre traz o currículo em PDF e o LinkedIn, os dois em nova aba", async
 	);
 });
 
-test("a seção Skills traz só hard e soft skills, em duas colunas", async ({ page }) => {
+test("as pílulas de Skills trazem só hard e soft skills, em duas colunas", async ({ page }) => {
 	await page.goto("/");
 	const skills = page.getByRole("region", { name: "Skills" });
 	await expect(skills.getByRole("heading", { name: "Hard skills" })).toBeVisible();
 	await expect(skills.getByRole("heading", { name: "Soft skills" })).toBeVisible();
 	await expect(skills.getByRole("heading", { level: 3 })).toHaveCount(2);
-	await expect(skills.getByText("Figma", { exact: true })).toHaveCount(0);
+	// As ferramentas ficam na faixa, não nas pílulas.
+	await expect(skills.locator(".skills__pilula", { hasText: "Figma" })).toHaveCount(0);
 });
 
 test("no Sobre, as três colunas vão de margem a margem, com vãos iguais de 80 a 120 px", async ({
@@ -304,24 +305,26 @@ test("no Sobre, as três colunas vão de margem a margem, com vãos iguais de 80
 	}
 });
 
-test("Ferramentas é uma seção própria, fora do menu, com a faixa que para no hover", async ({
+test("a faixa de Ferramentas fica dentro de Skills, sem título, e para com o foco", async ({
 	page,
 }) => {
 	await page.goto("/");
-	const secao = page.getByRole("region", { name: "Ferramentas" });
-	const itens = secao.getByRole("listitem");
+	const skills = page.getByRole("region", { name: "Skills" });
+	const faixa = skills.getByRole("group", { name: "Ferramentas" });
+	await expect(page.getByRole("heading", { name: "Ferramentas" })).toHaveCount(0);
+	await expect(page.locator("#ferramentas")).toHaveCount(0);
+	const itens = faixa.getByRole("listitem");
 	await expect(itens.first()).toHaveText("Figma");
 	expect(await itens.count()).toBeGreaterThan(10);
 	// Logos só de enfeite: o leitor de tela lê o nome.
-	for (const logo of await secao.locator("svg").all()) {
+	for (const logo of await faixa.locator("svg").all()) {
 		await expect(logo).toHaveAttribute("aria-hidden", "true");
 	}
-	// Fora do menu ilha e do rodapé.
-	await expect(page.locator('a[href$="#ferramentas"]')).toHaveCount(0);
-	// O letreiro anda só com transform e para com o foco na faixa.
-	const lista = secao.locator(".ferramentas__lista");
+	// Ida de 15 a 20 s, só com transform, e para com o foco na faixa.
+	const lista = faixa.locator(".ferramentas__lista");
+	await expect(lista).toHaveCSS("animation-duration", "18s");
 	await expect(lista).toHaveCSS("animation-name", "ferramentas-vai-e-volta");
-	await secao.locator(".ferramentas").focus();
+	await faixa.focus();
 	await expect(lista).toHaveCSS("animation-play-state", "paused");
 });
 

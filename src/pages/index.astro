@@ -1,10 +1,9 @@
 ---
 /**
- * Página inicial. Ordem de leitura: abertura, projetos, artigos, sobre, skills e ferramentas.
+ * Página inicial. Ordem de leitura: abertura, projetos, artigos, sobre e skills (com a faixa de ferramentas).
  * O rodapé, com "Me chama!", vem do LayoutBase.
  */
 import Abertura from "../components/blocos/Abertura.astro";
-import Ferramentas from "../components/blocos/Ferramentas.astro";
 import ListaDeEntradas from "../components/blocos/ListaDeEntradas.astro";
 import Projetos from "../components/blocos/Projetos.astro";
 import Skills from "../components/blocos/Skills.astro";
@@ -32,5 +31,4 @@ const projetos = await projetosDosCases();
 	/>
 	<Sobre />
 	<Skills />
-	<Ferramentas />
 </LayoutBase>
