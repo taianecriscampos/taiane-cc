@@ -4,6 +4,8 @@
  */
 export interface Perfil {
 	nome: string;
+	/** Nome curto do cabeçalho no celular. */
+	apelido: string;
 	cargo: string;
 	frase: string;
 	/** Linha da faixa de baixo da abertura. */
@@ -26,6 +28,7 @@ export interface Perfil {
 
 export const perfil: Perfil = {
 	nome: "Taiane Cris Campos",
+	apelido: "Tai",
 	cargo: "Senior Product Designer · Design Engineer",
 	frase: "Design de produto com pensamento sistêmico, IA e código.",
 	especialidade: "Senior Product Designer | Design Engineering",

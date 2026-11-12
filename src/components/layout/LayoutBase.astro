@@ -52,7 +52,11 @@ const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 			Pular para o conteúdo
 		</a>
 		{secoesDoCase ? (
-			<Cabecalho links={secoesDoCase} rotulo="Neste case" inicio="Visão geral" />
+			<Cabecalho
+				links={secoesDoCase}
+				rotulo="Neste case"
+				inicio={{ texto: "Visão geral", href: "#conteudo" }}
+			/>
 		) : (
 			<Cabecalho />
 		)}

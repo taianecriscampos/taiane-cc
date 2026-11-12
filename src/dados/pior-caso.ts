@@ -7,6 +7,7 @@ import type { Perfil } from "./perfil";
 
 export const perfilPiorCaso: Perfil = {
 	nome: "Maria Aparecida dos Santos Wiśniewska-Kowalczyk",
+	apelido: "Maria Aparecida",
 	cargo: "Designer de Produto Sênior · Engenheira de Design · Pesquisadora de UX",
 	frase:
 		"Design de produto com pensamento sistêmico, inteligência artificial generativa, pesquisa contínua e código de produção.",

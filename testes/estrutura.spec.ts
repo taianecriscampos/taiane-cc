@@ -60,38 +60,58 @@ test("o cabeçalho leva às seções da página inicial e de volta ao início", 
 	await page.goto("/");
 	await abrirIlha(page);
 	const navegacao = page.getByRole("navigation", { name: "Principal" });
-	await expect(navegacao.getByRole("link")).toHaveText(["Projetos", "Artigos", "Sobre"]);
+	const nomes = ["Início", "Projetos", "Artigos", "Sobre"];
+	const links = navegacao.getByRole("link");
+	await expect(links).toHaveCount(nomes.length);
+	for (const [i, nome] of nomes.entries()) await expect(links.nth(i)).toHaveAccessibleName(nome);
 	await navegacao.getByRole("link", { name: "Sobre" }).click();
 	await expect(page).toHaveURL(/\/#sobre$/);
 	// A ilha fecha depois da escolha e passa a mostrar a seção escolhida.
-	await expect(page.locator("#ilha-painel")).toBeHidden();
-	await expect(page.getByRole("button", { name: /^Menu/ })).toHaveAccessibleName(
-		"Menu, seção atual: Sobre",
-	);
+	const menu = page.locator(".ilha__botao");
+	await expect(menu).toHaveAttribute("aria-expanded", "false");
+	await expect(menu).toHaveAccessibleName("Menu, seção atual: Sobre");
 	await page.goto("/cases/funis-interativos");
 	await page.getByRole("banner").getByRole("link", { name: "Taiane Cris Campos" }).click();
 	await expect(page).toHaveURL(/\/$/);
 });
 
-test("a ilha fecha com Esc e devolve o foco ao botão", async ({ page }) => {
+test("pelo teclado, a ilha leva o foco à seção atual, anda com as setas e fecha com Esc", async ({
+	page,
+}) => {
 	await page.goto("/");
-	const menu = page.getByRole("button", { name: /^Menu/ });
+	const menu = page.locator(".ilha__botao");
+	const links = page.locator("#ilha-painel a");
 	await menu.focus();
 	await page.keyboard.press("Enter");
 	await expect(menu).toHaveAttribute("aria-expanded", "true");
-	await page.keyboard.press("Tab");
-	await expect(page.locator("#ilha-painel a").first()).toBeFocused();
+	await expect(links.first()).toBeFocused();
+	await page.keyboard.press("ArrowDown");
+	await expect(links.nth(1)).toBeFocused();
+	await page.keyboard.press("ArrowUp");
+	await page.keyboard.press("ArrowUp");
+	await expect(links.last()).toBeFocused();
 	await page.keyboard.press("Escape");
 	await expect(menu).toHaveAttribute("aria-expanded", "false");
 	await expect(menu).toBeFocused();
-	await expect(page.locator("#ilha-painel")).toBeHidden();
+	await expect(links.first()).toBeHidden();
+});
+
+test("o botão Fechar da ilha fecha o painel e devolve o foco", async ({ page }) => {
+	await page.goto("/");
+	const menu = page.locator(".ilha__botao");
+	await menu.focus();
+	await page.keyboard.press("Enter");
+	await page.getByRole("button", { name: "Fechar" }).click();
+	await expect(menu).toHaveAttribute("aria-expanded", "false");
+	await expect(menu).toBeFocused();
 });
 
 test("no case, o cabeçalho leva a cada seção do texto", async ({ page }) => {
 	await page.goto("/cases/funis-interativos");
 	await abrirIlha(page);
 	const links = page.getByRole("navigation", { name: "Neste case" }).getByRole("link");
-	await expect(links).toHaveCount(6);
+	// Visão geral e as seis seções do case.
+	await expect(links).toHaveCount(7);
 	for (const link of await links.all()) {
 		const alvo = (await link.getAttribute("href")) ?? "";
 		await expect(page.locator(alvo)).toHaveCount(1);

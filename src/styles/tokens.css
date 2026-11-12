@@ -25,6 +25,10 @@
 	--prim-color-branco: #ffffff;
 	--prim-color-preto: #000000; /* fundo do rodapé: cinza-50 sobre ele dá 19,6:1, cinza-300 dá 13,4:1 */
 	--prim-color-cinza-50-translucido: rgb(250 250 250 / 0.1);
+	/* Vidro escuro da ilha: preto a 70%. No pior caso (sobre branco) vira #4d4d4d:
+	   branco dá 8,4:1 e cinza-200 dá 4,85:1. */
+	--prim-color-preto-70: rgb(0 0 0 / 0.7);
+	--prim-color-cinza-200: #c4c4c4;
 	--prim-color-verde: #12a150; /* ponto de status, decorativo: o texto ao lado diz o mesmo */
 
 	/* Fonte auto-hospedada em public/fontes (licença SIL OFL 1.1, arquivo ao lado).
@@ -81,6 +85,7 @@
 	--prim-space-4: 0.25rem;
 	--prim-space-8: 0.5rem;
 	--prim-space-16: 1rem;
+	--prim-space-20: 1.25rem;
 	--prim-space-24: 1.5rem;
 	--prim-space-32: 2rem;
 	--prim-space-40: 2.5rem;
@@ -92,16 +97,20 @@
 	/* Medidas de estrutura. */
 	--prim-borda-1: 1px;
 	--prim-borda-1pt: 1pt;
+	--prim-size-6: 0.375rem;
 	--prim-size-8: 0.5rem;
 	--prim-size-10: 0.625rem;
 	--prim-size-20: 1.25rem;
 	--prim-size-40: 2.5rem;
 	--prim-size-48: 3rem;
+	--prim-size-52: 3.25rem;
 	--prim-size-56: 3.5rem;
 	--prim-size-96: 6rem;
 	--prim-size-1800: 112.5rem;
 	--prim-colunas-12: 12;
+	--prim-desfoque-2: blur(2px);
 	--prim-desfoque-15: blur(15px);
+	--prim-desfoque-20: blur(20px);
 
 	/* Raios. */
 	--prim-radius-0: 0;
@@ -141,6 +150,9 @@
 	--color-escuro-texto: var(--prim-color-cinza-50);
 	--color-escuro-texto-secundario: var(--prim-color-cinza-300);
 	--color-status: var(--prim-color-verde);
+	--color-vidro-fundo: var(--prim-color-preto-70);
+	--color-vidro-texto: var(--prim-color-branco);
+	--color-vidro-texto-secundario: var(--prim-color-cinza-200);
 
 	--font-texto: var(--prim-font-google-sans-flex);
 	--font-tecnica: var(--prim-font-mono-sistema);
@@ -220,6 +232,7 @@
 	--motion-escala-pressionado: var(--prim-escala-pressionado);
 	--motion-escala-pressionado-suave: var(--prim-escala-pressionado-suave);
 	--motion-escala-entrada: var(--prim-escala-entrada);
+	--motion-desfoque-troca: var(--prim-desfoque-2); /* conteúdo que sai e entra na troca */
 }
 
 /* ---------- 3. Componentes ---------- */
@@ -266,13 +279,17 @@
 	--rodape-texto-secundario: var(--color-escuro-texto-secundario);
 	--rodape-focus-cor: var(--color-escuro-texto);
 
-	--ilha-fundo: var(--color-inverso-fundo);
-	--ilha-texto: var(--color-inverso-texto);
-	--ilha-altura: var(--prim-size-40);
-	--ilha-espaco: var(--space-medio);
+	--ilha-fundo: var(--color-vidro-fundo);
+	--ilha-desfoque: var(--prim-desfoque-20);
+	--ilha-texto: var(--color-vidro-texto);
+	--ilha-texto-secundario: var(--color-vidro-texto-secundario);
+	--ilha-altura: var(--prim-size-48);
+	--ilha-espaco: var(--prim-space-20);
+	--ilha-linha-altura: var(--prim-size-52);
+	--ilha-ponto: var(--prim-size-6);
 	--ilha-raio-aberta: var(--radius-grande);
-	--ilha-largura-aberta: 18rem;
-	--ilha-focus-cor: var(--color-inverso-texto);
+	--ilha-largura-aberta: 20rem;
+	--ilha-focus-cor: var(--color-vidro-texto);
 
 	--status-ponto: var(--prim-size-8);
 	--status-cor: var(--color-status);

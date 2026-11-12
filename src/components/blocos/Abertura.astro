@@ -20,11 +20,11 @@ interface Props {
 	nivel?: 1 | 2;
 }
 
-const { perfil = perfilPadrao, idBase = "abertura", nivel = 1 } = Astro.props;
+const { perfil = perfilPadrao, idBase = "inicio", nivel = 1 } = Astro.props;
 const Titulo = `h${nivel}` as const;
 ---
 
-<section class="abertura envoltorio" aria-labelledby={`${idBase}-titulo`}>
+<section class="abertura envoltorio" id={idBase} aria-labelledby={`${idBase}-titulo`}>
 	<div class="abertura__meio">
 		<Titulo id={`${idBase}-titulo`} class="abertura__frase">
 			{perfil.frase}

@@ -1,14 +1,21 @@
 ---
 /**
  * Cabeçalho de todas as páginas: fixo no topo, translúcido, sem linha embaixo.
- * Esquerda: o nome leva ao início. Centro: a ilha. Direita: o modelo de trabalho com o ponto
- * verde (no celular ele desce para a faixa de baixo da abertura, por falta de espaço).
+ * Esquerda: o nome leva ao início ("Tai" no celular). Centro: a ilha. Direita: o modelo de
+ * trabalho com o ponto verde (no celular ele fica na abertura, acima da foto).
  *
- * A ilha é uma cápsula escura com o nome da seção atual. Ao clicar, ela cresce e vira a lista
- * das seções (morph: o recorte da cápsula se abre até o painel, com uma mola leve). Escolher
- * uma seção rola até ela e a cápsula volta ao tamanho pequeno, sem mola. Esc fecha e devolve
- * o foco ao botão. Aberta pelo teclado, abre e fecha sem animação.
- * Nos cases, a lista traz as seções do próprio case.
+ * A ilha é uma pílula de vidro escuro (preto translúcido com desfoque do que está atrás) com o
+ * número e o nome da seção atual e um ponto branco. Ao clicar, ela cresce até o painel (morph:
+ * o recorte se abre a partir da pílula, com uma mola leve); o conteúdo antigo some com um
+ * desfoque leve enquanto o novo entra. Ao fechar, encolhe sem mola.
+ * Painel: "Seções" e "Fechar" no topo e a lista numerada; o ponto marca a seção atual.
+ *
+ * Por dentro: o painel é quem desenha a pílula. Fechado, ele fica recortado no tamanho exato do
+ * botão (medido pelo script), e o botão transparente fica por cima. Assim a pílula e o painel são
+ * a mesma peça, e a troca de largura entre "Início" e "Projetos" também anda suave.
+ *
+ * Teclado: abre sem animação e leva o foco à seção atual; setas, Home e End andam pela lista;
+ * Esc e "Fechar" fecham e devolvem o foco ao botão. Nos cases, a lista traz as seções do case.
  */
 import { perfil } from "../../dados/perfil";
 import Disponibilidade from "../ui/Disponibilidade.astro";
@@ -22,8 +29,8 @@ interface Props {
 	links?: LinkDoCabecalho[];
 	/** Nome da navegação para o leitor de tela. */
 	rotulo?: string;
-	/** O que a cápsula mostra antes da primeira seção. */
-	inicio?: string;
+	/** O primeiro item da lista: o topo da página. */
+	inicio?: LinkDoCabecalho;
 }
 
 const {
@@ -33,49 +40,60 @@ const {
 		{ texto: "Sobre", href: "/#sobre" },
 	],
 	rotulo = "Principal",
-	inicio = "Início",
+	inicio = { texto: "Início", href: "/#inicio" },
 } = Astro.props;
+
+const numero = (i: number) => String(i + 1).padStart(2, "0");
+// No celular aparece só o apelido; o resto do nome continua lá para o leitor de tela,
+// e o texto visível faz parte do nome lido (critério 2.5.3).
+const [curto, resto] = perfil.nome.startsWith(perfil.apelido)
+	? [perfil.apelido, perfil.nome.slice(perfil.apelido.length)]
+	: [perfil.nome, ""];
+const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) }));
 ---
 
 <header class="cabecalho">
 	<div class="cabecalho__barra envoltorio">
-		<a class="link cabecalho__nome" href="/">
-			{perfil.nome}
-		</a>
+		<!-- Sem espaço entre o apelido e o resto: "Tai" + "ane Cris Campos". -->
+		<!-- prettier-ignore -->
+		<a class="link cabecalho__nome" href="/">{curto}<span class="cabecalho__nome-resto">{resto}</span><span class="cabecalho__nome-oculto">, início</span></a>
 
-		<nav class="ilha" aria-label={rotulo} data-ilha data-inicio={inicio}>
+		<nav class="ilha" aria-label={rotulo} data-ilha>
 			<button class="ilha__botao" type="button" aria-expanded="false" aria-controls="ilha-painel">
-				<span class="so-leitor-de-tela">Menu, seção atual: </span>
-				<span class="ilha__atual" data-atual>
-					{inicio}
+				<span class="ilha__conteudo">
+					<span class="ilha__numero" aria-hidden="true" data-numero>
+						{itens[0].numero}
+					</span>
+					<span class="so-leitor-de-tela">Menu, seção atual: </span>
+					<span data-atual>{itens[0].texto}</span>
+					<span class="ilha__ponto" aria-hidden="true"></span>
 				</span>
-				<svg
-					class="ilha__seta"
-					viewBox="0 0 20 20"
-					width="16"
-					height="16"
-					aria-hidden="true"
-					focusable="false"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<path d="M5 8l5 5 5-5"></path>
-				</svg>
 			</button>
 
 			<div class="ilha__painel" id="ilha-painel">
-				<ul class="ilha__links" role="list">
-					{links.map((link) => (
-						<li>
-							<a class="link ilha__link" href={link.href}>
-								{link.texto}
-							</a>
-						</li>
-					))}
-				</ul>
+				<div class="ilha__interno">
+					<div class="ilha__topo">
+						<p class="ilha__titulo" aria-hidden="true">
+							Seções
+						</p>
+						<button class="ilha__fechar" type="button" data-fechar>
+							Fechar
+						</button>
+					</div>
+					<ul class="ilha__links" role="list">
+						{itens.map((item) => (
+							<li>
+								<a class="ilha__link" href={item.href} data-numero={item.numero}>
+									<span class="ilha__numero" aria-hidden="true">
+										{item.numero}
+									</span>
+									{item.texto}
+									<span class="ilha__ponto" aria-hidden="true" />
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
 			</div>
 		</nav>
 
@@ -90,11 +108,14 @@ const {
 	const botao = ilha?.querySelector<HTMLButtonElement>(".ilha__botao");
 	const painel = ilha?.querySelector<HTMLElement>(".ilha__painel");
 	const atual = ilha?.querySelector<HTMLElement>("[data-atual]");
+	const numeroAtual = ilha?.querySelector<HTMLElement>("[data-numero]");
+	const fecharBotao = ilha?.querySelector<HTMLButtonElement>("[data-fechar]");
 
-	if (ilha && botao && painel && atual) {
+	if (ilha && botao && painel && atual && numeroAtual && fecharBotao) {
+		const links = [...painel.querySelectorAll<HTMLAnchorElement>(".ilha__link")];
 		const aberta = () => ilha.hasAttribute("data-aberta");
 
-		// O recorte fechado tem o tamanho e o lugar exatos da cápsula, para o painel crescer dela.
+		// Fechado, o painel fica recortado no tamanho e no lugar exatos do botão.
 		const medirRecorte = () => {
 			const topo = botao.offsetTop - painel.offsetTop;
 			const esquerda = botao.offsetLeft - painel.offsetLeft;
@@ -105,13 +126,19 @@ const {
 				`inset(${topo}px ${direita}px ${baixo}px ${esquerda}px round ${botao.offsetHeight / 2}px)`,
 			);
 		};
+		new ResizeObserver(medirRecorte).observe(botao);
+		addEventListener("resize", medirRecorte);
+		medirRecorte();
+		ilha.setAttribute("data-pronta", "");
+
+		const linkAtual = () => links.find((l) => l.hasAttribute("aria-current")) ?? links[0];
 
 		const abrir = (instantaneo: boolean) => {
 			ilha.toggleAttribute("data-instantaneo", instantaneo);
-			medirRecorte();
-			void painel.offsetWidth; // aplica o recorte fechado antes de abrir
 			ilha.setAttribute("data-aberta", "");
 			botao.setAttribute("aria-expanded", "true");
+			// O botão some dentro do painel aberto: o foco vai para a seção atual.
+			linkAtual().focus({ preventScroll: true });
 		};
 
 		const fechar = (instantaneo: boolean, devolverFoco = false) => {
@@ -119,17 +146,33 @@ const {
 			ilha.toggleAttribute("data-instantaneo", instantaneo);
 			ilha.removeAttribute("data-aberta");
 			botao.setAttribute("aria-expanded", "false");
-			if (devolverFoco) botao.focus();
+			if (devolverFoco) botao.focus({ preventScroll: true });
 		};
 
 		// detail 0: o clique veio do teclado (Enter ou espaço), então sem animação.
 		botao.addEventListener("click", (evento) => {
-			if (aberta()) fechar(evento.detail === 0);
+			if (aberta()) fechar(evento.detail === 0, true);
 			else abrir(evento.detail === 0);
 		});
 
+		fecharBotao.addEventListener("click", (evento) => fechar(evento.detail === 0, true));
+
 		painel.addEventListener("click", (evento) => {
 			if ((evento.target as HTMLElement).closest("a")) fechar(false);
+		});
+
+		// Setas, Home e End andam pela lista, sem sair dela.
+		painel.addEventListener("keydown", (evento) => {
+			const i = links.indexOf(document.activeElement as HTMLAnchorElement);
+			const alvo = {
+				ArrowDown: links[(i + 1) % links.length],
+				ArrowUp: links[(i - 1 + links.length) % links.length],
+				Home: links[0],
+				End: links[links.length - 1],
+			}[evento.key];
+			if (!alvo) return;
+			evento.preventDefault();
+			alvo.focus({ preventScroll: true });
 		});
 
 		document.addEventListener("keydown", (evento) => {
@@ -141,22 +184,22 @@ const {
 		});
 
 		ilha.addEventListener("focusout", (evento) => {
-			if (aberta() && !ilha.contains(evento.relatedTarget as Node | null)) fechar(true);
+			const destino = evento.relatedTarget as Node | null;
+			if (aberta() && destino && !ilha.contains(destino)) fechar(true);
 		});
 
 		// Seção atual: a que cruza a faixa do meio da tela.
-		const inicio = ilha.dataset.inicio ?? "";
-		const linksDaIlha = [...painel.querySelectorAll<HTMLAnchorElement>("a")];
-		const secoes = linksDaIlha
+		const secoes = links
 			.map((link) => {
 				const id = decodeURIComponent(link.hash.slice(1));
 				return { link, alvo: id ? document.getElementById(id) : null };
 			})
 			.filter((s): s is { link: HTMLAnchorElement; alvo: HTMLElement } => s.alvo !== null);
 
-		const marcar = (texto: string, link?: HTMLAnchorElement) => {
-			atual.textContent = texto;
-			for (const l of linksDaIlha) {
+		const marcar = (link: HTMLAnchorElement) => {
+			atual.textContent = link.textContent?.replace(link.dataset.numero ?? "", "").trim() ?? "";
+			numeroAtual.textContent = link.dataset.numero ?? "";
+			for (const l of links) {
 				if (l === link) l.setAttribute("aria-current", "location");
 				else l.removeAttribute("aria-current");
 			}
@@ -171,8 +214,8 @@ const {
 						else visiveis.delete(r.target);
 					}
 					const ativa = secoes.filter((s) => visiveis.has(s.alvo)).at(-1);
-					if (ativa) marcar(ativa.link.textContent?.trim() ?? "", ativa.link);
-					else if (secoes[0].alvo.getBoundingClientRect().top > innerHeight / 2) marcar(inicio);
+					if (ativa) marcar(ativa.link);
+					else if (secoes[0].alvo.getBoundingClientRect().top > innerHeight / 2) marcar(links[0]);
 				},
 				{ rootMargin: "-45% 0px -54% 0px" },
 			);
@@ -182,10 +225,19 @@ const {
 </script>
 
 <style>
+	/* O desfoque do cabeçalho fica numa camada à parte: se ficasse no próprio cabeçalho, o vidro
+	   da ilha só desfocaria o cabeçalho, e não a página que passa por baixo do painel aberto. */
 	.cabecalho {
 		position: sticky;
 		inset-block-start: 0;
 		z-index: var(--cabecalho-camada);
+	}
+
+	.cabecalho::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
 		background: var(--cabecalho-fundo);
 		-webkit-backdrop-filter: var(--cabecalho-desfoque);
 		backdrop-filter: var(--cabecalho-desfoque);
@@ -193,7 +245,7 @@ const {
 
 	.cabecalho__barra {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
 		align-items: center;
 		gap: var(--space-medio);
 		block-size: var(--cabecalho-altura);
@@ -206,6 +258,16 @@ const {
 
 	.cabecalho__status {
 		display: none;
+	}
+
+	/* No celular, o resto do nome fica sem tamanho, mas continua em linha com o apelido:
+	   assim o nome lido é "Taiane Cris Campos", sem espaço no meio. */
+	.cabecalho__nome-resto,
+	.cabecalho__nome-oculto {
+		font-size: 0;
+	}
+
+	.cabecalho__status {
 		justify-self: end;
 	}
 
@@ -213,7 +275,8 @@ const {
 	.ilha {
 		position: relative;
 		display: flex;
-		justify-content: end;
+		justify-content: center;
+		--ilha-painel-largura: min(var(--ilha-largura-aberta), 100vw - 2 * var(--space-margem-pagina));
 	}
 
 	.ilha__botao {
@@ -221,118 +284,223 @@ const {
 		z-index: 1;
 		display: inline-flex;
 		align-items: center;
-		gap: var(--space-pequeno);
 		block-size: var(--ilha-altura);
-		padding-inline: var(--ilha-espaco) var(--space-medio);
+		padding-inline: var(--ilha-espaco);
 		border: 0;
 		border-radius: var(--radius-pilula);
-		background: var(--ilha-fundo);
+		background: transparent;
 		color: var(--ilha-texto);
+		font-weight: var(--peso-titulo);
+		white-space: nowrap;
 		cursor: pointer;
 		user-select: none;
 		-webkit-user-select: none;
+		--focus-cor: var(--color-texto);
 		transition: transform var(--motion-duration-pressionar) var(--motion-ease-out);
 	}
 
+	/* Sem script, o botão desenha a própria pílula e o painel não aparece. */
+	.ilha:not([data-pronta]) .ilha__botao {
+		background: var(--ilha-fundo);
+	}
+
+	.ilha:not([data-pronta]) .ilha__painel {
+		display: none;
+	}
+
+	.ilha__conteudo {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-pequeno);
+		transition:
+			opacity var(--motion-duration-rapida) var(--motion-ease-out),
+			filter var(--motion-duration-rapida) var(--motion-ease-out);
+	}
+
+	.ilha__conteudo .ilha__ponto {
+		margin-inline-start: var(--space-pequeno);
+	}
+
+	.ilha__numero {
+		color: var(--ilha-texto-secundario);
+		font-size: var(--text-pequeno);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.ilha__ponto {
+		flex: none;
+		inline-size: var(--ilha-ponto);
+		block-size: var(--ilha-ponto);
+		border-radius: var(--radius-pilula);
+		background: currentColor;
+	}
+
+	/* A pílula encolhe um pouco no toque: o painel (que a desenha) e o conteúdo juntos. */
+	.ilha:has(.ilha__botao:active) .ilha__painel,
 	.ilha__botao:active {
 		transform: scale(var(--motion-escala-pressionado));
 	}
 
-	.ilha__seta {
-		transition: transform var(--motion-duration-rapida) var(--motion-ease-out);
-	}
-
-	.ilha[data-aberta] .ilha__seta {
-		transform: rotate(180deg);
-	}
-
 	/*
-	 * Painel: fica atrás da cápsula, recortado no formato dela. Ao abrir, o recorte se abre até o
-	 * painel inteiro e o painel assenta de 95% para 100% com mola. Ao fechar, o contrário, mais
-	 * rápido e sem mola; no fim, some de vez (visibility), para os links saírem da ordem do Tab.
+	 * Painel: fechado, fica recortado no formato da pílula. Ao abrir, o recorte se abre até o
+	 * painel inteiro, com uma mola leve no tamanho. Ao fechar, volta mais rápido e sem mola.
 	 */
 	.ilha__painel {
 		position: absolute;
 		inset-block-start: 0;
-		inset-inline-end: 0;
-		inline-size: min(var(--ilha-largura-aberta), 100vw - 2 * var(--space-margem-pagina));
-		padding: calc(var(--ilha-altura) + var(--space-pequeno)) var(--ilha-espaco) var(--ilha-espaco);
+		inset-inline-start: 50%;
+		margin-inline-start: calc(var(--ilha-painel-largura) / -2);
+		inline-size: var(--ilha-painel-largura);
+		padding: 0 var(--ilha-espaco) var(--space-pequeno);
 		border-radius: var(--ilha-raio-aberta);
 		background: var(--ilha-fundo);
+		-webkit-backdrop-filter: var(--ilha-desfoque);
+		backdrop-filter: var(--ilha-desfoque);
 		color: var(--ilha-texto);
-		clip-path: var(--ilha-recorte, inset(0 round var(--ilha-raio-aberta)));
-		transform: scale(var(--motion-escala-entrada));
-		transform-origin: top right;
-		visibility: hidden;
+		clip-path: var(--ilha-recorte);
+		transform-origin: 50% calc(var(--ilha-altura) / 2);
 		transition:
 			clip-path var(--motion-duration-rapida) var(--motion-ease-out),
-			transform var(--motion-duration-rapida) var(--motion-ease-out),
+			transform var(--motion-duration-pressionar) var(--motion-ease-out);
+	}
+
+	.ilha__interno {
+		visibility: hidden;
+		opacity: 0;
+		filter: var(--motion-desfoque-troca);
+		transition:
+			opacity var(--motion-duration-rapida) var(--motion-ease-out),
+			filter var(--motion-duration-rapida) var(--motion-ease-out),
 			visibility 0s linear var(--motion-duration-rapida);
+	}
+
+	.ilha__topo {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		block-size: var(--ilha-altura);
+		color: var(--ilha-texto-secundario);
+		font-size: var(--text-pequeno);
+		line-height: var(--leading-pequeno);
+	}
+
+	.ilha__fechar {
+		margin-inline-end: calc(-1 * var(--space-pequeno));
+		padding: var(--space-pequeno);
+		border: 0;
+		border-radius: var(--radius-medio);
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+		user-select: none;
+		-webkit-user-select: none;
+		--focus-cor: var(--ilha-focus-cor);
+	}
+
+	.ilha__links {
+		padding: 0;
+		list-style: none;
+	}
+
+	.ilha__link {
+		display: flex;
+		align-items: center;
+		gap: var(--space-medio);
+		block-size: var(--ilha-linha-altura);
+		color: var(--ilha-texto);
+		font-size: var(--text-rotulo);
+		font-weight: var(--peso-titulo);
+		letter-spacing: var(--tracking-texto);
+		text-decoration: none;
+		--focus-cor: var(--ilha-focus-cor);
+	}
+
+	.ilha__link .ilha__numero {
+		min-inline-size: 1.5em;
+	}
+
+	.ilha__link .ilha__ponto {
+		margin-inline-start: auto;
+		visibility: hidden;
+	}
+
+	.ilha__link[aria-current] .ilha__ponto {
+		visibility: visible;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.ilha__link:hover {
+			color: var(--ilha-texto-secundario);
+		}
+
+		.ilha__fechar:hover {
+			color: var(--ilha-texto);
+		}
+	}
+
+	/* ---------- aberta ---------- */
+	.ilha[data-aberta] .ilha__botao {
+		visibility: hidden;
+		pointer-events: none;
+		transition: visibility 0s linear var(--motion-duration-rapida);
+	}
+
+	.ilha[data-aberta] .ilha__conteudo {
+		opacity: 0;
+		filter: var(--motion-desfoque-troca);
 	}
 
 	.ilha[data-aberta] .ilha__painel {
 		clip-path: inset(0 round var(--ilha-raio-aberta));
-		transform: none;
+		transition: clip-path var(--motion-duration-abrir) var(--motion-ease-out);
+		animation: ilha-mola var(--motion-duration-abrir) var(--motion-ease-mola);
+	}
+
+	.ilha[data-aberta] .ilha__interno {
 		visibility: visible;
+		opacity: 1;
+		filter: none;
 		transition:
-			clip-path var(--motion-duration-abrir) var(--motion-ease-out),
-			transform var(--motion-duration-abrir) var(--motion-ease-mola),
+			opacity var(--motion-duration-abrir) var(--motion-ease-out)
+				calc(var(--motion-duration-rapida) / 4),
+			filter var(--motion-duration-abrir) var(--motion-ease-out)
+				calc(var(--motion-duration-rapida) / 4),
 			visibility 0s;
 	}
 
-	.ilha__links {
-		display: grid;
-		gap: var(--space-pequeno);
-		justify-items: start;
-		padding: 0;
-		list-style: none;
-		font-size: var(--text-subtitulo);
-		letter-spacing: var(--tracking-subtitulo);
-		line-height: var(--leading-subtitulo);
-		opacity: 0;
-		transition: opacity var(--motion-duration-rapida) var(--motion-ease-out);
-	}
-
-	.ilha[data-aberta] .ilha__links {
-		opacity: 1;
-		transition-delay: calc(var(--motion-duration-rapida) / 4);
-	}
-
-	.ilha__link {
-		color: var(--ilha-texto);
-		--focus-cor: var(--ilha-focus-cor);
-	}
-
-	.ilha__link[aria-current]::after {
-		transform: scaleX(1);
+	@keyframes ilha-mola {
+		from {
+			transform: scale(var(--motion-escala-pressionado));
+		}
 	}
 
 	/* Teclado: nada de animação, nem para abrir nem para fechar. */
 	.ilha[data-instantaneo] .ilha__painel,
-	.ilha[data-instantaneo] .ilha__links {
+	.ilha[data-instantaneo] .ilha__interno,
+	.ilha[data-instantaneo] .ilha__conteudo,
+	.ilha[data-instantaneo] .ilha__botao {
 		transition-duration: 0s;
 		transition-delay: 0s;
+		animation: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ilha__painel,
+		.ilha__interno,
+		.ilha__conteudo {
+			filter: none !important;
+			animation: none !important;
+		}
 	}
 
 	@media (min-width: 768px) {
-		.cabecalho__barra {
-			grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+		.cabecalho__nome-resto {
+			font-size: inherit;
 		}
 
 		.cabecalho__status {
 			display: block;
-		}
-
-		.ilha {
-			justify-content: center;
-		}
-
-		/* No centro, o painel cresce para os dois lados a partir da cápsula. */
-		.ilha__painel {
-			inset-inline: 50% auto;
-			margin-inline-start: calc(var(--ilha-largura-aberta) / -2);
-			inline-size: var(--ilha-largura-aberta);
-			transform-origin: top center;
 		}
 	}
 </style>
