@@ -2,12 +2,13 @@
 /**
  * Seção da página inicial com rótulo e lista de entradas (Artigos e o Laboratório usam esta peça).
  *
- * titulosEmDuasLinhas: todos os títulos usam o MESMO tamanho, calculado para o título mais longo
- * caber em 2 linhas em qualquer largura, sem reticências e sem JavaScript. O tamanho é a largura
+ * titulosEmDuasLinhas (a partir de 768 px): todos os títulos usam o MESMO tamanho, calculado
+ * para o título mais longo caber em 2 linhas, sem reticências e sem JavaScript. O tamanho é a largura
  * da coluna do título (unidade cqi, de container query) vezes um fator, dividida pelo número de
  * letras do título mais longo. Esse número chega ao CSS pelo atributo data-letras, arredondado
  * para cima de 10 em 10 (a política de segurança não deixa estilo direto no HTML).
- * O teste testes/artigos.spec.ts falha se algum título passar de 2 linhas em 375, 768 e 1440.
+ * No celular, os títulos ficam no tamanho de entrada do site, em quantas linhas precisarem.
+ * O teste testes/artigos.spec.ts falha se algum título passar de 2 linhas em 768 e 1440.
  */
 import EntradaDaLista, { type Entrada } from "../ui/Entrada.astro";
 
@@ -52,18 +53,22 @@ const letras = Math.min(200, Math.max(20, Math.ceil(maior / 10) * 10));
 	}
 
 	/* ---------- títulos em até duas linhas ---------- */
-	.lista[data-letras] :global(.entrada__cabeca) {
-		container-type: inline-size;
-	}
+	/* Só a partir de 768 px. No celular, o título usa o tamanho de entrada do site e quebra
+	   em quantas linhas precisar. */
+	@media (min-width: 768px) {
+		.lista[data-letras] :global(.entrada__cabeca) {
+			container-type: inline-size;
+		}
 
-	.lista[data-letras] :global(.entrada__titulo) {
-		font-size: clamp(
-			var(--titulo-ajustado-minimo),
-			var(--titulo-ajustado-fator) * 100cqi / var(--letras),
-			var(--titulo-ajustado-maximo)
-		);
-		line-height: var(--leading-titulo-ajustado);
-		text-wrap: balance;
+		.lista[data-letras] :global(.entrada__titulo) {
+			font-size: clamp(
+				var(--titulo-ajustado-minimo),
+				var(--titulo-ajustado-fator) * 100cqi / var(--letras),
+				var(--titulo-ajustado-maximo)
+			);
+			line-height: var(--leading-titulo-ajustado);
+			text-wrap: balance;
+		}
 	}
 
 	.lista[data-letras="20"] {
