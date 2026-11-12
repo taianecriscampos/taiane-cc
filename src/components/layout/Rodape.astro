@@ -1,13 +1,15 @@
 ---
 /**
- * Rodapé de todas as páginas, em fundo preto. Faz também o papel de contato: "Me chama".
+ * Rodapé de todas as páginas, em fundo preto. Faz também o papel de contato: "Me chama?".
  * Título; navegação; contato (LinkedIn, designdivergente.blog e o e-mail com botão de copiar);
  * redes; e, na base, "© ano nome" e a localização com um relógio e a hora local de Ribeirão
  * Preto, atualizada por um script pequeno, sem serviço de fora.
  * Todo link externo tem a seta diagonal e avisa o leitor de tela que abre em nova aba.
  * Copiar: ao clicar, o e-mail vai para a área de transferência e "Copiado" aparece por 2 s,
  * anunciado ao leitor de tela. Sem script (ou sem área de transferência), o botão não aparece.
- * O ponteiro do relógio gira devagar e sem parar; com redução de movimento, fica parado.
+ * Relógio vivo, como o ponto verde: o ponteiro gira devagar e sem parar, e os dois-pontos da hora
+ * piscam a cada segundo. Com redução de movimento, tudo fica parado.
+ * As três colunas têm o mesmo ritmo: cada item ocupa uma linha de 40 px (a área da seta).
  */
 import { perfil } from "../../dados/perfil";
 import LinkComSeta from "../ui/LinkComSeta.astro";
@@ -35,7 +37,7 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 
 <footer class="rodape">
 	<div class="rodape__grade envoltorio">
-		<h2 class="rodape__titulo">Me chama</h2>
+		<h2 class="rodape__titulo">Me chama?</h2>
 
 		<nav class="rodape__grupo" aria-labelledby="rodape-navegacao">
 			<h3 id="rodape-navegacao" class="rodape__grupo-titulo">
@@ -54,7 +56,7 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 
 		<div class="rodape__grupo rodape__grupo--contato">
 			<h3 class="rodape__grupo-titulo">Contato</h3>
-			<ul class="rodape__lista rodape__lista--setas" role="list">
+			<ul class="rodape__lista" role="list">
 				<li>
 					<LinkComSeta href={perfil.linkedin} texto="LinkedIn" externo />
 				</li>
@@ -98,7 +100,7 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 
 		<div class="rodape__grupo">
 			<h3 class="rodape__grupo-titulo">Redes</h3>
-			<ul class="rodape__lista rodape__lista--setas" role="list">
+			<ul class="rodape__lista" role="list">
 				{redes.map((item) => (
 					<li>
 						<LinkComSeta href={item.href} texto={item.texto} externo />
@@ -150,7 +152,12 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 		});
 		const atualizar = () => {
 			const agora = new Date();
-			valor.textContent = formato.format(agora);
+			// "22:40" vira 22, dois-pontos que piscam e 40; o texto continua "22:40".
+			const [horas, minutos] = formato.format(agora).split(":");
+			const doisPontos = document.createElement("span");
+			doisPontos.className = "rodape__dois-pontos";
+			doisPontos.textContent = ":";
+			valor.replaceChildren(horas, doisPontos, minutos);
 			valor.dateTime = agora.toISOString();
 			setTimeout(atualizar, 60_000 - (agora.getTime() % 60_000));
 		};
@@ -209,22 +216,23 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 		color: var(--rodape-texto-secundario);
 	}
 
+	/* Mesmo ritmo nas três colunas: cada item numa linha de 40 px, sem espaço extra entre eles. */
 	.rodape__lista {
 		display: grid;
 		justify-items: start;
-		gap: var(--space-minimo);
 		padding: 0;
 		list-style: none;
+	}
+
+	.rodape__lista > li {
+		display: flex;
+		align-items: center;
+		min-block-size: var(--alvo-toque);
 	}
 
 	/* A seta acompanha o texto claro do rodapé. */
 	.rodape :global(.seta) {
 		color: var(--rodape-texto);
-	}
-
-	/* A área de 40 px da seta já dá o respiro entre as linhas. */
-	.rodape__lista--setas {
-		gap: var(--space-nenhum);
 	}
 
 	.rodape__email {
@@ -316,8 +324,20 @@ const semProtocolo = (url: string) => url.replace(/^https?:\/\//, "").replace(/\
 		}
 	}
 
+	/* A classe nasce no script: :global para o estilo chegar a ela. */
+	.rodape__hora :global(.rodape__dois-pontos) {
+		animation: piscar var(--motion-duration-piscar) ease-in-out infinite;
+	}
+
+	@keyframes piscar {
+		50% {
+			opacity: var(--rodape-piscar-opacidade);
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
-		.rodape__ponteiro {
+		.rodape__ponteiro,
+		.rodape__hora :global(.rodape__dois-pontos) {
 			animation: none;
 		}
 	}
