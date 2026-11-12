@@ -6,7 +6,7 @@ empresa: "Inlead"
 cliente: "Inlead"
 ano: 2025
 papel: "Senior Product Designer"
-duracao: "[QUANTO TEMPO DUROU O PROJETO]"
+duracao: "6 meses"
 disciplinas:
   - "Product Discovery"
   - "Arquitetura da Informação"
@@ -19,7 +19,6 @@ cartoes:
   atuacao: "Propus e liderei o projeto do início ao fim, do diagnóstico ao handoff para o front-end."
   desafio: "Montar um funil em formato de quiz exigia lógica condicional e repertório técnico que a maioria dos usuários não tinha."
   solucao: "Uma barra lateral com etapas prontas, baseadas em 15 funis de alta conversão, sem mexer no back-end."
-  rascunho: true
 resultados:
   - valor: "40%"
     descricao: "menos ajustes manuais na criação de funis"
@@ -27,6 +26,8 @@ resultados:
     descricao: "menos tempo para criar um funil, de 15% a 30% conforme a experiência do usuário"
   - valor: "3x"
     descricao: "mais rápido para criar variações de campanha, com a duplicação de etapas"
+# Duração de exemplo e cartões escritos a partir do artigo: conferir antes da 1.0.0.
+rascunhos: ["duracao", "cartoes"]
 ---
 
 <!--

@@ -1,7 +1,7 @@
 ---
 /**
  * Fechamento padrão de todo case: convite para o LinkedIn e nota de confidencialidade.
- * A nota está em RASCUNHO, para a Taiane trocar pelas palavras dela.
+ * A nota é conteúdo de exemplo (data-rascunho), para a Taiane trocar pelas palavras dela.
  */
 import { perfil } from "../../dados/perfil";
 import LinkComSeta from "../ui/LinkComSeta.astro";
@@ -23,10 +23,9 @@ const nota =
 		Quer saber mais detalhes?
 	</h2>
 	<LinkComSeta href={perfil.linkedin} texto="Fale comigo no LinkedIn" />
-	<div class="rascunho">
-		<p class="marcador">[RASCUNHO]</p>
-		<p class="fechamento__nota">{nota}</p>
-	</div>
+	<p class="fechamento__nota" data-rascunho>
+		{nota}
+	</p>
 </section>
 
 <style>

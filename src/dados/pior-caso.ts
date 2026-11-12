@@ -86,7 +86,7 @@ export const cabecalhoPiorCaso = {
 	],
 	minutos: 1,
 	sigilo: "confidencial" as const,
-	cartoes: { atuacao: cartaoNoLimite, desafio: "Ok.", solucao: cartaoNoLimite, rascunho: true },
+	cartoes: { atuacao: cartaoNoLimite, desafio: "Ok.", solucao: cartaoNoLimite },
 };
 
 /**

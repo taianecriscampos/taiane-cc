@@ -1,50 +1,93 @@
 ---
 titulo: "Azul GPT"
-chamada: "[TEXTO DA TAIANE]"
-resumo: "[TEXTO DA TAIANE]"
+chamada: "Assistente de IA generativa para tripulantes consultarem procedimentos da operação."
+resumo: "Pela WeFit, participei do desenvolvimento do Azul GPT, assistente de IA generativa criado com a OpenAI para tripulantes e operações críticas da Azul. Conduzi a pesquisa com tripulantes e desenhei a experiência de conversa, das perguntas sugeridas ao jeito de mostrar a fonte de cada resposta. Resultado: dúvidas do dia a dia respondidas sem procurar em vários manuais."
 empresa: "Azul Linhas Aéreas, cliente atendido pela WeFit"
 cliente: "Azul · WeFit"
 ano: 2024
 papel: "Senior Product Designer pela WeFit"
-duracao: "[TEXTO DA TAIANE]"
+duracao: "8 meses"
+disciplinas:
+  - "UX Research"
+  - "Design conversacional"
+  - "IA generativa"
+  - "Arquitetura da Informação"
+  - "Prototipação"
 sigilo: "confidencial"
 ordem: 2
 cartoes:
-  atuacao: "[TEXTO DA TAIANE]"
-  desafio: "[TEXTO DA TAIANE]"
-  solucao: "[TEXTO DA TAIANE]"
+  atuacao: "Conduzi a pesquisa com tripulantes e desenhei a experiência de conversa, junto com o time técnico da Azul e da OpenAI."
+  desafio: "Procedimentos espalhados em manuais extensos, consultados com pressa, entre um voo e outro."
+  solucao: "Um assistente que responde em linguagem simples e mostra de qual documento veio cada resposta."
 resultados:
-  - valor: "[A DEFINIR]"
-    descricao: "[TEXTO DA TAIANE]"
+  - valor: "Menos busca"
+    descricao: "em manuais para tirar dúvidas do dia a dia"
+  - valor: "Mais confiança"
+    descricao: "nas respostas, com a fonte sempre à vista"
+  - valor: "Uma porta só"
+    descricao: "para procedimentos que estavam em vários sistemas"
+rascunhos: ["chamada", "resumo", "duracao", "disciplinas", "cartoes", "resultados"]
 ---
 
 <!--
 Case sob sigilo: sem telas, números internos ou documentos. Mostre processo e papel.
 Confirmar a cláusula de divulgação do contrato antes de citar o cliente (briefing de design).
+CONTEÚDO DE EXEMPLO (rodada 1c): escrito para a Taiane ver o resultado. Trocar antes da 1.0.0.
+Resultados descritos em palavras, sem números inventados.
 -->
 
 ## Contexto
 
-<p class="marcador">[TEXTO DA TAIANE]</p>
+<div data-rascunho>
+
+Tripulantes da Azul consultam procedimentos o tempo todo: regras de escala, protocolos de bordo, mudanças de última hora. A informação existia, mas estava espalhada em manuais longos e em sistemas diferentes, cada um com a sua busca.
+
+A Azul decidiu testar um assistente de IA generativa, construído com a OpenAI, para responder essas perguntas em linguagem natural. A WeFit entrou no projeto para cuidar da experiência, e eu fiquei com a pesquisa e o desenho da conversa.
+
+</div>
 
 ## Problema
 
-<p class="marcador">[TEXTO DA TAIANE]</p>
+<div data-rascunho>
+
+Um assistente que erra em operação crítica é pior do que não ter assistente. O desafio não era só fazer a IA responder, mas fazer o tripulante confiar na resposta certa e desconfiar da resposta duvidosa.
+
+Nas primeiras conversas com tripulantes, ouvimos a mesma frase de jeitos diferentes: "eu preciso saber de onde veio isso".
+
+</div>
 
 ## Processo e decisões
 
-<p class="marcador">[TEXTO DA TAIANE]</p>
+<div data-rascunho>
+
+Comecei com entrevistas e acompanhamento de tripulantes em momentos reais de consulta, para entender quando a dúvida aparece e quanto tempo há para resolvê-la. Com isso, organizamos as perguntas mais comuns por momento da jornada, e não por manual.
+
+A decisão mais importante foi tratar a fonte como parte da resposta: cada resposta mostra o documento e o trecho de onde veio, e o assistente diz com clareza quando não sabe. Prototipamos e testamos a conversa com tripulantes antes de qualquer tela final.
+
+</div>
 
 ## Solução
 
-<p class="marcador">[TEXTO DA TAIANE]</p>
+<div data-rascunho>
+
+Uma conversa simples, com perguntas sugeridas para os momentos mais comuns, respostas curtas e a fonte sempre à vista. Quando a pergunta foge do que os documentos cobrem, o assistente indica o canal certo em vez de inventar.
+
+</div>
 
 ## Resultados
 
-<p class="marcador">[TEXTO DA TAIANE]</p>
+<div data-rascunho>
 
-<p class="marcador">[MÉTODO DA MEDIÇÃO: TEXTO DA TAIANE]</p>
+Os tripulantes passaram a resolver dúvidas do dia a dia sem abrir vários manuais, e a fonte visível aumentou a confiança nas respostas. Procedimentos que viviam em sistemas diferentes ficaram acessíveis por uma porta só.
+
+Os resultados vêm das sessões de teste com tripulantes e do retorno das áreas de operação; os números internos ficam de fora por sigilo.
+
+</div>
 
 ## Aprendizados
 
-<p class="marcador">[TEXTO DA TAIANE]</p>
+<div data-rascunho>
+
+Em IA para operação crítica, a experiência é feita mais de confiança do que de interface. Mostrar a fonte e admitir o "não sei" valeram mais do que qualquer ajuste visual.
+
+</div>

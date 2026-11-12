@@ -3,8 +3,9 @@
  * Projetos em blocos bento: cartões arredondados de fundo cinza claro, sem borda e sem sombra.
  * O primeiro case ganha o bloco grande, com espaço para a imagem; os outros ficam empilhados ao lado.
  * O título é o link, esticado para o cartão inteiro: o leitor de tela anuncia um link por projeto.
- * Sem chamada, o cartão mostra o texto-modelo no estilo de rascunho, marcando o lugar do conteúdo.
+ * Sem imagem do case, o cartão grande mostra uma ilustração neutra de exemplo (data-rascunho).
  */
+import Ilustracao from "../ui/Ilustracao.astro";
 import Seta from "../ui/Seta.astro";
 import type { Entrada } from "../ui/Entrada.astro";
 
@@ -27,7 +28,7 @@ const { entradas, id = "projetos", rotulo = "Projetos" } = Astro.props;
 			<li class="bento__item" data-tamanho={i === 0 ? "grande" : "pequeno"}>
 				{i === 0 && (
 					<div class="bento__imagem">
-						<p class="marcador">[IMAGEM DO CASE]</p>
+						<Ilustracao variante={1} />
 					</div>
 				)}
 				<div class="bento__texto">
@@ -42,10 +43,10 @@ const { entradas, id = "projetos", rotulo = "Projetos" } = Astro.props;
 							{e.externo && <span class="so-leitor-de-tela"> — abre em nova aba</span>}
 						</a>
 					</h3>
-					{e.descricao ? (
-						<p class="bento__descricao">{e.descricao}</p>
-					) : (
-						<p class="marcador">[Chamada do case: uma frase sobre o problema e o resultado.]</p>
+					{e.descricao && (
+						<p class="bento__descricao" data-rascunho={e.rascunho ? "" : undefined}>
+							{e.descricao}
+						</p>
 					)}
 				</div>
 				<div class="bento__meta">
@@ -84,8 +85,7 @@ const { entradas, id = "projetos", rotulo = "Projetos" } = Astro.props;
 	}
 
 	.bento__imagem {
-		display: grid;
-		place-items: center;
+		overflow: hidden;
 		aspect-ratio: var(--destaque-proporcao);
 		border-radius: var(--bento-imagem-raio);
 		background: var(--bento-imagem-fundo);

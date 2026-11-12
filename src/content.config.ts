@@ -29,12 +29,11 @@ const cases = defineCollection({
 		sigilo: z.enum(["publico", "confidencial"]),
 		/** Posição na lista de cases, começando em 1. */
 		ordem: z.number().int().positive(),
-		/** Os três cartões do topo do case. `rascunho: true` mostra o marcador [RASCUNHO] acima deles. */
+		/** Os três cartões do topo do case. */
 		cartoes: z.object({
 			atuacao: z.string().min(1).max(160),
 			desafio: z.string().min(1).max(160),
 			solucao: z.string().min(1).max(160),
-			rascunho: z.boolean().default(false),
 		}),
 		resultados: z
 			.array(
@@ -46,6 +45,14 @@ const cases = defineCollection({
 			)
 			.min(1)
 			.max(3),
+		/**
+		 * Campos com conteúdo de exemplo, escrito para a Taiane ver o resultado. Cada um ganha o
+		 * atributo data-rascunho na página e entra em docs/rascunhos.md, para ser trocado antes da 1.0.0.
+		 * No texto do case, o exemplo fica dentro de <div data-rascunho>.
+		 */
+		rascunhos: z
+			.array(z.enum(["chamada", "resumo", "duracao", "disciplinas", "cartoes", "resultados"]))
+			.default([]),
 	}),
 });
 

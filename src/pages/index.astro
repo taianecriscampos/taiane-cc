@@ -20,7 +20,8 @@ const projetos: Entrada[] = cases.map(({ id, data }) => ({
 	titulo: data.titulo,
 	ano: data.ano,
 	onde: data.cliente,
-	descricao: data.chamada.startsWith("[") ? undefined : data.chamada,
+	descricao: data.chamada,
+	rascunho: data.rascunhos.includes("chamada"),
 	href: `/cases/${id}`,
 }));
 ---

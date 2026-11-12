@@ -18,6 +18,7 @@
 	--prim-color-cinza-50: #fafafa;
 	--prim-color-cinza-100: #e5e8ec; /* fundo secundário, sem texto claro em cima */
 	--prim-color-cinza-300: #cbd0d6; /* 1,49:1, só divisórias */
+	--prim-color-cinza-500: #9aa3ab; /* só formas decorativas, sem texto */
 	--prim-color-cinza-700: #4d575f; /* 7,07:1 */
 	--prim-color-cinza-900: #1a2025; /* 15,75:1 */
 	--prim-color-vermelho: #ff2400; /* 3,66:1, só o selo, que é decorativo */
@@ -146,6 +147,7 @@
 	--color-texto: var(--prim-color-cinza-900);
 	--color-texto-secundario: var(--prim-color-cinza-700);
 	--color-borda: var(--prim-color-cinza-300);
+	--color-forma-decorativa: var(--prim-color-cinza-500); /* ilustrações, nunca texto */
 	--color-marca: var(--prim-color-vermelho);
 	--color-destaque-case: var(--prim-color-azul);
 	--color-inverso-fundo: var(--prim-color-cinza-900);
@@ -229,6 +231,9 @@
 	--radius-grande: var(--prim-radius-24);
 	--radius-destaque: var(--prim-radius-32);
 	--radius-pilula: var(--prim-radius-pilula);
+	/* Regra da Taiane (rodada 1c): 24 px nos cartões e molduras; 8 px nas imagens dentro deles. */
+	--radius-cartao: var(--prim-radius-24);
+	--radius-imagem-interna: var(--prim-radius-8);
 
 	--motion-duration-pressionar: var(--prim-duration-160);
 	--motion-duration-rapida: var(--prim-duration-200);
@@ -329,10 +334,14 @@
 	--skill-icone-cor: var(--color-texto-secundario);
 	--skill-coluna-minima: 10rem;
 	--bento-fundo: var(--color-fundo-secundario);
-	--bento-raio: var(--radius-grande);
+	--bento-raio: var(--radius-cartao);
 	--bento-imagem-fundo: var(--color-fundo);
-	--bento-imagem-raio: var(--radius-medio);
+	--bento-imagem-raio: var(--radius-imagem-interna);
 	--bento-escala-pressionado: var(--motion-escala-pressionado-suave);
+	--ilustracao-fundo: var(--color-fundo-secundario);
+	--ilustracao-forma-clara: var(--color-fundo);
+	--ilustracao-forma-media: var(--color-borda);
+	--ilustracao-forma-escura: var(--color-forma-decorativa);
 	--moldura-raio: var(--radius-grande);
 	--moldura-fundo: var(--color-fundo-secundario);
 	--moldura-espaco: var(--space-maior);

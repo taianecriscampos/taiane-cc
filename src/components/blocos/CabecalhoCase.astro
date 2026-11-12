@@ -7,8 +7,11 @@
  * duração, tempo de leitura e, nos confidenciais, "Case sob sigilo").
  * Depois, o bloco de destaque: a imagem grande numa moldura bem arredondada e os resultados
  * em cartões arredondados. Por fim, os três cartões: Minha atuação, Desafio e Solução.
- * Texto entre colchetes, como [TEXTO DA TAIANE], aparece com o estilo de marcador.
+ * Conteúdo de exemplo: os campos listados em `rascunhos` ganham data-rascunho (docs/rascunhos.md).
+ * Sem imagem do case, o destaque mostra uma ilustração neutra de exemplo.
  */
+import Ilustracao from "../ui/Ilustracao.astro";
+
 interface Props {
 	titulo: string;
 	resumo: string;
@@ -20,7 +23,9 @@ interface Props {
 	minutos: number;
 	sigilo: "publico" | "confidencial";
 	resultados: { valor: string; descricao: string }[];
-	cartoes: { atuacao: string; desafio: string; solucao: string; rascunho: boolean };
+	cartoes: { atuacao: string; desafio: string; solucao: string };
+	/** Campos com conteúdo de exemplo. */
+	rascunhos?: string[];
 	nivel?: 1 | 2;
 }
 
@@ -36,16 +41,18 @@ const {
 	sigilo,
 	resultados,
 	cartoes,
+	rascunhos = [],
 	nivel = 1,
 } = Astro.props;
 const Titulo = `h${nivel}` as const;
-const ehMarcador = (texto: string) => texto.startsWith("[");
+/** data-rascunho no elemento quando o campo ainda é conteúdo de exemplo. */
+const rascunho = (campo: string) => (rascunhos.includes(campo) ? "" : undefined);
 
 const ficha = [
 	{ rotulo: "Empresa", valor: empresa },
 	{ rotulo: "Ano", valor: String(ano) },
 	{ rotulo: "Papel", valor: papel },
-	{ rotulo: "Duração", valor: duracao },
+	{ rotulo: "Duração", valor: duracao, campo: "duracao" },
 	{ rotulo: "Leitura", valor: `${minutos} ${minutos === 1 ? "minuto" : "minutos"} de leitura` },
 ];
 
@@ -60,24 +67,29 @@ const listaDeCartoes = [
 	<Titulo class="cabecalho-case__titulo">{titulo}</Titulo>
 
 	<div class="cabecalho-case__intro">
-		<p class:list={["cabecalho-case__resumo", { marcador: ehMarcador(resumo) }]}>{resumo}</p>
+		<p class="cabecalho-case__resumo" data-rascunho={rascunho("resumo")}>
+			{resumo}
+		</p>
 
 		<div class="cabecalho-case__lado">
-			{disciplinas.length > 0 ? (
-				<ul class="cabecalho-case__pilulas" role="list" aria-label="Disciplinas">
+			{disciplinas.length > 0 && (
+				<ul
+					class="cabecalho-case__pilulas"
+					role="list"
+					aria-label="Disciplinas"
+					data-rascunho={rascunho("disciplinas")}
+				>
 					{disciplinas.map((d) => (
 						<li class="cabecalho-case__pilula">{d}</li>
 					))}
 				</ul>
-			) : (
-				<p class="marcador">[DISCIPLINAS: TEXTO DA TAIANE]</p>
 			)}
 
 			<dl class="cabecalho-case__ficha">
 				{ficha.map((item) => (
 					<div class="cabecalho-case__ficha-linha">
 						<dt>{item.rotulo}</dt>
-						<dd class:list={{ marcador: ehMarcador(item.valor) }}>
+						<dd data-rascunho={item.campo ? rascunho(item.campo) : undefined}>
 							{item.rotulo === "Ano" ? <time datetime={item.valor}>{item.valor}</time> : item.valor}
 						</dd>
 					</div>
@@ -89,25 +101,29 @@ const listaDeCartoes = [
 
 	<div class="cabecalho-case__destaque">
 		<div class="cabecalho-case__imagem">
-			<p class="marcador">[IMAGEM DO CASE]</p>
+			<Ilustracao variante={1} />
 		</div>
-		<ul class="cabecalho-case__resultados" role="list" aria-label="Resultados">
+		<ul
+			class="cabecalho-case__resultados"
+			role="list"
+			aria-label="Resultados"
+			data-rascunho={rascunho("resultados")}
+		>
 			{resultados.map((r) => (
 				<li class="cabecalho-case__resultado">
-					<p class:list={["cabecalho-case__valor", { marcador: ehMarcador(r.valor) }]}>{r.valor}</p>
-					<p class:list={{ marcador: ehMarcador(r.descricao) }}>{r.descricao}</p>
+					<p class="cabecalho-case__valor">{r.valor}</p>
+					<p>{r.descricao}</p>
 				</li>
 			))}
 		</ul>
 	</div>
 
 	<div class="cabecalho-case__cartoes-bloco">
-		{cartoes.rascunho && <p class="marcador">[RASCUNHO]</p>}
-		<ul class="cabecalho-case__cartoes" role="list">
+		<ul class="cabecalho-case__cartoes" role="list" data-rascunho={rascunho("cartoes")}>
 			{listaDeCartoes.map((cartao) => (
 				<li class="cabecalho-case__cartao">
 					<p class="cabecalho-case__rotulo">{cartao.rotulo}</p>
-					<p class:list={{ marcador: ehMarcador(cartao.texto) }}>{cartao.texto}</p>
+					<p>{cartao.texto}</p>
 				</li>
 			))}
 		</ul>
@@ -137,13 +153,6 @@ const listaDeCartoes = [
 		font-weight: var(--peso-introducao);
 		letter-spacing: var(--tracking-introducao);
 		line-height: var(--leading-introducao);
-	}
-
-	.cabecalho-case__resumo.marcador {
-		font-size: var(--text-pequeno);
-		font-weight: var(--peso-corpo);
-		letter-spacing: var(--tracking-texto);
-		line-height: var(--leading-pequeno);
 	}
 
 	.cabecalho-case__lado {
@@ -204,8 +213,7 @@ const listaDeCartoes = [
 	}
 
 	.cabecalho-case__imagem {
-		display: grid;
-		place-items: center;
+		overflow: hidden;
 		aspect-ratio: var(--destaque-proporcao);
 		border-radius: var(--destaque-raio);
 		background: var(--destaque-fundo);
@@ -232,11 +240,6 @@ const listaDeCartoes = [
 		font-weight: var(--peso-titulo);
 		letter-spacing: var(--tracking-entrada);
 		line-height: var(--leading-titulo);
-	}
-
-	.cabecalho-case__valor.marcador {
-		font-size: var(--text-pequeno);
-		letter-spacing: var(--tracking-texto);
 	}
 
 	/* ---------- cartões ---------- */

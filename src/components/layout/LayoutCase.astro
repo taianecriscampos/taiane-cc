@@ -68,6 +68,7 @@ const corpo = html
 				sigilo={dados.sigilo}
 				resultados={dados.resultados}
 				cartoes={dados.cartoes}
+				rascunhos={dados.rascunhos}
 			/>
 		</div>
 
@@ -123,6 +124,11 @@ const corpo = html
 		align-content: start;
 		gap: var(--space-medio);
 		min-inline-size: 0;
+	}
+
+	/* O bloco de conteúdo de exemplo não muda o ritmo: os parágrafos de dentro seguem a grade. */
+	.case__corpo :global(.case-secao__texto > [data-rascunho]) {
+		display: contents;
 	}
 
 	.case__corpo :global(h3) {

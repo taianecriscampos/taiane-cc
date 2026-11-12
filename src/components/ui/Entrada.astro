@@ -20,6 +20,8 @@ export interface Entrada {
 	href?: string;
 	/** true abre em nova aba e avisa o leitor de tela. */
 	externo?: boolean;
+	/** true: a descrição é conteúdo de exemplo (data-rascunho, docs/rascunhos.md). */
+	rascunho?: boolean;
 }
 
 interface Props extends Entrada {
@@ -27,7 +29,16 @@ interface Props extends Entrada {
 	nivel?: 2 | 3;
 }
 
-const { titulo, ano, onde, descricao, href, externo = false, nivel = 3 } = Astro.props;
+const {
+	titulo,
+	ano,
+	onde,
+	descricao,
+	href,
+	externo = false,
+	rascunho = false,
+	nivel = 3,
+} = Astro.props;
 const Titulo = `h${nivel}` as const;
 const emConstrucao = !href;
 ---
@@ -51,7 +62,11 @@ const emConstrucao = !href;
 		</Titulo>
 	</div>
 
-	{descricao && <p class="entrada__descricao">{descricao}</p>}
+	{descricao && (
+		<p class="entrada__descricao" data-rascunho={rascunho ? "" : undefined}>
+			{descricao}
+		</p>
+	)}
 
 	<div class="entrada__meta">
 		<p>
