@@ -343,3 +343,19 @@ test("no celular, o case não tem sumário fixo e não repete o convite do rodap
 	await expect(page.getByRole("heading", { level: 2, name: "Contexto" })).toBeVisible();
 	await expect(page.getByText("Quer saber mais detalhes?")).toHaveCount(0);
 });
+
+for (const largura of [375, 1440]) {
+	test(`em ${largura} px, a ilha do case acompanha a seção atual, até as curtas`, async ({
+		page,
+	}) => {
+		await page.setViewportSize({ width: largura, height: 800 });
+		await page.goto("/cases/funis-interativos");
+		const botao = page.locator(".ilha__botao");
+		for (const nome of ["Contexto", "Solução", "Aprendizados", "Contexto"]) {
+			await page
+				.locator(".case-secao", { has: page.getByRole("heading", { level: 2, name: nome }) })
+				.evaluate((s) => scrollTo(0, s.getBoundingClientRect().top + scrollY - 200));
+			await expect(botao).toHaveAccessibleName(`Menu, seção atual: ${nome}`);
+		}
+	});
+}

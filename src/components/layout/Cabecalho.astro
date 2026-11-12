@@ -214,18 +214,17 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		};
 
 		if (secoes.length > 0) {
-			const visiveis = new Set<Element>();
+			// Seção atual: a última cujo começo já passou da linha a 45% da altura da janela (a mesma
+			// do sumário do case). O observador só avisa quando alguma seção cruza a faixa de cima;
+			// a conta mede onde cada uma está agora. Assim uma seção curta, que nem chega à linha,
+			// também é marcada (rodada 1f).
 			const observador = new IntersectionObserver(
-				(registros) => {
-					for (const r of registros) {
-						if (r.isIntersecting) visiveis.add(r.target);
-						else visiveis.delete(r.target);
-					}
-					const ativa = secoes.filter((s) => visiveis.has(s.alvo)).at(-1);
-					if (ativa) marcar(ativa.link);
-					else if (secoes[0].alvo.getBoundingClientRect().top > innerHeight / 2) marcar(links[0]);
+				() => {
+					const linha = innerHeight * 0.45;
+					const ativa = secoes.filter((s) => s.alvo.getBoundingClientRect().top <= linha).at(-1);
+					marcar(ativa ? ativa.link : links[0]);
 				},
-				{ rootMargin: "-45% 0px -54% 0px" },
+				{ rootMargin: "0px 0px -55% 0px" },
 			);
 			for (const s of secoes) observador.observe(s.alvo);
 		}
@@ -241,10 +240,11 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		z-index: var(--cabecalho-camada);
 	}
 
+	/* A faixa vai 16 px abaixo da ilha (rodada 1f): o conteúdo nunca parece encostado nela. */
 	.cabecalho::before {
 		content: "";
 		position: absolute;
-		inset: 0;
+		inset: 0 0 calc(-1 * var(--cabecalho-folga));
 		z-index: -1;
 		background: var(--cabecalho-fundo);
 		-webkit-backdrop-filter: var(--cabecalho-desfoque);

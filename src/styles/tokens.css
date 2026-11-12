@@ -312,6 +312,7 @@
 	--divisoria: var(--linha-espessura) solid var(--color-borda);
 
 	--cabecalho-altura: var(--prim-size-56);
+	--cabecalho-folga: var(--space-medio); /* faixa com desfoque abaixo da ilha */
 	--cabecalho-fundo: var(--color-fundo-translucido);
 	--cabecalho-desfoque: var(--prim-desfoque-15);
 	--cabecalho-camada: 100;
