@@ -71,6 +71,7 @@
 
 	/* Espaço entre letras, apertado como na hugeinc.com: quanto maior o texto, mais fechado. */
 	--prim-tracking-4: -0.04em;
+	--prim-tracking-3-5: -0.035em;
 	--prim-tracking-3: -0.03em;
 	--prim-tracking-2: -0.02em;
 	--prim-tracking-1: -0.01em;
@@ -185,7 +186,7 @@
 	--peso-forte: var(--prim-peso-700);
 	--peso-introducao: var(--prim-peso-600);
 
-	--tracking-abertura: var(--prim-tracking-4); /* 80 px */
+	--tracking-abertura: var(--prim-tracking-3-5); /* 80 px; ajustável, a pedido da Taiane */
 	--tracking-entrada: var(--prim-tracking-3); /* 56 px */
 	--tracking-titulo-case: var(--prim-tracking-4); /* 120 px */
 	--tracking-introducao: var(--prim-tracking-2); /* 30 px */
@@ -263,6 +264,7 @@
 	--seta-tamanho: var(--prim-size-20);
 
 	--retrato-proporcao: 3 / 4;
+	--abertura-altura-minima: 18rem; /* abaixo disso (janela muito baixa), a dobra rola em vez de espremer */
 	--retrato-raio: var(--radius-grande);
 	--selo-tamanho: var(--prim-size-96);
 	--selo-cor: var(--color-marca);

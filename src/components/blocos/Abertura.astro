@@ -1,11 +1,15 @@
 ---
 /**
- * Abertura: ocupa a altura da tela menos o cabeçalho.
- * No meio, centralizados na vertical: a frase em caixa alta e condensada (eixo de largura da
- * Google Sans Flex) e o retrato grande, de cantos arredondados.
- * Faixa de baixo: a especialidade com seta para baixo (leva a Projetos) e o LinkedIn com seta
- * diagonal. No celular, o modelo de trabalho com o ponto verde também fica nesta faixa.
- * A caixa alta vem do CSS: no HTML o texto continua normal, e o leitor de tela lê a frase certa.
+ * Abertura: a primeira dobra inteira (cabeçalho, frase, foto e faixa de baixo) cabe na altura
+ * da tela em todas as larguras (100svh, a altura menor do celular, com a barra do navegador).
+ * A foto é quem cede: ela ocupa o espaço que sobra, e a faixa de baixo nunca sai da dobra.
+ * Só numa janela muito baixa, menor que um celular deitado, a dobra para na altura mínima e rola.
+ *
+ * Frase na mesma fonte do site, largura e caixa normais, com espaço entre letras próprio.
+ * Faixa de baixo em duas colunas: a especialidade com seta para baixo (leva a Projetos) e o
+ * LinkedIn com seta diagonal. No celular, os dois textos ficam curtos para caber.
+ * No celular, o modelo de trabalho com o ponto verde fica acima da foto; a partir de 768 px,
+ * ele está no cabeçalho.
  */
 import { Image } from "astro:assets";
 import retrato from "../../assets/taiane-retrato.png";
@@ -15,7 +19,7 @@ import LinkComSeta from "../ui/LinkComSeta.astro";
 
 interface Props {
 	perfil?: Perfil;
-	/** Muda os ids quando a abertura aparece mais de uma vez (Laboratório). */
+	/** Id da seção; muda quando a abertura aparece mais de uma vez (Laboratório). */
 	idBase?: string;
 	nivel?: 1 | 2;
 }
@@ -29,77 +33,84 @@ const Titulo = `h${nivel}` as const;
 		<Titulo id={`${idBase}-titulo`} class="abertura__frase">
 			{perfil.frase}
 		</Titulo>
-		<Image
-			class="abertura__retrato"
-			src={retrato}
-			alt={`Retrato de ${perfil.nome}: cabelo escuro na altura dos ombros, com mechas grisalhas, e óculos de armação redonda e fina, sobre fundo claro.`}
-			widths={[320, 480, 640, 960]}
-			sizes="(min-width: 1200px) 30vw, (min-width: 768px) 38vw, 70vw"
-			loading="eager"
-			fetchpriority="high"
-		/>
+		<div class="abertura__status">
+			<Disponibilidade texto={perfil.modalidade} />
+		</div>
+		<div class="abertura__foto">
+			<Image
+				class="abertura__retrato"
+				src={retrato}
+				alt={`Retrato de ${perfil.nome}: cabelo escuro na altura dos ombros, com mechas grisalhas, e óculos de armação redonda e fina, sobre fundo claro.`}
+				widths={[320, 480, 640, 960]}
+				sizes="(min-width: 1200px) 30vw, (min-width: 768px) 38vw, 90vw"
+				loading="eager"
+				fetchpriority="high"
+			/>
+		</div>
 	</div>
 
 	<div class="abertura__faixa">
 		<LinkComSeta
 			href="#projetos"
 			texto={perfil.especialidade}
+			textoCurto={perfil.especialidadeCurta}
 			direcao="baixo"
 			complemento="ir para Projetos"
 		/>
-		<div class="abertura__status">
-			<Disponibilidade texto={perfil.modalidade} />
-		</div>
-		<LinkComSeta href={perfil.linkedin} texto="Me encontre no LinkedIn" />
+		<LinkComSeta
+			href={perfil.linkedin}
+			texto="Me encontre no LinkedIn"
+			textoCurto="LinkedIn"
+			externo
+		/>
 	</div>
 </section>
 
 <style>
+	/* Altura exata da dobra: a foto encolhe para o resto caber. */
 	.abertura {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-bloco);
-		min-block-size: calc(100svh - var(--cabecalho-altura));
-		padding-block: var(--space-grande);
+		gap: var(--space-grande);
+		block-size: calc(100svh - var(--cabecalho-altura));
+		min-block-size: var(--abertura-altura-minima);
+		padding-block: var(--space-medio) var(--space-grande);
 	}
 
 	.abertura__meio {
 		flex: 1;
-		display: grid;
-		align-content: center;
-		gap: var(--space-bloco);
+		min-block-size: 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-medio);
 	}
 
 	.abertura__frase {
 		font-size: var(--text-abertura);
-		font-stretch: var(--fonte-largura-condensada);
 		letter-spacing: var(--tracking-abertura);
 		line-height: var(--leading-titulo);
-		text-transform: uppercase;
+		text-wrap: balance;
+	}
+
+	.abertura__foto {
+		flex: 1;
+		min-block-size: 0;
 	}
 
 	.abertura__retrato {
-		inline-size: min(100%, 70vw);
-		aspect-ratio: var(--retrato-proporcao);
+		inline-size: 100%;
+		block-size: 100%;
 		object-fit: cover;
 		object-position: 50% 30%;
 		border-radius: var(--retrato-raio);
 	}
 
-	/* No celular, a faixa usa o texto pequeno para a especialidade caber numa linha com a seta. */
+	/* Duas colunas, cada link na sua ponta. */
 	.abertura__faixa {
-		font-size: var(--text-pequeno);
-		line-height: var(--leading-pequeno);
 		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: var(--space-pequeno) var(--space-medio);
-	}
-
-	.abertura__status {
-		flex-basis: 100%;
-		order: -1;
+		gap: var(--space-medio);
 	}
 
 	@media (hover: hover) and (pointer: fine) {
@@ -109,28 +120,41 @@ const Titulo = `h${nivel}` as const;
 	}
 
 	@media (min-width: 768px) {
+		.abertura {
+			gap: var(--space-bloco);
+			padding-block: var(--space-grande);
+		}
+
 		.abertura__meio {
+			display: grid;
 			grid-template-columns: repeat(var(--grade-colunas), minmax(0, 1fr));
+			grid-template-rows: minmax(0, 1fr);
 			column-gap: var(--grade-espaco);
 			align-items: center;
 		}
 
 		.abertura__frase {
 			grid-column: 1 / span 7;
-		}
-
-		.abertura__retrato {
-			grid-column: 8 / -1;
-			inline-size: 100%;
-		}
-
-		.abertura__faixa {
-			font-size: var(--text-corpo);
-			line-height: var(--leading-corpo);
+			grid-row: 1;
 		}
 
 		.abertura__status {
 			display: none;
+		}
+
+		/* A foto fica em pé (3 por 4) enquanto houver altura; numa tela baixa, ela se ajusta. */
+		.abertura__foto {
+			grid-column: 8 / -1;
+			grid-row: 1;
+			display: flex;
+			align-items: center;
+			block-size: 100%;
+		}
+
+		.abertura__retrato {
+			block-size: auto;
+			max-block-size: 100%;
+			aspect-ratio: var(--retrato-proporcao);
 		}
 	}
 
@@ -139,7 +163,7 @@ const Titulo = `h${nivel}` as const;
 			grid-column: 1 / span 8;
 		}
 
-		.abertura__retrato {
+		.abertura__foto {
 			grid-column: 9 / -1;
 		}
 	}

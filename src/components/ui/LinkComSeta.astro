@@ -3,19 +3,21 @@
  * Link de texto com a seta ao lado, como "Me encontre no LinkedIn".
  * A seta fica dentro do link: a área de toque inclui os dois.
  * Externo: abre em nova aba e avisa o leitor de tela.
+ * textoCurto: aparece no lugar do texto até 767 px, quando o texto inteiro não cabe.
  */
 import Seta from "./Seta.astro";
 
 interface Props {
 	href: string;
 	texto: string;
+	textoCurto?: string;
 	direcao?: "diagonal" | "direita" | "baixo";
 	externo?: boolean;
 	/** Só para o leitor de tela, depois do texto: diz o destino quando o texto não diz. */
 	complemento?: string;
 }
 
-const { href, texto, direcao = "diagonal", externo = false, complemento } = Astro.props;
+const { href, texto, textoCurto, direcao = "diagonal", externo = false, complemento } = Astro.props;
 ---
 
 <a
@@ -24,7 +26,14 @@ const { href, texto, direcao = "diagonal", externo = false, complemento } = Astr
 	target={externo ? "_blank" : undefined}
 	rel={externo ? "noopener noreferrer" : undefined}
 >
-	<span class="link link-com-seta__texto">{texto}</span>
+	{textoCurto ? (
+		<span class="link link-com-seta__texto">
+			<span class="link-com-seta__curto">{textoCurto}</span>
+			<span class="link-com-seta__longo">{texto}</span>
+		</span>
+	) : (
+		<span class="link link-com-seta__texto">{texto}</span>
+	)}
 	{complemento && <span class="so-leitor-de-tela">, {complemento}</span>}
 	{externo && <span class="so-leitor-de-tela"> — abre em nova aba</span>}
 	<Seta direcao={direcao} />
@@ -42,6 +51,20 @@ const { href, texto, direcao = "diagonal", externo = false, complemento } = Astr
 	/* O sublinhado do texto acompanha o hover e o foco do link inteiro. */
 	.link-com-seta:focus-visible .link-com-seta__texto::after {
 		transform: scaleX(1);
+	}
+
+	.link-com-seta__longo {
+		display: none;
+	}
+
+	@media (min-width: 768px) {
+		.link-com-seta__curto {
+			display: none;
+		}
+
+		.link-com-seta__longo {
+			display: inline;
+		}
 	}
 
 	@media (hover: hover) and (pointer: fine) {

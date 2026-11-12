@@ -10,6 +10,8 @@ export interface Perfil {
 	frase: string;
 	/** Linha da faixa de baixo da abertura. */
 	especialidade: string;
+	/** Versão curta da especialidade, para o celular. */
+	especialidadeCurta: string;
 	/** Modelo de trabalho, ao lado do ponto verde de status. */
 	modalidade: string;
 	cidade: string;
@@ -32,6 +34,7 @@ export const perfil: Perfil = {
 	cargo: "Senior Product Designer · Design Engineer",
 	frase: "Design de produto com pensamento sistêmico, IA e código.",
 	especialidade: "Senior Product Designer | Design Engineering",
+	especialidadeCurta: "Design Engineer",
 	modalidade: "Remoto ou híbrido",
 	cidade: "Ribeirão Preto",
 	estado: "SP",

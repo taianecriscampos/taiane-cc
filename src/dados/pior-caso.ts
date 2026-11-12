@@ -13,6 +13,7 @@ export const perfilPiorCaso: Perfil = {
 		"Design de produto com pensamento sistêmico, inteligência artificial generativa, pesquisa contínua e código de produção.",
 	especialidade:
 		"Senior Product Designer | Design Engineering | Research Operations | Design Systems",
+	especialidadeCurta: "Design Engineering e Research Operations",
 	modalidade: "Remoto, híbrido ou presencial em São José do Rio Preto",
 	cidade: "São José do Rio Preto",
 	estado: "SP",
