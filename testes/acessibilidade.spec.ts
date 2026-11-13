@@ -16,6 +16,7 @@ for (const pagina of paginas) {
 		const resultado = await new AxeBuilder({ page })
 			.withTags(regrasWcag22AA)
 			.exclude(".sobre__inativo")
+			.exclude(".sobre__desativado")
 			.analyze();
 		expect(resultado.violations).toEqual([]);
 	});

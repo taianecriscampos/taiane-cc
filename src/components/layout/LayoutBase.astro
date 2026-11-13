@@ -32,7 +32,14 @@ interface Props {
 	dadosEstruturados?: object;
 }
 
-const { titulo, descricao, secoesDoCase, inicioDoCase, tipo = "website", dadosEstruturados } = Astro.props;
+const {
+	titulo,
+	descricao,
+	secoesDoCase,
+	inicioDoCase,
+	tipo = "website",
+	dadosEstruturados,
+} = Astro.props;
 const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 // Endereço canônico: sempre o do domínio oficial, mesmo numa prévia da Vercel.
 const canonica = urlAbsoluta(Astro.url.pathname);

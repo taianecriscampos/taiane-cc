@@ -10,15 +10,17 @@ COMPORTAMENTO descrito publicamente na página e observado no preview).
 3. NOVO: ao escolher uma seção na lista, a ilha cresce de novo e mostra um detalhe curto daquela seção:
    número, nome, uma frase e um link "Ir para a seção →". Clicar no link rola até a seção e a ilha
    volta à cápsula.
+
 - Esc volta UM nível por vez (detalhe → lista → cápsula). "Fechar" volta direto à cápsula.
 
 Frases do nível 3 (podem ser ajustadas pela Taiane):
+
 - Início: "Quem eu sou, em uma frase e uma foto."
 - Projetos: "Cases de produto, do diagnóstico ao código."
 - Artigos: "O que escrevo sobre design, IA e engenharia."
 - Sobre: "Trajetória, experiência e formação."
 - Skills: "Competências e as ferramentas do dia a dia."
-(No case: Visão geral, Contexto, Problema... com frases curtas tiradas do próprio texto.)
+  (No case: Visão geral, Contexto, Problema... com frases curtas tiradas do próprio texto.)
 
 ## Mola por movimento (o ponto principal)
 

@@ -37,7 +37,10 @@ Camada dos dados pessoais (fase 0.4.0):
 - Sem telefone no site; contato por LinkedIn e e-mail. No PDF público do currículo, ver a exceção abaixo.
 - Remover metadados do PDF e das imagens.
 
-## Exceção registrada: telefone no PDF do currículo (11/11/2026)
+## Exceção encerrada: telefone no PDF do currículo (11/11/2026, encerrada em 13/11/2026)
+
+- Encerrada na v1.1.0: o `public/curriculo.pdf` saiu do site e o "Currículo em PDF" ficou desativado.
+  O telefone não está mais publicado. O histórico abaixo fica como registro.
 
 - O que: o PDF público em `public/curriculo.pdf` traz o telefone da Taiane. O site continua sem telefone.
 - Por quê: decisão da Taiane; o telefone fica no PDF por enquanto e sai quando ela se recolocar.

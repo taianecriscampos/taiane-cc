@@ -166,6 +166,16 @@ const ficha = [
 		background: var(--pilula-fundo);
 		font-size: var(--text-pequeno);
 		line-height: var(--leading-pequeno);
+		transition:
+			transform var(--pilula-hover-duracao) var(--motion-ease-out),
+			background-color var(--pilula-hover-duracao) var(--motion-ease-out);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.cabecalho-case__pilula:hover {
+			background: var(--pilula-fundo-hover);
+			transform: translateY(calc(-1 * var(--pilula-hover-subida)));
+		}
 	}
 
 	.cabecalho-case__ficha {

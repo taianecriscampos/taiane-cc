@@ -17,6 +17,7 @@
 	/* Cor. Contraste medido sobre --prim-color-cinza-50. */
 	--prim-color-cinza-50: #fafafa;
 	--prim-color-cinza-100: #e5e8ec; /* fundo secundário, sem texto claro em cima */
+	--prim-color-cinza-150: #d9dde2; /* fundo secundário no hover das pílulas */
 	--prim-color-cinza-300: #cbd0d6; /* 1,49:1, só divisórias */
 	--prim-color-cinza-500: #9aa3ab; /* só formas decorativas, sem texto */
 	--prim-color-cinza-700: #4d575f; /* 7,07:1 */
@@ -164,6 +165,8 @@
 	--color-fundo-secundario: var(--prim-color-cinza-100);
 	--color-texto: var(--prim-color-cinza-900);
 	--color-texto-secundario: var(--prim-color-cinza-700);
+	--color-fundo-secundario-hover: var(--prim-color-cinza-150);
+	--color-texto-desativado: #a3abb3; /* mesmo cinza do "não concluída"; só para o Currículo desativado */
 	--color-borda: var(--prim-color-cinza-300);
 	--color-forma-decorativa: var(--prim-color-cinza-500); /* ilustrações, nunca texto */
 	--color-marca: var(--prim-color-vermelho);
@@ -371,6 +374,10 @@
 
 	--etiqueta-espaco: var(--space-fio) var(--space-pequeno);
 	--pilula-fundo: var(--color-fundo-secundario);
+	--pilula-fundo-hover: var(--color-fundo-secundario-hover);
+	--pilula-hover-subida: var(--space-fio);
+	--pilula-hover-duracao: var(--motion-duration-rapida);
+	--transicao-pagina-duracao: 250ms;
 	--pilula-espaco: var(--space-minimo) var(--space-medio);
 	--capa-raio: var(--radius-cartao);
 	--destaque-proporcao: 16 / 9;
@@ -407,6 +414,7 @@
 	--skill-pilula-espaco: var(--space-pequeno) var(--space-medio); /* 14/20 + 8 + 8 = 36 px */
 	--skill-pilula-intervalo: var(--space-pequeno);
 	--skill-pilula-fundo: var(--color-fundo-secundario);
+	--skill-pilula-fundo-hover: var(--color-fundo-secundario-hover);
 	--skill-pilula-texto: var(--color-texto);
 	/* Cartões de Projetos (ajuste rápido depois da 1f): frente sem fundo, contorno de 1 px e os
 	   textos nas cores do site. */

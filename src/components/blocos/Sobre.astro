@@ -18,6 +18,7 @@
 import { perfil } from "../../dados/perfil";
 import { experienciasDoSobre, formacaoDoSobre } from "../../dados/trajetoria";
 import LinkComSeta from "../ui/LinkComSeta.astro";
+import Seta from "../ui/Seta.astro";
 
 /** "2025–2026" vira duas datas, e o leitor de tela lê "2025 até 2026". */
 const partes = (periodo: string) => periodo.split("–");
@@ -45,11 +46,11 @@ const partes = (periodo: string) => periodo.split("–");
 		</div>
 
 		<div class="sobre__link sobre__link--curriculo">
-			{perfil.curriculo.disponivel ? (
-				<LinkComSeta href={perfil.curriculo.href} texto="Currículo em PDF" externo />
-			) : (
-				<p class="sobre__secundario">Currículo em PDF, em breve</p>
-			)}
+			{/* Currículo em PDF fora do ar por enquanto: mesmo visual do link, desativado, sem href. */}
+			<a class="sobre__desativado" role="link" aria-disabled="true">
+				<span class="link sobre__desativado-texto">Currículo em PDF</span>
+				<Seta direcao="diagonal" />
+			</a>
 		</div>
 
 		<div class="sobre__coluna sobre__coluna--experiencia">
@@ -150,6 +151,33 @@ const partes = (periodo: string) => periodo.split("–");
 
 	.sobre__secundario {
 		color: var(--color-texto-secundario);
+	}
+
+	/* Desativado: sem href, sem foco, sem clique, mas com o mesmo hover dos outros links. */
+	.sobre__desativado {
+		display: inline-flex;
+		align-items: center;
+		color: var(--color-texto-desativado);
+		cursor: not-allowed;
+		text-decoration: none;
+	}
+
+	.sobre__desativado-texto {
+		color: inherit;
+	}
+
+	.sobre__desativado :global(.seta) {
+		color: inherit;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.sobre__desativado:hover .sobre__desativado-texto::after {
+			transform: scaleX(1);
+		}
+
+		.sobre__desativado:hover :global(.seta__icone) {
+			transform: translate(var(--space-fio), calc(-1 * var(--space-fio)));
+		}
 	}
 
 	.sobre__ano {

@@ -30,7 +30,11 @@ function textoPuro(html: string): string {
 export function encurtar(frase: string, limite = LIMITE): string {
 	if (frase.length <= limite) return frase;
 	const trecho = frase.slice(0, limite);
-	const pausa = Math.max(trecho.lastIndexOf(", "), trecho.lastIndexOf(": "), trecho.lastIndexOf(" — "));
+	const pausa = Math.max(
+		trecho.lastIndexOf(", "),
+		trecho.lastIndexOf(": "),
+		trecho.lastIndexOf(" — "),
+	);
 	const corte = pausa >= limite / 2 ? pausa : trecho.lastIndexOf(" ");
 	return `${trecho.slice(0, corte).replace(/[\s,;:.—–-]+$/, "")}…`;
 }

@@ -83,12 +83,16 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 				<span class="ilha__conteudo">
 					<span class="ilha__janela ilha__numero" aria-hidden="true" data-mover>
 						<span class="ilha__faixa" data-faixa>
-							{itens.map((item) => <span class="ilha__faixa-item">{item.numero}</span>)}
+							{itens.map((item) => (
+								<span class="ilha__faixa-item">{item.numero}</span>
+							))}
 						</span>
 					</span>
 					<span class="ilha__janela" aria-hidden="true" data-mover data-janela-nome>
 						<span class="ilha__faixa" data-faixa>
-							{itens.map((item) => <span class="ilha__faixa-item">{item.texto}</span>)}
+							{itens.map((item) => (
+								<span class="ilha__faixa-item">{item.texto}</span>
+							))}
 						</span>
 					</span>
 					<span class="so-leitor-de-tela">
@@ -101,17 +105,20 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 			<div class="ilha__painel" id="ilha-painel">
 				<div class="ilha__vista ilha__vista--lista" data-lista>
 					<div class="ilha__topo">
-						<p class="ilha__titulo" aria-hidden="true">Seções</p>
-						<button class="ilha__acao" type="button" data-fechar>Fechar</button>
+						<p class="ilha__titulo" aria-hidden="true">
+							Seções
+						</p>
+						<button class="ilha__acao" type="button" data-fechar>
+							Fechar
+						</button>
 					</div>
 					<div class="ilha__lista">
 						<ul class="ilha__links" role="list">
-							{itens.map((item, i) => (
-								<li class="ilha__item" style={`--i: ${i}`}>
-									<button
+							{itens.map((item) => (
+								<li class="ilha__item">
+									<a
 										class="ilha__link"
-										type="button"
-										data-href={item.href}
+										href={item.href}
 										data-numero={item.numero}
 										data-texto={item.texto}
 										data-frase={item.frase ?? ""}
@@ -120,7 +127,7 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 											{item.numero}
 										</span>
 										{item.texto}
-									</button>
+									</a>
 								</li>
 							))}
 						</ul>
@@ -135,8 +142,12 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 					data-detalhe
 				>
 					<div class="ilha__topo">
-						<button class="ilha__acao" type="button" data-voltar>Voltar</button>
-						<button class="ilha__acao" type="button" data-fechar>Fechar</button>
+						<button class="ilha__acao" type="button" data-voltar>
+							Voltar
+						</button>
+						<button class="ilha__acao" type="button" data-fechar>
+							Fechar
+						</button>
 					</div>
 					<p class="ilha__detalhe-titulo">
 						<span class="ilha__numero" aria-hidden="true" data-detalhe-numero></span>
@@ -199,7 +210,9 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		detalheLink &&
 		detalheLinkNome
 	) {
-		const links = [...ilha.querySelectorAll<HTMLButtonElement>(".ilha__link")];
+		const links = [...ilha.querySelectorAll<HTMLAnchorElement>(".ilha__link")];
+		// O atraso escalonado de cada item vem daqui: a política de segurança não aceita style no HTML.
+		links.forEach((link, i) => link.parentElement?.style.setProperty("--i", String(i)));
 		const faixas = [...ilha.querySelectorAll<HTMLElement>("[data-faixa]")];
 		const moveis = [...ilha.querySelectorAll<HTMLElement>("[data-mover]")];
 		const nomesDaFaixa = [...janelaNome.querySelectorAll<HTMLElement>(".ilha__faixa-item")];
@@ -231,7 +244,8 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		// ---------- tamanho de cada nível ----------
 		const raioAberto = () => parseFloat(getComputedStyle(lista).borderTopLeftRadius) || 0;
 		const caixaDo = (n: Nivel): Caixa => {
-			if (n === 0) return { w: botao.offsetWidth, h: botao.offsetHeight, r: botao.offsetHeight / 2 };
+			if (n === 0)
+				return { w: botao.offsetWidth, h: botao.offsetHeight, r: botao.offsetHeight / 2 };
 			const vista = n === 1 ? lista : detalhe;
 			return { w: vista.offsetWidth, h: vista.offsetHeight, r: raioAberto() };
 		};
@@ -301,7 +315,7 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 			detalheNumero.textContent = link.dataset.numero ?? "";
 			detalheNome.textContent = link.dataset.texto ?? "";
 			detalheFrase.textContent = link.dataset.frase ?? "";
-			detalheLink.href = link.dataset.href ?? "#";
+			detalheLink.href = link.getAttribute("href") ?? "#";
 			detalheLinkNome.textContent = ` ${link.dataset.texto ?? ""}`;
 		};
 
@@ -369,8 +383,14 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		botao.addEventListener("click", (e) => {
 			if (nivel === 0) abrir(e.detail === 0);
 		});
+		// Sem JavaScript, cada item é um link comum para a seção. Com ele, o clique abre o detalhe.
+		// Clique com Ctrl, Cmd, Shift ou botão do meio segue o link normal.
 		links.forEach((link, i) =>
-			link.addEventListener("click", (e) => abrirDetalhe(i, e.detail === 0)),
+			link.addEventListener("click", (e) => {
+				if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+				e.preventDefault();
+				abrirDetalhe(i, e.detail === 0);
+			}),
 		);
 		voltar.addEventListener("click", (e) => voltarALista(e.detail === 0));
 		for (const b of ilha.querySelectorAll<HTMLButtonElement>("[data-fechar]")) {
@@ -381,7 +401,7 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 
 		// Setas, Home e End andam pela lista, sem sair dela.
 		lista.addEventListener("keydown", (e) => {
-			const i = links.indexOf(document.activeElement as HTMLButtonElement);
+			const i = links.indexOf(document.activeElement as HTMLAnchorElement);
 			if (i < 0) return;
 			const proximo = {
 				ArrowDown: links[(i + 1) % links.length],
@@ -420,7 +440,8 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 			const antes = moveis.map((el) => el.getBoundingClientRect().left);
 
 			// A faixa desliza até a seção; se já estiver a caminho de outra, muda o destino no meio.
-			for (const faixa of faixas) faixa.style.transform = `translateY(${(-100 * i) / links.length}%)`;
+			for (const faixa of faixas)
+				faixa.style.transform = `translateY(${(-100 * i) / links.length}%)`;
 			janelaNome.style.inlineSize = `${nomesDaFaixa[i].offsetWidth}px`;
 			atual.textContent = link.dataset.texto ?? "";
 			for (const l of links) {
@@ -457,11 +478,11 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		// de uma seção (case), observa a seção inteira: no desktop o título fica oculto (1 px).
 		const secoes = links
 			.map((link) => {
-				const id = decodeURIComponent((link.dataset.href ?? "").split("#")[1] ?? "");
+				const id = decodeURIComponent((link.getAttribute("href") ?? "").split("#")[1] ?? "");
 				const alvoSecao = id ? document.getElementById(id) : null;
 				return { link, alvo: alvoSecao?.closest<HTMLElement>("section") ?? alvoSecao };
 			})
-			.filter((s): s is { link: HTMLButtonElement; alvo: HTMLElement } => s.alvo !== null);
+			.filter((s): s is { link: HTMLAnchorElement; alvo: HTMLElement } => s.alvo !== null);
 
 		// Pronta antes de medir: sem isso, a lista e o detalhe ainda estão escondidos (tamanho 0).
 		ilha.setAttribute("data-pronta", "");
@@ -762,6 +783,7 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		border: 0;
 		background: transparent;
 		color: var(--ilha-texto);
+		text-decoration: none;
 		font: inherit;
 		font-size: var(--text-rotulo);
 		font-weight: var(--peso-titulo);

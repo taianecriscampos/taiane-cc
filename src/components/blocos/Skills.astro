@@ -4,7 +4,7 @@
  * de 1200 px; abaixo disso, uma embaixo da outra, na largura toda (rodada 1f). Títulos em rótulo (16/24, secundário).
  * Nas duas, pílulas lado a lado que quebram linha quando acaba o espaço: nunca uma por linha.
  * Pílula cinza, sem borda e sem sombra, texto pequeno (14/20) e espaços da escala (8 e 16):
- * 36 px de altura. Não são clicáveis: nada de hover.
+ * 36 px de altura. Não são clicáveis, mas têm hover sutil só com mouse (sobe 2 px, fundo escurece).
  * Logo abaixo das pílulas, a faixa de ferramentas (Ferramentas.astro), parte desta seção,
  * sem título próprio, a 48 px da última pílula (rodada 1f).
  */
@@ -74,6 +74,17 @@ const colunas = [
 		color: var(--skill-pilula-texto);
 		font-size: var(--text-pequeno);
 		line-height: var(--leading-pequeno);
+		transition:
+			transform var(--pilula-hover-duracao) var(--motion-ease-out),
+			background-color var(--pilula-hover-duracao) var(--motion-ease-out);
+	}
+
+	/* Hover só com mouse: sobe 2 px e o fundo escurece um pouco. */
+	@media (hover: hover) and (pointer: fine) {
+		.skills__pilula:hover {
+			background: var(--skill-pilula-fundo-hover);
+			transform: translateY(calc(-1 * var(--pilula-hover-subida)));
+		}
 	}
 
 	/* Entre a faixa e o rodapé, o mesmo espaço que separa duas seções: o respiro de baixo desta

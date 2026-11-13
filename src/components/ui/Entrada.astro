@@ -69,8 +69,10 @@ const emConstrucao = !href;
 	)}
 
 	<div class="entrada__meta">
-		<p>
-			<time datetime={String(ano)}>{ano}</time>, {onde}
+		<p class="entrada__origem">
+			<span class="entrada__origem-texto">
+				<time datetime={String(ano)}>{ano}</time>, {onde}
+			</span>
 		</p>
 		{emConstrucao ? (
 			<p class="entrada__construcao">
@@ -117,6 +119,7 @@ const emConstrucao = !href;
 	.entrada__link {
 		color: var(--link-cor);
 		text-decoration: none;
+		cursor: pointer;
 	}
 
 	/* Estende a área de clique do link para a entrada toda. */
@@ -124,6 +127,7 @@ const emConstrucao = !href;
 		content: "";
 		position: absolute;
 		inset: 0;
+		cursor: pointer;
 	}
 
 	.entrada__link:focus-visible {
@@ -170,8 +174,35 @@ const emConstrucao = !href;
 		color: var(--color-texto-secundario);
 	}
 
+	/* Mesmo sublinhado que cresce do botão da abertura, no "ano, onde". */
+	.entrada__origem-texto {
+		position: relative;
+		/* O clique passa para a área do link, que cobre a entrada toda. */
+		pointer-events: none;
+	}
+
+	.entrada__origem-texto::after {
+		content: "";
+		position: absolute;
+		inset-inline: 0;
+		inset-block-end: 0;
+		block-size: var(--link-sublinhado);
+		background: currentColor;
+		transform: scaleX(0);
+		transform-origin: left center;
+		transition: transform var(--motion-duration-base) var(--motion-ease-out);
+	}
+
+	.entrada:has(.entrada__link:focus-visible) .entrada__origem-texto::after {
+		transform: scaleX(1);
+	}
+
 	/* A seta avança um pouco quando a entrada recebe o ponteiro ou o foco. */
 	@media (hover: hover) and (pointer: fine) {
+		.entrada:not([data-em-construcao]):hover .entrada__origem-texto::after {
+			transform: scaleX(1);
+		}
+
 		.entrada:hover :global(.seta__icone) {
 			transform: translate(var(--space-fio), calc(-1 * var(--space-fio)));
 		}
