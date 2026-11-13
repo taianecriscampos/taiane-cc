@@ -162,6 +162,10 @@ const partes = (periodo: string) => periodo.split("–");
 	/* "não concluída": só texto, em itálico, na cor secundária (inativo), ao lado do ano.
 	   #4d575f sobre o fundo da página: 7,07:1. */
 	.sobre__inativo {
+		font-size: var(
+			--text-pequeno
+		); /* 14 px, o menor tamanho da escala: menor que o ano, ainda legível */
+		line-height: 1;
 		font-style: italic;
 		color: var(--color-texto-secundario);
 	}
