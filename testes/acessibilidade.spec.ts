@@ -11,7 +11,12 @@ for (const pagina of paginas) {
 		// em paralelo): mais tempo em todas as páginas, sem mudar o que é verificado.
 		test.slow();
 		await page.goto(pagina);
-		const resultado = await new AxeBuilder({ page }).withTags(regrasWcag22AA).analyze();
+		// Exceção de contraste decidida pela Taiane (ver CLAUDE.md): só o "não concluída" da seção
+		// Sobre, que é detalhe decorativo. Qualquer outro elemento continua sendo verificado.
+		const resultado = await new AxeBuilder({ page })
+			.withTags(regrasWcag22AA)
+			.exclude(".sobre__inativo")
+			.analyze();
 		expect(resultado.violations).toEqual([]);
 	});
 }
