@@ -57,6 +57,13 @@ evite tabelas longas e símbolos desnecessários nas respostas.
   um resumo que responde "quem, o quê, resultado" em até 3 frases; /llms.txt; robots.txt liberando
   buscadores e assistentes de IA; nome e cargo idênticos em todos os perfis.
 
+## Exceção de contraste (decisão da Taiane)
+
+O "não concluída" da seção Sobre (`.sobre__inativo`) usa #A3ABB3 sobre #fafafa, cerca de 2,2:1,
+abaixo do AA (4,5:1). É decisão dela, por ser detalhe decorativo. A exceção vale só para esse
+elemento: ele é excluído da checagem de contraste em `testes/acessibilidade.spec.ts`. Todo o resto
+segue no AA.
+
 ## Proibido (para não parecer gerado por IA)
 
 Cartões com borda e sombra genéricos, gradientes roxos, emojis na interface (única exceção,

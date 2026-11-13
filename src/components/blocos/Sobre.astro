@@ -159,15 +159,16 @@ const partes = (periodo: string) => periodo.split("–");
 		gap: var(--space-pequeno);
 	}
 
-	/* "não concluída": só texto, em itálico, na cor secundária (inativo), ao lado do ano.
-	   #4d575f sobre o fundo da página: 7,07:1. */
+	/* "não concluída": só texto, em itálico, em #A3ABB3 (inativo), ao lado do ano.
+	   #A3ABB3 sobre #fafafa: cerca de 2,2:1, abaixo do AA por decisão da Taiane (detalhe decorativo).
+	   Exceção registrada no CLAUDE.md e em testes/acessibilidade.spec.ts. */
 	.sobre__inativo {
 		font-size: var(
 			--text-pequeno
 		); /* 14 px, o menor tamanho da escala: menor que o ano, ainda legível */
 		line-height: 1;
 		font-style: italic;
-		color: var(--color-texto-secundario);
+		color: #a3abb3;
 	}
 
 	/* Tablet: Resumo e currículo em cima; Experiência e Formação lado a lado embaixo. */
