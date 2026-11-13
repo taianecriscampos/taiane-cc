@@ -140,6 +140,7 @@
 	--prim-duration-200: 0.2s;
 	--prim-duration-280: 0.28s;
 	--prim-duration-300: 0.3s;
+	--prim-duration-350: 0.35s; /* sumário do case que se reorganiza */
 	--prim-duration-380: 0.38s;
 	--prim-duration-500: 0.5s; /* crescimento da ilha com mola (docs/movimento-ilha.md) */
 	--prim-intervalo-35: 35ms; /* entre itens de uma lista que entra em sequência */
@@ -258,6 +259,7 @@
 	--motion-duration-rapida: var(--prim-duration-200);
 	--motion-duration-base: var(--prim-duration-280);
 	--motion-duration-abrir: var(--prim-duration-300);
+	--motion-duration-reorganizar: var(--prim-duration-350);
 	--motion-duration-virar: var(--prim-duration-380); /* cartão que vira, decisão da Taiane */
 	--motion-duration-esmaecer: var(
 		--prim-duration-150
@@ -356,6 +358,13 @@
 	--ilha-intervalo-lista: var(--prim-intervalo-35);
 	--ilha-deslize-item: var(--prim-space-8);
 	--ilha-focus-cor: var(--color-vidro-texto);
+
+	/* Sumário do case: encolher e reorganizar sem mola, ease-out forte. */
+	--sumario-duracao: var(--motion-duration-reorganizar);
+	--sumario-curva: var(--motion-ease-out);
+	--sumario-deslize: var(--space-pequeno); /* título que entra ou sai */
+	--sumario-hover-duracao: var(--motion-duration-rapida);
+	--sumario-hover-deslize: var(--space-fio);
 
 	--status-ponto: var(--prim-size-8);
 	--status-cor: var(--color-status);

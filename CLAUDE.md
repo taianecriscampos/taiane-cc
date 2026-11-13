@@ -64,6 +64,13 @@ abaixo do AA (4,5:1). É decisão dela, por ser detalhe decorativo. A exceção 
 elemento: ele é excluído da checagem de contraste em `testes/acessibilidade.spec.ts`. Todo o resto
 segue no AA.
 
+## Exceção de movimento (decisão da Taiane)
+
+No sumário lateral do case (`.sumario__item` em `LayoutCase.astro`), o peso da letra e o espaço entre
+letras mudam aos poucos (transição de `font-weight` e `letter-spacing`), junto com o encolher do título,
+em vez de trocar de uma vez. Foge da regra "só transform e opacity"; vale só para esse elemento.
+Todo o resto do movimento segue só com transform e opacity.
+
 ## Proibido (para não parecer gerado por IA)
 
 Cartões com borda e sombra genéricos, gradientes roxos, emojis na interface (única exceção,
