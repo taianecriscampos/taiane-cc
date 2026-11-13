@@ -115,6 +115,24 @@
 		color: var(--color-inverso-texto);
 	}
 
+	/* Rolagem suave nos links internos (o scroll-padding acima desconta o cabeçalho) e esmaecimento
+	   simples entre páginas (View Transitions nativas, sem JavaScript). Só sem pedido de menos movimento. */
+	@media (prefers-reduced-motion: no-preference) {
+		html {
+			scroll-behavior: smooth;
+		}
+
+		@view-transition {
+			navigation: auto;
+		}
+
+		::view-transition-old(root),
+		::view-transition-new(root) {
+			animation-duration: var(--transicao-pagina-duracao);
+			animation-timing-function: var(--motion-ease-out);
+		}
+	}
+
 	/* Quem pede menos movimento não recebe animação nenhuma. A exceção é data-esmaecer: quem troca
 	   de estado por esmaecimento (o cartão que vira) mantém só a transição de opacidade, curta. */
 	@media (prefers-reduced-motion: reduce) {

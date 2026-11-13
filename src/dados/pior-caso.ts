@@ -27,7 +27,6 @@ export const perfilPiorCaso: Perfil = {
 	substack: "https://exemplo.example.com/",
 	github: "https://github.com/exemplo",
 	designDivergente: "https://exemplo.example.com/",
-	curriculo: { href: "/curriculo.pdf", disponivel: true },
 };
 
 /** Exatamente 60 caracteres, o limite de `titulo`. */

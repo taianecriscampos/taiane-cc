@@ -6,6 +6,23 @@ e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+## [1.1.0] - 2026-11-13
+
+### Adicionado
+
+- Rolagem suave nos links internos e esmaecimento entre páginas (View Transitions nativas), ambos desligados com movimento reduzido.
+- Hover sutil nas pílulas de Skills e de disciplina dos cases; sublinhado no "ano, local" dos Artigos.
+- Sumário do case com encolher suave e ilha com três níveis.
+
+### Alterado
+
+- A linha inteira de cada artigo é clicável, com cursor de mão.
+- "Currículo em PDF" fica visível e desativado (aria-disabled, cursor not-allowed), com exceção de contraste.
+
+### Removido
+
+- `public/curriculo.pdf`: o telefone não está mais publicado.
+
 ## [1.0.0] - 2026-11-12
 
 Lançamento do taiane.cc.

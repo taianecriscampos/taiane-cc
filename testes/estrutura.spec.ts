@@ -89,7 +89,13 @@ test("o cabeçalho leva às seções da página inicial e de volta ao início", 
 	const links = navegacao.getByRole("link");
 	await expect(links).toHaveCount(nomes.length);
 	for (const [i, nome] of nomes.entries()) await expect(links.nth(i)).toHaveAccessibleName(nome);
-	await navegacao.getByRole("link", { name: "Sobre" }).click();
+	// Cada item é um link de verdade (funciona sem JavaScript): aponta para a seção.
+	for (const [i, id] of ["inicio", "projetos", "artigos", "sobre", "skills"].entries()) {
+		await expect(links.nth(i)).toHaveAttribute("href", new RegExp(`#${id}$`));
+	}
+	// Com JavaScript, o clique mostra o detalhe; "Ir para a seção" leva até lá.
+	await links.nth(3).click();
+	await navegacao.getByRole("link", { name: /^Ir para a seção/ }).click();
 	await expect(page).toHaveURL(/\/#sobre$/);
 	// A ilha fecha depois da escolha e passa a mostrar a seção escolhida.
 	const menu = page.locator(".ilha__botao");
@@ -105,7 +111,7 @@ test("pelo teclado, a ilha leva o foco à seção atual, anda com as setas e fec
 }) => {
 	await page.goto("/");
 	const menu = page.locator(".ilha__botao");
-	const links = page.locator("#ilha-painel a");
+	const links = page.locator("#ilha-painel .ilha__link");
 	await menu.focus();
 	await page.keyboard.press("Enter");
 	await expect(menu).toHaveAttribute("aria-expanded", "true");
@@ -134,12 +140,12 @@ test("o botão Fechar da ilha fecha o painel e devolve o foco", async ({ page })
 test("no case, o cabeçalho leva a cada seção do texto", async ({ page }) => {
 	await page.goto("/cases/funis-interativos");
 	await abrirIlha(page);
-	const links = page.getByRole("navigation", { name: "Neste case" }).getByRole("link");
-	// Visão geral e as seis seções do case.
+	const links = page.locator("#ilha-painel .ilha__link");
+	// Visão geral e as seis seções do case, cada uma um link para o seu trecho.
 	await expect(links).toHaveCount(7);
 	for (const link of await links.all()) {
 		const alvo = (await link.getAttribute("href")) ?? "";
-		await expect(page.locator(alvo)).toHaveCount(1);
+		await expect(page.locator(alvo.replace(/^.*#/, "#"))).toHaveCount(1);
 	}
 });
 
@@ -260,12 +266,10 @@ test("o Sobre traz o currículo em PDF e o LinkedIn, os dois em nova aba", async
 	for (const titulo of ["Resumo", "Experiência profissional", "Formação acadêmica"]) {
 		await expect(sobre.getByRole("heading", { name: titulo, exact: true })).toHaveCount(1);
 	}
-	const curriculo = sobre.getByRole("link", { name: /^Currículo em PDF/ });
-	await expect(curriculo).toHaveAttribute("href", "/curriculo.pdf");
-	await expect(curriculo).toHaveAttribute("target", "_blank");
-	const resposta = await page.request.get("/curriculo.pdf");
-	expect(resposta.ok()).toBe(true);
-	expect(resposta.headers()["content-type"]).toContain("pdf");
+	// Currículo em PDF fora do ar: visível, mas desativado (sem href, sem seta).
+	const curriculo = sobre.getByRole("link", { name: "Currículo em PDF" });
+	await expect(curriculo).toHaveAttribute("aria-disabled", "true");
+	await expect(curriculo).not.toHaveAttribute("href");
 	await expect(sobre.getByRole("link", { name: /^Mais informações no LinkedIn/ })).toHaveAttribute(
 		"target",
 		"_blank",
@@ -345,17 +349,17 @@ test("no desktop, o sumário do case empilha as seções lidas e marca a atual",
 	await page.goto("/cases/funis-interativos");
 	const sumario = page.getByRole("navigation", { name: "Sumário do case" });
 	await expect(sumario).toBeVisible();
-	await expect(sumario.locator('[aria-current="location"]')).toHaveText("Visão geral");
+	await expect(sumario.locator('[aria-current="location"]')).toHaveAccessibleName("Visão geral");
 	// No fim do texto: as seis primeiras (Visão geral e cinco tópicos) ficam pequenas.
 	await page
 		.locator(".case-secao")
 		.last()
 		.evaluate((s) => s.scrollIntoView());
-	await expect(sumario.locator('[aria-current="location"]')).toHaveText("Aprendizados");
+	await expect(sumario.locator('[aria-current="location"]')).toHaveAccessibleName("Aprendizados");
 	await expect(sumario.locator('[data-estado="lida"]')).toHaveCount(6);
 	// Um item pequeno leva de volta à seção.
 	await sumario.getByRole("link", { name: "Problema" }).click();
-	await expect(sumario.locator('[aria-current="location"]')).toHaveText("Problema");
+	await expect(sumario.locator('[aria-current="location"]')).toHaveAccessibleName("Problema");
 	await expect(sumario.locator('[data-estado="proxima"]')).toHaveCount(4);
 });
 

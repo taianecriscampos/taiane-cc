@@ -27,11 +27,6 @@ export interface Perfil {
 	substack: string;
 	github: string;
 	designDivergente: string;
-	curriculo: {
-		href: string;
-		/** false esconde o link e mostra "em breve". */
-		disponivel: boolean;
-	};
 }
 
 export const perfil: Perfil = {
@@ -52,5 +47,4 @@ export const perfil: Perfil = {
 	substack: "https://taianecriscampos.substack.com/",
 	github: "https://github.com/taianecriscampos",
 	designDivergente: "https://designdivergente.blog/",
-	curriculo: { href: "/curriculo.pdf", disponivel: true },
 };

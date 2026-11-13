@@ -17,6 +17,7 @@
 	/* Cor. Contraste medido sobre --prim-color-cinza-50. */
 	--prim-color-cinza-50: #fafafa;
 	--prim-color-cinza-100: #e5e8ec; /* fundo secundário, sem texto claro em cima */
+	--prim-color-cinza-150: #d9dde2; /* fundo secundário no hover das pílulas */
 	--prim-color-cinza-300: #cbd0d6; /* 1,49:1, só divisórias */
 	--prim-color-cinza-500: #9aa3ab; /* só formas decorativas, sem texto */
 	--prim-color-cinza-700: #4d575f; /* 7,07:1 */
@@ -125,6 +126,7 @@
 	--prim-size-1800: 112.5rem;
 	--prim-colunas-12: 12;
 	--prim-desfoque-2: blur(2px);
+	--prim-desfoque-6: blur(6px);
 	--prim-desfoque-15: blur(15px);
 	--prim-desfoque-20: blur(20px);
 
@@ -139,12 +141,16 @@
 	--prim-duration-200: 0.2s;
 	--prim-duration-280: 0.28s;
 	--prim-duration-300: 0.3s;
+	--prim-duration-350: 0.35s; /* sumário do case que se reorganiza */
 	--prim-duration-380: 0.38s;
+	--prim-duration-500: 0.5s; /* crescimento da ilha com mola (docs/movimento-ilha.md) */
+	--prim-intervalo-35: 35ms; /* entre itens de uma lista que entra em sequência */
 	--prim-duration-1000: 1s;
 	--prim-duration-2000: 2s;
 	--prim-duration-8000: 8s;
 	--prim-duration-18000: 18s; /* letreiro de Ferramentas: uma ida */
 	--prim-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--prim-ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
 	--prim-ease-in-out-suave: ease-in-out; /* movimento longo e contínuo: desacelera nas pontas */
 	/* Mola leve: passa 3% do destino e assenta. Curva desenhada ponto a ponto, sem biblioteca. */
 	--prim-ease-mola: linear(0, 0.3 8%, 0.69 18%, 0.93 29%, 1.025 39%, 1.03 47%, 1.01 62%, 1);
@@ -159,6 +165,8 @@
 	--color-fundo-secundario: var(--prim-color-cinza-100);
 	--color-texto: var(--prim-color-cinza-900);
 	--color-texto-secundario: var(--prim-color-cinza-700);
+	--color-fundo-secundario-hover: var(--prim-color-cinza-150);
+	--color-texto-desativado: #a3abb3; /* mesmo cinza do "não concluída"; só para o Currículo desativado */
 	--color-borda: var(--prim-color-cinza-300);
 	--color-forma-decorativa: var(--prim-color-cinza-500); /* ilustrações, nunca texto */
 	--color-marca: var(--prim-color-vermelho);
@@ -254,6 +262,7 @@
 	--motion-duration-rapida: var(--prim-duration-200);
 	--motion-duration-base: var(--prim-duration-280);
 	--motion-duration-abrir: var(--prim-duration-300);
+	--motion-duration-reorganizar: var(--prim-duration-350);
 	--motion-duration-virar: var(--prim-duration-380); /* cartão que vira, decisão da Taiane */
 	--motion-duration-esmaecer: var(
 		--prim-duration-150
@@ -338,13 +347,37 @@
 	--ilha-ponto: var(--prim-size-6);
 	--ilha-raio-aberta: var(--radius-grande);
 	--ilha-largura-aberta: 20rem;
+	--ilha-largura-detalhe: 24rem; /* nível 3: a ilha cresce de novo a partir da lista */
+	/* Mola por movimento: todo crescimento passa do tamanho final sempre pelos mesmos 6 px,
+	   cresça pouco ou muito. Encolher não tem mola: só assenta com ease-out forte. */
+	--ilha-mola-sobra: 6px;
+	--ilha-mola-pico: 0.55; /* em que ponto do tempo a ilha chega ao máximo da sobra */
+	--ilha-crescer: var(--prim-duration-500);
+	--ilha-encolher: var(--motion-duration-base);
+	--ilha-curva-subida: var(--motion-ease-out);
+	--ilha-curva-assentar: var(--prim-ease-in-out);
+	--ilha-folga-fundo: 8px; /* espaço em volta do vidro para a sobra da mola aparecer */
+	--ilha-desfoque-saida: var(--prim-desfoque-6); /* conteúdo que sai; o novo entra nítido */
+	--ilha-intervalo-lista: var(--prim-intervalo-35);
+	--ilha-deslize-item: var(--prim-space-8);
 	--ilha-focus-cor: var(--color-vidro-texto);
+
+	/* Sumário do case: encolher e reorganizar sem mola, ease-out forte. */
+	--sumario-duracao: var(--motion-duration-reorganizar);
+	--sumario-curva: var(--motion-ease-out);
+	--sumario-deslize: var(--space-pequeno); /* título que entra ou sai */
+	--sumario-hover-duracao: var(--motion-duration-rapida);
+	--sumario-hover-deslize: var(--space-fio);
 
 	--status-ponto: var(--prim-size-8);
 	--status-cor: var(--color-status);
 
 	--etiqueta-espaco: var(--space-fio) var(--space-pequeno);
 	--pilula-fundo: var(--color-fundo-secundario);
+	--pilula-fundo-hover: var(--color-fundo-secundario-hover);
+	--pilula-hover-subida: var(--space-fio);
+	--pilula-hover-duracao: var(--motion-duration-rapida);
+	--transicao-pagina-duracao: 250ms;
 	--pilula-espaco: var(--space-minimo) var(--space-medio);
 	--capa-raio: var(--radius-cartao);
 	--destaque-proporcao: 16 / 9;
@@ -381,6 +414,7 @@
 	--skill-pilula-espaco: var(--space-pequeno) var(--space-medio); /* 14/20 + 8 + 8 = 36 px */
 	--skill-pilula-intervalo: var(--space-pequeno);
 	--skill-pilula-fundo: var(--color-fundo-secundario);
+	--skill-pilula-fundo-hover: var(--color-fundo-secundario-hover);
 	--skill-pilula-texto: var(--color-texto);
 	/* Cartões de Projetos (ajuste rápido depois da 1f): frente sem fundo, contorno de 1 px e os
 	   textos nas cores do site. */

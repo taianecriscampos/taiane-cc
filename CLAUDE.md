@@ -59,10 +59,18 @@ evite tabelas longas e símbolos desnecessários nas respostas.
 
 ## Exceção de contraste (decisão da Taiane)
 
-O "não concluída" da seção Sobre (`.sobre__inativo`) usa #A3ABB3 sobre #fafafa, cerca de 2,2:1,
-abaixo do AA (4,5:1). É decisão dela, por ser detalhe decorativo. A exceção vale só para esse
-elemento: ele é excluído da checagem de contraste em `testes/acessibilidade.spec.ts`. Todo o resto
-segue no AA.
+O "não concluída" da seção Sobre (`.sobre__inativo`) e o "Currículo em PDF" desativado
+(`.sobre__desativado`) usam #A3ABB3 sobre #fafafa, cerca de 2,2:1, abaixo do AA (4,5:1). É decisão
+dela: o primeiro é detalhe decorativo; o segundo é componente inativo, que a WCAG 1.4.3 dispensa
+de contraste. A exceção vale só para esses dois elementos, excluídos da checagem de contraste em
+`testes/acessibilidade.spec.ts`. Todo o resto segue no AA.
+
+## Exceção de movimento (decisão da Taiane)
+
+No sumário lateral do case (`.sumario__item` em `LayoutCase.astro`), o peso da letra e o espaço entre
+letras mudam aos poucos (transição de `font-weight` e `letter-spacing`), junto com o encolher do título,
+em vez de trocar de uma vez. Foge da regra "só transform e opacity"; vale só para esse elemento.
+Todo o resto do movimento segue só com transform e opacity.
 
 ## Proibido (para não parecer gerado por IA)
 

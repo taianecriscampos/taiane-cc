@@ -2,9 +2,9 @@
 
 Atualize este arquivo ao final de cada tarefa.
 
-**Versão atual:** 1.0.0 (Lançamento)
-**Etapa atual:** 1.0.0 Lançamento
-**Fase da etapa:** 1.0.a Ajustes do celular, redirecionamento removido, pull request e etiqueta v1.0.0 · desempenho no celular abaixo da meta, anotado como pendência
+**Versão atual:** 1.1.0 (Ajustes rápidos: rolagem suave, hovers, transição de página, currículo desativado)
+**Etapa atual:** 1.1.0 Movimento (publicada em 13/11/2026)
+**Fase da etapa:** 1.1.b Sumário do case com movimento suave · aprovado pela Taiane no localhost
 **Direção de arte (0.3.0):** aprovada pela Taiane
 **Status geral:** Publicado em 12/11/2026 (v1.0.0, conferido em taiane.cc: página, robots, sitemap, sem noindex e cabeçalhos de segurança)
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
@@ -282,6 +282,26 @@ Ramificação design. Um commit só.
   abaixo da linha da cidade e da hora, sem cobrir texto (espaço extra no fim do rodapé).
 - Redirecionamento temporário para o Linktree removido do `vercel.json`.
 - package.json e CHANGELOG.md em 1.0.0; pull request da design para a main e etiqueta v1.0.0.
+
+## Versão 1.1.0 (em andamento)
+
+Ramificação design, sem envio ao GitHub. Efeitos da v1.1 aprovados (ver seção acima).
+
+- **1.1.a Ilha** (`docs/movimento-ilha.md`), aprovada pela Taiane: três níveis (cápsula, lista e
+  detalhe da seção com frase curta de `src/dados/frase-da-secao.ts`), mola por movimento só ao
+  crescer, encolher sem mola, troca de conteúdo com desfoque. Commit `4eca6b9`.
+- **1.1.b Sumário do case**, aprovado pela Taiane em /cases/funis-interativos:
+  - Ao mudar de seção, o título que sai encolhe por escala a partir do canto e passa para o
+    cinza ao mesmo tempo (cópia escura por cima, que esmaece). Os itens deslizam para o novo
+    lugar (FLIP); o título novo entra com opacidade e 8 px de deslize. Sem mola, ease-out, 350 ms.
+  - Peso e espaço entre letras mudam aos poucos junto com o encolher: exceção à regra "só
+    transform e opacity", registrada no CLAUDE.md.
+  - Rolagem rápida: espera de 100 ms e um movimento só até a seção final; troca no meio parte
+    de onde os itens estão. Rolando para cima, o caminho inverso.
+  - Hover só com mouse (texto principal e 2 px de deslize); clique rola suave até a seção e leva
+    o foco ao título. Movimento reduzido: troca instantânea.
+  - Tokens novos: `--motion-duration-reorganizar` (350 ms) e `--sumario-*`.
+  - Qualidade: check sem erros, formatação ok. Testes ainda não rodados nesta etapa.
 
 ## Pendências anotadas
 

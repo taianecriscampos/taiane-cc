@@ -26,6 +26,7 @@ import { getImage } from "astro:assets";
 import { perfil } from "../../dados/perfil";
 import { artigoDoCase } from "../../dados/dados-estruturados";
 import { imagemPadrao, urlAbsoluta } from "../../dados/site";
+import { encurtar, fraseDaSecao } from "../../dados/frase-da-secao";
 import CabecalhoCase from "../blocos/CabecalhoCase.astro";
 import FechamentoCase from "../blocos/FechamentoCase.astro";
 import VisaoGeralCase from "../blocos/VisaoGeralCase.astro";
@@ -68,20 +69,35 @@ const minutos = Math.max(1, Math.ceil(palavras / 200));
  * O que vem antes do primeiro título (só comentários) fica de fora.
  */
 const html = await Astro.slots.render("default");
-const corpo = html
+const partes = html
 	.split(/(?=<h2[\s>])/)
 	.filter((parte) => parte.startsWith("<h2"))
 	.map((parte) => {
 		const fim = parte.indexOf("</h2>") + "</h2>".length;
-		return `<section class="case-secao">${parte.slice(0, fim)}<div class="case-secao__texto">${parte.slice(fim)}</div></section>`;
-	})
+		return { titulo: parte.slice(0, fim), texto: parte.slice(fim) };
+	});
+const corpo = partes
+	.map(
+		({ titulo, texto }) =>
+			`<section class="case-secao">${titulo}<div class="case-secao__texto">${texto}</div></section>`,
+	)
 	.join("");
+
+// Ilha, nível 3: cada seção com a primeira frase do próprio texto (encurtada se passar de 80
+// caracteres). A Visão geral usa a primeira frase do resumo.
+const secoesDaIlha = secoes.map((s, i) => ({ ...s, frase: fraseDaSecao(partes[i]?.texto ?? "") }));
+const visaoGeralDaIlha = {
+	texto: "Visão geral",
+	href: "#visao-geral",
+	frase: encurtar(dados.resumo.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? dados.resumo),
+};
 ---
 
 <LayoutBase
 	titulo={`${dados.titulo} · ${perfil.nome}`}
 	descricao={dados.resumo}
-	secoesDoCase={secoes}
+	secoesDoCase={secoesDaIlha}
+	inicioDoCase={visaoGeralDaIlha}
 	tipo="article"
 	imagem={imagemOg}
 	dadosEstruturados={artigoDoCase({
@@ -120,6 +136,9 @@ const corpo = html
 								aria-current={i === 0 ? "location" : undefined}
 							>
 								{secao.texto}
+								<span class="sumario__realce" aria-hidden="true">
+									{secao.texto}
+								</span>
 							</a>
 						</li>
 					))}
@@ -150,10 +169,20 @@ const corpo = html
 
 <script>
 	/*
-	 * Sumário que se empilha. Uma linha imaginária a 45% da altura da janela (a mesma da ilha) decide a seção atual:
-	 * a última seção que já cruzou essa linha. O IntersectionObserver avisa quando alguma seção
-	 * entra ou sai da faixa acima da linha; não há cálculo a cada rolagem.
+	 * Sumário que se empilha. Uma linha imaginária a 45% da altura da janela (a mesma da ilha) decide a
+	 * seção atual: a última seção que já cruzou essa linha. O IntersectionObserver avisa quando alguma
+	 * seção cruza a faixa acima da linha; não há cálculo a cada rolagem.
+	 *
+	 * Movimento (sem mola, ease-out forte, cerca de 350 ms, só transform e opacity):
+	 * - O título que sai encolhe por escala a partir do canto, e o realce (texto principal por cima
+	 *   do secundário) esmaece ao mesmo tempo: a cor muda sem animar a propriedade color.
+	 * - Os itens que continuam deslizam para o novo lugar (FLIP). O título novo entra com opacidade e
+	 *   um deslize curto; quem sai (rolando para cima) esmaece e desce numa cópia sem leitor de tela.
+	 * - Rolagem rápida: espera curta (ESPERA) para a seção se firmar e vai direto até a final. Uma
+	 *   troca no meio parte de onde cada item está naquele instante, sem pulo.
+	 * - Movimento reduzido ou sumário escondido (abaixo de 1200 px): troca instantânea, sem espera.
 	 */
+	const ESPERA = 100;
 	const nav = document.querySelector<HTMLElement>("[data-sumario]");
 	const itens = [...(nav?.querySelectorAll<HTMLLIElement>(".sumario__item") ?? [])];
 	const secoes = itens.map((item) => {
@@ -161,23 +190,79 @@ const corpo = html
 		return document.getElementById(decodeURIComponent(alvo.slice(1)))?.closest("section") ?? null;
 	});
 	const reduzido = matchMedia("(prefers-reduced-motion: reduce)");
-	const curva = getComputedStyle(document.documentElement)
-		.getPropertyValue("--motion-ease-out")
-		.trim();
+	const raiz = getComputedStyle(document.documentElement);
+	const token = (nome: string) => raiz.getPropertyValue(nome).trim();
+	const emMs = (valor: string) => parseFloat(valor) * (valor.endsWith("ms") ? 1 : 1000);
+	const emPx = (valor: string) =>
+		parseFloat(valor) * (valor.endsWith("rem") ? parseFloat(raiz.fontSize) : 1);
+	const opcoes: KeyframeAnimationOptions = {
+		duration: emMs(token("--sumario-duracao")) || 350,
+		easing: token("--sumario-curva") || "ease-out",
+	};
+	const deslize = emPx(token("--sumario-deslize")) || 8;
 	let atual = 0;
 
+	type Foto = {
+		estado: string;
+		caixa: DOMRect;
+		escala: number;
+		letra: number;
+		opacidade: number;
+		transform: string;
+		topo: number;
+		esquerda: number;
+		largura: number;
+	};
+
+	/** Como o item aparece agora, com a animação em curso, se houver. */
+	const fotografar = (item: HTMLLIElement): Foto | null => {
+		if (item.dataset.estado === "proxima") return null;
+		const estilo = getComputedStyle(item);
+		const caixa = item.getBoundingClientRect();
+		return {
+			estado: item.dataset.estado ?? "lida",
+			caixa,
+			escala: item.offsetWidth ? caixa.width / item.offsetWidth : 1,
+			letra: parseFloat(estilo.fontSize),
+			opacidade: parseFloat(estilo.opacity),
+			transform: estilo.transform === "none" ? "" : estilo.transform,
+			topo: item.offsetTop,
+			esquerda: item.offsetLeft,
+			largura: item.offsetWidth,
+		};
+	};
+
+	/** Quem sai do sumário esmaece e desce numa cópia; o item de verdade já está escondido. */
+	const sair = (item: HTMLLIElement, foto: Foto) => {
+		if (!nav) return;
+		const copia = item.cloneNode(true) as HTMLLIElement;
+		copia.dataset.estado = foto.estado;
+		copia.setAttribute("aria-hidden", "true");
+		copia.inert = true;
+		Object.assign(copia.style, {
+			position: "absolute",
+			insetBlockStart: `${foto.topo}px`,
+			insetInlineStart: `${foto.esquerda}px`,
+			inlineSize: `${foto.largura}px`,
+			pointerEvents: "none",
+		});
+		nav.append(copia);
+		const de = foto.transform || "none";
+		copia
+			.animate(
+				[
+					{ opacity: foto.opacidade, transform: de },
+					{ opacity: 0, transform: `${foto.transform} translateY(${deslize}px)` },
+				],
+				opcoes,
+			)
+			.finished.finally(() => copia.remove());
+	};
+
 	/** Mostra a seção `indice` como atual: as de antes ficam pequenas e as de depois somem. */
-	const marcar = (indice: number) => {
+	const marcar = (indice: number, animar: boolean) => {
 		if (indice === atual) return;
-		// FLIP: guarda onde cada item visível estava e o tamanho da letra, troca e anima a diferença.
-		const antes = itens.map((item) =>
-			item.dataset.estado === "proxima"
-				? null
-				: {
-						caixa: item.getBoundingClientRect(),
-						letra: parseFloat(getComputedStyle(item).fontSize),
-					},
-		);
+		const antes = itens.map(fotografar);
 		itens.forEach((item, i) => {
 			item.dataset.estado = i < indice ? "lida" : i === indice ? "atual" : "proxima";
 			const link = item.querySelector("a");
@@ -185,50 +270,85 @@ const corpo = html
 			else link?.removeAttribute("aria-current");
 		});
 		atual = indice;
-		// Sem sumário visível (abaixo de 1200 px) ou com movimento reduzido: troca sem animação.
-		if (reduzido.matches || !nav?.offsetParent) return;
-		const opcoes = { duration: 300, easing: curva || "ease-out" };
+
 		itens.forEach((item, i) => {
-			if (item.dataset.estado === "proxima") return;
-			const anterior = antes[i];
-			if (!anterior) {
+			item.getAnimations().forEach((a) => a.cancel());
+			if (!animar) return;
+			const foto = antes[i];
+			if (item.dataset.estado === "proxima") {
+				if (foto) sair(item, foto);
+				return;
+			}
+			if (!foto) {
 				item.animate(
 					[
-						{ opacity: 0, transform: "translateY(0.5rem)" },
+						{ opacity: 0, transform: `translateY(${deslize}px)` },
 						{ opacity: 1, transform: "none" },
 					],
 					opcoes,
 				);
 				return;
 			}
+			// FLIP: do jeito que estava (lugar, tamanho visível e opacidade) até o novo lugar.
 			const caixa = item.getBoundingClientRect();
-			const escala = anterior.letra / parseFloat(getComputedStyle(item).fontSize);
-			const dx = anterior.caixa.left - caixa.left;
-			const dy = anterior.caixa.top - caixa.top;
-			if (escala === 1 && dx === 0 && dy === 0) return;
+			const escala = (foto.letra * foto.escala) / parseFloat(getComputedStyle(item).fontSize);
+			const dx = foto.caixa.left - caixa.left;
+			const dy = foto.caixa.top - caixa.top;
+			if (
+				Math.abs(escala - 1) < 0.001 &&
+				Math.abs(dx) < 0.5 &&
+				Math.abs(dy) < 0.5 &&
+				foto.opacidade === 1
+			)
+				return;
 			item.animate(
-				[{ transform: `translate(${dx}px, ${dy}px) scale(${escala})` }, { transform: "none" }],
+				[
+					{ opacity: foto.opacidade, transform: `translate(${dx}px, ${dy}px) scale(${escala})` },
+					{ opacity: 1, transform: "none" },
+				],
 				opcoes,
 			);
 		});
 	};
 
 	if (nav && secoes.every(Boolean)) {
-		// O aviso do observador só dispara a conta; a conta mede onde cada seção está agora.
-		// Assim um salto grande (clique no sumário, tecla Home) também acerta a seção atual.
+		/** A conta mede onde cada seção está agora: um salto grande também acerta a seção atual. */
+		const secaoAtual = () => {
+			const linha = innerHeight * 0.45;
+			let indice = 0;
+			secoes.forEach((s, i) => {
+				if (s && s.getBoundingClientRect().top <= linha) indice = i;
+			});
+			return indice;
+		};
+		let espera: ReturnType<typeof setTimeout> | undefined;
+		let primeira = true;
 		const observador = new IntersectionObserver(
 			() => {
-				const linha = innerHeight * 0.45;
-				let indice = 0;
-				secoes.forEach((s, i) => {
-					if (s && s.getBoundingClientRect().top <= linha) indice = i;
-				});
-				marcar(indice);
+				clearTimeout(espera);
+				const animar = !primeira && !reduzido.matches && nav.offsetParent !== null;
+				primeira = false;
+				if (!animar) marcar(secaoAtual(), false);
+				else espera = setTimeout(() => marcar(secaoAtual(), true), ESPERA);
 			},
 			// Faixa do topo da janela até a linha a 45% da altura, a mesma da ilha.
 			{ rootMargin: "0px 0px -55% 0px" },
 		);
 		for (const s of secoes) if (s) observador.observe(s);
+
+		// Clique num item: rolagem suave até a seção (instantânea com movimento reduzido). O foco vai
+		// para o título da seção, para o teclado continuar dali.
+		nav.addEventListener("click", (e) => {
+			const link = (e.target as Element).closest<HTMLAnchorElement>(".sumario__link");
+			if (!link || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+			const alvo = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+			if (!alvo) return;
+			e.preventDefault();
+			alvo.scrollIntoView({ behavior: reduzido.matches ? "instant" : "smooth", block: "start" });
+			history.pushState(null, "", link.hash);
+			if (!alvo.hasAttribute("tabindex")) alvo.setAttribute("tabindex", "-1");
+			alvo.focus({ preventScroll: true });
+		});
 	}
 </script>
 
@@ -401,6 +521,12 @@ const corpo = html
 			transform-origin: left top;
 			font-size: var(--text-corpo);
 			line-height: var(--leading-corpo);
+			/* Peso e espaço entre letras mudam aos poucos, junto com o encolher (a fonte é variável).
+			   Exceção à regra "só transform e opacity", pedida pela Taiane: só nestes itens, e só
+			   durante a troca de seção. */
+			transition:
+				font-weight var(--sumario-duracao) var(--sumario-curva),
+				letter-spacing var(--sumario-duracao) var(--sumario-curva);
 		}
 
 		.sumario__item[data-estado="proxima"] {
@@ -415,19 +541,38 @@ const corpo = html
 			line-height: var(--leading-titulo-cartao);
 		}
 
+		/* O texto fica no secundário; o realce, o mesmo texto no principal por cima, aparece no
+		   título atual. A cor muda por opacidade, junto com o encolher. */
 		.sumario__link {
+			position: relative;
+			display: inline-block;
 			color: var(--color-texto-secundario);
 			text-decoration: none;
+			transition: transform var(--sumario-hover-duracao) var(--sumario-curva);
 		}
 
-		.sumario__item[data-estado="atual"] .sumario__link {
+		.sumario__realce {
+			position: absolute;
+			inset: 0;
 			color: var(--color-texto);
+			opacity: 0;
+			transition: opacity var(--sumario-duracao) var(--sumario-curva);
+		}
+
+		.sumario__item[data-estado="atual"] .sumario__realce {
+			opacity: 1;
 		}
 	}
 
+	/* Hover só com mouse: o item lido vai para o texto principal e desliza 2 px. */
 	@media (min-width: 1200px) and (hover: hover) and (pointer: fine) {
 		.sumario__item[data-estado="lida"] .sumario__link:hover {
-			color: var(--color-texto);
+			transform: translateX(var(--sumario-hover-deslize));
+		}
+
+		.sumario__item[data-estado="lida"] .sumario__link:hover .sumario__realce {
+			opacity: 1;
+			transition-duration: var(--sumario-hover-duracao);
 		}
 	}
 </style>
