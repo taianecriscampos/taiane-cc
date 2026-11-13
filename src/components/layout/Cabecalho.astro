@@ -5,25 +5,33 @@
  * trabalho com o ponto verde ("Remoto ou híbrido"; no celular, só o ponto). O leitor
  * de tela lê a frase completa: "Disponível para trabalho remoto ou híbrido".
  *
- * A ilha é uma pílula de vidro escuro (preto translúcido com desfoque do que está atrás) com o
- * número e o nome da seção atual e um ponto branco. Ao clicar, ela cresce até o painel (morph:
- * o recorte se abre a partir da pílula, com uma mola leve); o conteúdo antigo some com um
- * desfoque leve enquanto o novo entra. Ao fechar, encolhe sem mola.
- * Painel: "Seções" e "Fechar" no topo e a lista numerada; o ponto marca a seção atual.
+ * A ilha (docs/movimento-ilha.md) tem três níveis:
+ * 0. Cápsula: número e nome da seção atual, numa faixa vertical atrás de uma janela. A faixa
+ *    desliza até a seção atual; uma rolagem rápida por várias seções vira um movimento só.
+ * 1. Lista de seções, que entram uma depois da outra; um ponto só desliza até a seção atual.
+ * 2. Detalhe da seção escolhida: número, nome, uma frase e "Ir para a seção".
+ * Esc volta um nível por vez; "Fechar" volta direto à cápsula e devolve o foco ao botão.
  *
- * Por dentro: o painel é quem desenha a pílula. Fechado, ele fica recortado no tamanho exato do
- * botão (medido pelo script), e o botão transparente fica por cima. Assim a pílula e o painel são
- * a mesma peça, e a troca de largura entre "Início" e "Projetos" também anda suave.
+ * Por dentro: uma camada de vidro (o fundo) desenha a ilha nos três níveis. Ela é um pouco maior
+ * que o maior nível e fica recortada (clip-path) no tamanho do nível atual. Só o recorte anima;
+ * o texto nunca estica.
+ * Mola por movimento: todo crescimento passa do tamanho final sempre pelos mesmos 6 px (3 de cada
+ * lado na largura, 6 embaixo na altura), cresça a ilha pouco ou muito, e assenta. Encolher não
+ * tem mola. Um movimento novo parte de onde a ilha está, sem pulo.
  *
- * Teclado: abre sem animação e leva o foco à seção atual; setas, Home e End andam pela lista;
- * Esc e "Fechar" fecham e devolvem o foco ao botão. Nos cases, a lista traz as seções do case.
+ * Teclado: tudo sem animação; o foco vai para a seção atual (lista) ou para "Ir para a seção"
+ * (detalhe, que o leitor de tela anuncia com a frase). Setas, Home e End andam pela lista.
+ * Nos cases, a lista traz as seções do case e as frases saem do próprio texto.
  */
 import { perfil } from "../../dados/perfil";
 import Disponibilidade from "../ui/Disponibilidade.astro";
+import Seta from "../ui/Seta.astro";
 
 export interface LinkDoCabecalho {
 	texto: string;
 	href: string;
+	/** Frase curta do detalhe da ilha (nível 3). */
+	frase?: string;
 }
 
 interface Props {
@@ -36,13 +44,21 @@ interface Props {
 
 const {
 	links = [
-		{ texto: "Projetos", href: "/#projetos" },
-		{ texto: "Artigos", href: "/#artigos" },
-		{ texto: "Sobre", href: "/#sobre" },
-		{ texto: "Skills", href: "/#skills" },
+		{
+			texto: "Projetos",
+			href: "/#projetos",
+			frase: "Cases de produto, do diagnóstico ao código.",
+		},
+		{
+			texto: "Artigos",
+			href: "/#artigos",
+			frase: "O que escrevo sobre design, IA e engenharia.",
+		},
+		{ texto: "Sobre", href: "/#sobre", frase: "Trajetória, experiência e formação." },
+		{ texto: "Skills", href: "/#skills", frase: "Competências e as ferramentas do dia a dia." },
 	],
 	rotulo = "Principal",
-	inicio = { texto: "Início", href: "/#inicio" },
+	inicio = { texto: "Início", href: "/#inicio", frase: "Quem eu sou, em uma frase e uma foto." },
 } = Astro.props;
 
 const numero = (i: number) => String(i + 1).padStart(2, "0");
@@ -60,41 +76,78 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		<!-- prettier-ignore -->
 		<a class="link cabecalho__nome" href="/">{curto}<span class="cabecalho__nome-resto">{resto}</span><span class="cabecalho__nome-oculto">, início</span></a>
 
-		<nav class="ilha" aria-label={rotulo} data-ilha>
+		<nav class="ilha" aria-label={rotulo} data-ilha data-nivel="0">
+			<div class="ilha__fundo" aria-hidden="true" data-fundo></div>
+
 			<button class="ilha__botao" type="button" aria-expanded="false" aria-controls="ilha-painel">
 				<span class="ilha__conteudo">
-					<span class="ilha__numero" aria-hidden="true" data-numero>
-						{itens[0].numero}
+					<span class="ilha__janela ilha__numero" aria-hidden="true" data-mover>
+						<span class="ilha__faixa" data-faixa>
+							{itens.map((item) => <span class="ilha__faixa-item">{item.numero}</span>)}
+						</span>
 					</span>
-					<span class="so-leitor-de-tela">Menu, seção atual: </span>
-					<span data-atual>{itens[0].texto}</span>
-					<span class="ilha__ponto" aria-hidden="true"></span>
+					<span class="ilha__janela" aria-hidden="true" data-mover data-janela-nome>
+						<span class="ilha__faixa" data-faixa>
+							{itens.map((item) => <span class="ilha__faixa-item">{item.texto}</span>)}
+						</span>
+					</span>
+					<span class="so-leitor-de-tela">
+						Menu, seção atual: <span data-atual>{itens[0].texto}</span>
+					</span>
+					<span class="ilha__ponto" aria-hidden="true" data-mover></span>
 				</span>
 			</button>
 
 			<div class="ilha__painel" id="ilha-painel">
-				<div class="ilha__interno">
+				<div class="ilha__vista ilha__vista--lista" data-lista>
 					<div class="ilha__topo">
-						<p class="ilha__titulo" aria-hidden="true">
-							Seções
-						</p>
-						<button class="ilha__fechar" type="button" data-fechar>
-							Fechar
-						</button>
+						<p class="ilha__titulo" aria-hidden="true">Seções</p>
+						<button class="ilha__acao" type="button" data-fechar>Fechar</button>
 					</div>
-					<ul class="ilha__links" role="list">
-						{itens.map((item) => (
-							<li>
-								<a class="ilha__link" href={item.href} data-numero={item.numero}>
-									<span class="ilha__numero" aria-hidden="true">
-										{item.numero}
-									</span>
-									{item.texto}
-									<span class="ilha__ponto" aria-hidden="true" />
-								</a>
-							</li>
-						))}
-					</ul>
+					<div class="ilha__lista">
+						<ul class="ilha__links" role="list">
+							{itens.map((item, i) => (
+								<li class="ilha__item" style={`--i: ${i}`}>
+									<button
+										class="ilha__link"
+										type="button"
+										data-href={item.href}
+										data-numero={item.numero}
+										data-texto={item.texto}
+										data-frase={item.frase ?? ""}
+									>
+										<span class="ilha__numero" aria-hidden="true">
+											{item.numero}
+										</span>
+										{item.texto}
+									</button>
+								</li>
+							))}
+						</ul>
+						<span class="ilha__ponto ilha__marcador" aria-hidden="true" data-marcador></span>
+					</div>
+				</div>
+
+				<div
+					class="ilha__vista ilha__vista--detalhe"
+					role="group"
+					aria-labelledby="ilha-detalhe-nome"
+					data-detalhe
+				>
+					<div class="ilha__topo">
+						<button class="ilha__acao" type="button" data-voltar>Voltar</button>
+						<button class="ilha__acao" type="button" data-fechar>Fechar</button>
+					</div>
+					<p class="ilha__detalhe-titulo">
+						<span class="ilha__numero" aria-hidden="true" data-detalhe-numero></span>
+						<span id="ilha-detalhe-nome" data-detalhe-nome></span>
+					</p>
+					<p class="ilha__detalhe-frase" id="ilha-detalhe-frase" data-detalhe-frase></p>
+					<a class="ilha__ir" href="#" aria-describedby="ilha-detalhe-frase" data-detalhe-link>
+						<span>Ir para a seção</span>
+						<span class="so-leitor-de-tela" data-detalhe-link-nome></span>
+						<Seta direcao="direita" />
+					</a>
 				</div>
 			</div>
 		</nav>
@@ -110,119 +163,329 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 </header>
 
 <script>
+	type Caixa = { w: number; h: number; r: number };
+	type Nivel = 0 | 1 | 2;
+
 	const ilha = document.querySelector<HTMLElement>("[data-ilha]");
-	const botao = ilha?.querySelector<HTMLButtonElement>(".ilha__botao");
-	const painel = ilha?.querySelector<HTMLElement>(".ilha__painel");
-	const atual = ilha?.querySelector<HTMLElement>("[data-atual]");
-	const numeroAtual = ilha?.querySelector<HTMLElement>("[data-numero]");
-	const fecharBotao = ilha?.querySelector<HTMLButtonElement>("[data-fechar]");
+	const q = <T extends HTMLElement>(seletor: string) => ilha?.querySelector<T>(seletor) ?? null;
 
-	if (ilha && botao && painel && atual && numeroAtual && fecharBotao) {
-		const links = [...painel.querySelectorAll<HTMLAnchorElement>(".ilha__link")];
-		const aberta = () => ilha.hasAttribute("data-aberta");
+	const fundo = q<HTMLElement>("[data-fundo]");
+	const botao = q<HTMLButtonElement>(".ilha__botao");
+	const atual = q<HTMLElement>("[data-atual]");
+	const janelaNome = q<HTMLElement>("[data-janela-nome]");
+	const lista = q<HTMLElement>("[data-lista]");
+	const detalhe = q<HTMLElement>("[data-detalhe]");
+	const marcador = q<HTMLElement>("[data-marcador]");
+	const voltar = q<HTMLButtonElement>("[data-voltar]");
+	const detalheNumero = q<HTMLElement>("[data-detalhe-numero]");
+	const detalheNome = q<HTMLElement>("[data-detalhe-nome]");
+	const detalheFrase = q<HTMLElement>("[data-detalhe-frase]");
+	const detalheLink = q<HTMLAnchorElement>("[data-detalhe-link]");
+	const detalheLinkNome = q<HTMLElement>("[data-detalhe-link-nome]");
 
-		// Fechado, o painel fica recortado no tamanho e no lugar exatos do botão.
-		const medirRecorte = () => {
-			const topo = botao.offsetTop - painel.offsetTop;
-			const esquerda = botao.offsetLeft - painel.offsetLeft;
-			const direita = painel.offsetWidth - esquerda - botao.offsetWidth;
-			const baixo = painel.offsetHeight - topo - botao.offsetHeight;
-			painel.style.setProperty(
-				"--ilha-recorte",
-				`inset(${topo}px ${direita}px ${baixo}px ${esquerda}px round ${botao.offsetHeight / 2}px)`,
-			);
+	if (
+		ilha &&
+		fundo &&
+		botao &&
+		atual &&
+		janelaNome &&
+		lista &&
+		detalhe &&
+		marcador &&
+		voltar &&
+		detalheNumero &&
+		detalheNome &&
+		detalheFrase &&
+		detalheLink &&
+		detalheLinkNome
+	) {
+		const links = [...ilha.querySelectorAll<HTMLButtonElement>(".ilha__link")];
+		const faixas = [...ilha.querySelectorAll<HTMLElement>("[data-faixa]")];
+		const moveis = [...ilha.querySelectorAll<HTMLElement>("[data-mover]")];
+		const nomesDaFaixa = [...janelaNome.querySelectorAll<HTMLElement>(".ilha__faixa-item")];
+		const reduzir = matchMedia("(prefers-reduced-motion: reduce)");
+
+		// Valores de movimento vêm dos tokens (src/styles/tokens.css).
+		const estilo = getComputedStyle(ilha);
+		const token = (nome: string) => estilo.getPropertyValue(nome).trim();
+		const tempo = (nome: string) => {
+			const v = token(nome);
+			return v.endsWith("ms") ? parseFloat(v) : parseFloat(v) * 1000;
 		};
-		new ResizeObserver(medirRecorte).observe(botao);
-		addEventListener("resize", medirRecorte);
-		medirRecorte();
-		ilha.setAttribute("data-pronta", "");
+		const SOBRA = parseFloat(token("--ilha-mola-sobra"));
+		const PICO = parseFloat(token("--ilha-mola-pico"));
+		const FOLGA = parseFloat(token("--ilha-folga-fundo"));
+		const CRESCER = tempo("--ilha-crescer");
+		const ENCOLHER = tempo("--ilha-encolher");
+		const SUBIDA = token("--ilha-curva-subida");
+		const ASSENTAR = token("--ilha-curva-assentar");
+
+		let nivel: Nivel = 0;
+		let indiceAtual = -1;
+		let escolhido = 0;
+		let fundoW = 0;
+		let fundoH = 0;
+		let alvo = "";
+		let animacao: Animation | null = null;
+
+		// ---------- tamanho de cada nível ----------
+		const raioAberto = () => parseFloat(getComputedStyle(lista).borderTopLeftRadius) || 0;
+		const caixaDo = (n: Nivel): Caixa => {
+			if (n === 0) return { w: botao.offsetWidth, h: botao.offsetHeight, r: botao.offsetHeight / 2 };
+			const vista = n === 1 ? lista : detalhe;
+			return { w: vista.offsetWidth, h: vista.offsetHeight, r: raioAberto() };
+		};
+
+		// Recorte da caixa dentro do fundo: centralizado na largura, preso em cima.
+		const recorte = (c: Caixa) => {
+			const lado = (fundoW - c.w) / 2;
+			const baixo = fundoH - FOLGA - c.h;
+			return `inset(${FOLGA}px ${lado}px ${baixo}px ${lado}px round ${c.r}px)`;
+		};
+
+		// Lê o recorte que está na tela agora (no meio de uma animação, inclusive).
+		const caixaNaTela = (): Caixa | null => {
+			const valor = getComputedStyle(fundo).clipPath;
+			const m = valor.match(/inset\(([^)]*?)(?:\s+round\s+([\d.]+)px[^)]*)?\)/);
+			if (!m) return null;
+			const n = m[1].trim().split(/\s+/).map(parseFloat);
+			const [t, r = t, b = t, l = r] = n;
+			return { w: fundoW - l - r, h: fundoH - t - b, r: parseFloat(m[2] ?? "0") };
+		};
+
+		// ---------- mola por movimento ----------
+		const animar = () => !reduzir.matches && !ilha.hasAttribute("data-instantaneo");
+
+		/** Leva o vidro até a caixa do nível. Devolve se cresceu (para o conteúdo acompanhar). */
+		const morph = (para: Caixa, comMovimento: boolean) => {
+			const fim = recorte(para);
+			const de = caixaNaTela();
+			const inicio = getComputedStyle(fundo).clipPath;
+			animacao?.cancel();
+			fundo.style.clipPath = fim;
+			alvo = fim;
+			if (!comMovimento || !de) return { cresceu: false, duracao: 0 };
+
+			const dw = para.w - de.w;
+			const dh = para.h - de.h;
+			if (Math.abs(dw) < 0.5 && Math.abs(dh) < 0.5) return { cresceu: false, duracao: 0 };
+
+			if (dw > 0.5 || dh > 0.5) {
+				// A sobra é sempre de SOBRA px, seja o passo de 10 px ou de 300 px.
+				const passou = recorte({
+					w: para.w + (dw > 0.5 ? SOBRA : 0),
+					h: para.h + (dh > 0.5 ? SOBRA : 0),
+					r: para.r,
+				});
+				animacao = fundo.animate(
+					[
+						{ clipPath: inicio, easing: SUBIDA },
+						{ clipPath: passou, offset: PICO, easing: ASSENTAR },
+						{ clipPath: fim },
+					],
+					{ duration: CRESCER },
+				);
+				return { cresceu: true, duracao: CRESCER };
+			}
+
+			animacao = fundo.animate([{ clipPath: inicio }, { clipPath: fim }], {
+				duration: ENCOLHER,
+				easing: SUBIDA,
+			});
+			return { cresceu: false, duracao: ENCOLHER };
+		};
+
+		// O fundo cobre o maior nível (inclusive o maior detalhe) mais a folga da mola.
+		const preencherDetalhe = (i: number) => {
+			const link = links[i];
+			detalheNumero.textContent = link.dataset.numero ?? "";
+			detalheNome.textContent = link.dataset.texto ?? "";
+			detalheFrase.textContent = link.dataset.frase ?? "";
+			detalheLink.href = link.dataset.href ?? "#";
+			detalheLinkNome.textContent = ` ${link.dataset.texto ?? ""}`;
+		};
+
+		const medirFundo = () => {
+			let w = Math.max(botao.offsetWidth, lista.offsetWidth, detalhe.offsetWidth);
+			let h = Math.max(botao.offsetHeight, lista.offsetHeight);
+			links.forEach((_, i) => {
+				preencherDetalhe(i);
+				w = Math.max(w, detalhe.offsetWidth);
+				h = Math.max(h, detalhe.offsetHeight);
+			});
+			preencherDetalhe(escolhido);
+			fundoW = Math.ceil(w + 2 * FOLGA);
+			fundoH = Math.ceil(h + 2 * FOLGA);
+			fundo.style.inlineSize = `${fundoW}px`;
+			fundo.style.blockSize = `${fundoH}px`;
+			fundo.style.marginInlineStart = `${-fundoW / 2}px`;
+			animacao?.cancel();
+			alvo = recorte(caixaDo(nivel));
+			fundo.style.clipPath = alvo;
+		};
+
+		// Mudou o tamanho do botão sem ser pela troca de seção (fonte carregou, por exemplo).
+		new ResizeObserver(() => {
+			if (nivel === 0 && recorte(caixaDo(0)) !== alvo) morph(caixaDo(0), false);
+		}).observe(botao);
+		addEventListener("resize", medirFundo);
+
+		// ---------- níveis ----------
+		const irPara = (n: Nivel, instantaneo: boolean) => {
+			ilha.toggleAttribute("data-instantaneo", instantaneo);
+			nivel = n;
+			ilha.dataset.nivel = String(n);
+			botao.setAttribute("aria-expanded", String(n > 0));
+			morph(caixaDo(n), animar());
+		};
 
 		const linkAtual = () => links.find((l) => l.hasAttribute("aria-current")) ?? links[0];
 
 		const abrir = (instantaneo: boolean) => {
-			ilha.toggleAttribute("data-instantaneo", instantaneo);
-			ilha.setAttribute("data-aberta", "");
-			botao.setAttribute("aria-expanded", "true");
-			// O botão some dentro do painel aberto: o foco vai para a seção atual.
+			irPara(1, instantaneo);
+			// O botão some dentro da ilha aberta: o foco vai para a seção atual.
 			linkAtual().focus({ preventScroll: true });
 		};
 
+		const abrirDetalhe = (i: number, instantaneo: boolean) => {
+			escolhido = i;
+			preencherDetalhe(i);
+			irPara(2, instantaneo);
+			detalheLink.focus({ preventScroll: true });
+		};
+
+		const voltarALista = (instantaneo: boolean) => {
+			irPara(1, instantaneo);
+			links[escolhido].focus({ preventScroll: true });
+		};
+
 		const fechar = (instantaneo: boolean, devolverFoco = false) => {
-			if (!aberta()) return;
-			ilha.toggleAttribute("data-instantaneo", instantaneo);
-			ilha.removeAttribute("data-aberta");
-			botao.setAttribute("aria-expanded", "false");
+			if (nivel === 0) return;
+			irPara(0, instantaneo);
 			if (devolverFoco) botao.focus({ preventScroll: true });
 		};
 
 		// detail 0: o clique veio do teclado (Enter ou espaço), então sem animação.
-		botao.addEventListener("click", (evento) => {
-			if (aberta()) fechar(evento.detail === 0, true);
-			else abrir(evento.detail === 0);
+		botao.addEventListener("click", (e) => {
+			if (nivel === 0) abrir(e.detail === 0);
 		});
-
-		fecharBotao.addEventListener("click", (evento) => fechar(evento.detail === 0, true));
-
-		painel.addEventListener("click", (evento) => {
-			if ((evento.target as HTMLElement).closest("a")) fechar(false);
-		});
+		links.forEach((link, i) =>
+			link.addEventListener("click", (e) => abrirDetalhe(i, e.detail === 0)),
+		);
+		voltar.addEventListener("click", (e) => voltarALista(e.detail === 0));
+		for (const b of ilha.querySelectorAll<HTMLButtonElement>("[data-fechar]")) {
+			b.addEventListener("click", (e) => fechar(e.detail === 0, true));
+		}
+		// "Ir para a seção": a página rola até lá (link comum) e a ilha volta à cápsula.
+		detalheLink.addEventListener("click", (e) => fechar(e.detail === 0));
 
 		// Setas, Home e End andam pela lista, sem sair dela.
-		painel.addEventListener("keydown", (evento) => {
-			const i = links.indexOf(document.activeElement as HTMLAnchorElement);
-			const alvo = {
+		lista.addEventListener("keydown", (e) => {
+			const i = links.indexOf(document.activeElement as HTMLButtonElement);
+			if (i < 0) return;
+			const proximo = {
 				ArrowDown: links[(i + 1) % links.length],
 				ArrowUp: links[(i - 1 + links.length) % links.length],
 				Home: links[0],
 				End: links[links.length - 1],
-			}[evento.key];
-			if (!alvo) return;
-			evento.preventDefault();
-			alvo.focus({ preventScroll: true });
+			}[e.key];
+			if (!proximo) return;
+			e.preventDefault();
+			proximo.focus({ preventScroll: true });
 		});
 
-		document.addEventListener("keydown", (evento) => {
-			if (evento.key === "Escape" && aberta()) fechar(true, true);
+		// Esc volta um nível por vez: detalhe → lista → cápsula.
+		document.addEventListener("keydown", (e) => {
+			if (e.key !== "Escape" || nivel === 0) return;
+			if (nivel === 2) voltarALista(true);
+			else fechar(true, true);
 		});
 
-		document.addEventListener("pointerdown", (evento) => {
-			if (aberta() && !ilha.contains(evento.target as Node)) fechar(false);
+		document.addEventListener("pointerdown", (e) => {
+			if (nivel > 0 && !ilha.contains(e.target as Node)) fechar(false);
 		});
 
-		ilha.addEventListener("focusout", (evento) => {
-			const destino = evento.relatedTarget as Node | null;
-			if (aberta() && destino && !ilha.contains(destino)) fechar(true);
+		ilha.addEventListener("focusout", (e) => {
+			const destino = e.relatedTarget as Node | null;
+			if (nivel > 0 && destino && !ilha.contains(destino)) fechar(true);
 		});
+
+		// ---------- seção atual ----------
+		const marcar = (i: number, comMovimento: boolean) => {
+			if (i === indiceAtual) return;
+			indiceAtual = i;
+			const link = links[i];
+
+			// Posição de cada peça da cápsula antes da troca (com o deslize em curso, se houver).
+			const antes = moveis.map((el) => el.getBoundingClientRect().left);
+
+			// A faixa desliza até a seção; se já estiver a caminho de outra, muda o destino no meio.
+			for (const faixa of faixas) faixa.style.transform = `translateY(${(-100 * i) / links.length}%)`;
+			janelaNome.style.inlineSize = `${nomesDaFaixa[i].offsetWidth}px`;
+			atual.textContent = link.dataset.texto ?? "";
+			for (const l of links) {
+				if (l === link) l.setAttribute("aria-current", "location");
+				else l.removeAttribute("aria-current");
+			}
+			marcador.style.transform = `translateY(${link.offsetTop}px)`;
+
+			if (nivel !== 0) return;
+			for (const el of moveis) el.getAnimations().forEach((a) => a.cancel());
+			// Aqui não vale o "sem animação" do teclado: quem troca a seção é a rolagem.
+			const { cresceu, duracao } = morph(caixaDo(0), comMovimento && !reduzir.matches);
+			if (!duracao) return;
+
+			// O número, o nome e o ponto acompanham a largura nova com a mesma mola do vidro.
+			moveis.forEach((el, k) => {
+				const dx = antes[k] - el.getBoundingClientRect().left;
+				if (Math.abs(dx) < 0.5) return;
+				const passou = cresceu ? (-Math.sign(dx) * SOBRA) / 2 : 0;
+				el.animate(
+					cresceu
+						? [
+								{ transform: `translateX(${dx}px)`, easing: SUBIDA },
+								{ transform: `translateX(${passou}px)`, offset: PICO, easing: ASSENTAR },
+								{ transform: "none" },
+							]
+						: [{ transform: `translateX(${dx}px)` }, { transform: "none" }],
+					{ duration: duracao, easing: cresceu ? "linear" : SUBIDA },
+				);
+			});
+		};
 
 		// Seção atual: a que cruza a faixa do meio da tela. Quando o link aponta para o título
 		// de uma seção (case), observa a seção inteira: no desktop o título fica oculto (1 px).
 		const secoes = links
 			.map((link) => {
-				const id = decodeURIComponent(link.hash.slice(1));
-				const alvo = id ? document.getElementById(id) : null;
-				return { link, alvo: alvo?.closest<HTMLElement>("section") ?? alvo };
+				const id = decodeURIComponent((link.dataset.href ?? "").split("#")[1] ?? "");
+				const alvoSecao = id ? document.getElementById(id) : null;
+				return { link, alvo: alvoSecao?.closest<HTMLElement>("section") ?? alvoSecao };
 			})
-			.filter((s): s is { link: HTMLAnchorElement; alvo: HTMLElement } => s.alvo !== null);
+			.filter((s): s is { link: HTMLButtonElement; alvo: HTMLElement } => s.alvo !== null);
 
-		const marcar = (link: HTMLAnchorElement) => {
-			atual.textContent = link.textContent?.replace(link.dataset.numero ?? "", "").trim() ?? "";
-			numeroAtual.textContent = link.dataset.numero ?? "";
-			for (const l of links) {
-				if (l === link) l.setAttribute("aria-current", "location");
-				else l.removeAttribute("aria-current");
-			}
-		};
+		// Pronta antes de medir: sem isso, a lista e o detalhe ainda estão escondidos (tamanho 0).
+		ilha.setAttribute("data-pronta", "");
+		marcar(0, false);
+		medirFundo();
+		// Com a fonte carregada, os nomes mudam de largura: mede de novo, sem animar.
+		document.fonts.ready.then(() => {
+			janelaNome.style.inlineSize = `${nomesDaFaixa[indiceAtual].offsetWidth}px`;
+			marcador.style.transform = `translateY(${links[indiceAtual].offsetTop}px)`;
+			medirFundo();
+		});
 
 		if (secoes.length > 0) {
 			// Seção atual: a última cujo começo já passou da linha a 45% da altura da janela (a mesma
 			// do sumário do case). O observador só avisa quando alguma seção cruza a faixa de cima;
 			// a conta mede onde cada uma está agora. Assim uma seção curta, que nem chega à linha,
 			// também é marcada (rodada 1f).
+			let primeira = true;
 			const observador = new IntersectionObserver(
 				() => {
 					const linha = innerHeight * 0.45;
 					const ativa = secoes.filter((s) => s.alvo.getBoundingClientRect().top <= linha).at(-1);
-					marcar(ativa ? ativa.link : links[0]);
+					marcar(links.indexOf(ativa ? ativa.link : links[0]), !primeira);
+					primeira = false;
 				},
 				{ rootMargin: "0px 0px -55% 0px" },
 			);
@@ -233,7 +496,7 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 
 <style>
 	/* O desfoque do cabeçalho fica numa camada à parte: se ficasse no próprio cabeçalho, o vidro
-	   da ilha só desfocaria o cabeçalho, e não a página que passa por baixo do painel aberto. */
+	   da ilha só desfocaria o cabeçalho, e não a página que passa por baixo da ilha aberta. */
 	.cabecalho {
 		position: sticky;
 		inset-block-start: 0;
@@ -282,11 +545,30 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 	}
 
 	/* ---------- ilha ---------- */
+	/* Acima do status (o ponto verde), para a ilha aberta passar por cima dele no celular. */
 	.ilha {
 		position: relative;
+		z-index: 1;
 		display: flex;
 		justify-content: center;
-		--ilha-painel-largura: min(var(--ilha-largura-aberta), 100vw - 2 * var(--space-margem-pagina));
+		--ilha-largura-lista: min(var(--ilha-largura-aberta), 100vw - 2 * var(--space-margem-pagina));
+		--ilha-largura-nivel-3: min(
+			var(--ilha-largura-detalhe),
+			100vw - 2 * var(--space-margem-pagina)
+		);
+	}
+
+	/* O vidro dos três níveis. Tamanho e recorte vêm do script; só o recorte anima. */
+	.ilha__fundo {
+		position: absolute;
+		inset-block-start: calc(-1 * var(--ilha-folga-fundo));
+		inset-inline-start: 50%;
+		background: var(--ilha-fundo);
+		-webkit-backdrop-filter: var(--ilha-desfoque);
+		backdrop-filter: var(--ilha-desfoque);
+		pointer-events: none;
+		transform-origin: 50% calc(var(--ilha-folga-fundo) + var(--ilha-altura) / 2);
+		transition: transform var(--motion-duration-pressionar) var(--motion-ease-out);
 	}
 
 	.ilha__botao {
@@ -309,12 +591,12 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		transition: transform var(--motion-duration-pressionar) var(--motion-ease-out);
 	}
 
-	/* Sem script, o botão desenha a própria pílula e o painel não aparece. */
+	/* Sem script, o botão desenha a própria pílula e o resto não aparece. */
 	.ilha:not([data-pronta]) .ilha__botao {
 		background: var(--ilha-fundo);
 	}
 
-	.ilha:not([data-pronta]) .ilha__painel {
+	.ilha:not([data-pronta]) :is(.ilha__fundo, .ilha__painel) {
 		display: none;
 	}
 
@@ -331,6 +613,26 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		margin-inline-start: var(--space-pequeno);
 	}
 
+	/* Janela do tamanho de um nome; a faixa com todos os nomes desliza por trás dela. */
+	.ilha__janela {
+		display: inline-block;
+		block-size: 1lh;
+		overflow: clip;
+		vertical-align: top;
+	}
+
+	.ilha__faixa {
+		display: flex;
+		flex-direction: column;
+		transition: transform var(--motion-duration-abrir) var(--motion-ease-out);
+	}
+
+	.ilha__faixa-item {
+		align-self: flex-start;
+		block-size: 1lh;
+		white-space: nowrap;
+	}
+
 	.ilha__numero {
 		color: var(--ilha-texto-secundario);
 		font-size: var(--text-pequeno);
@@ -345,43 +647,56 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		background: currentColor;
 	}
 
-	/* A pílula encolhe um pouco no toque: o painel (que a desenha) e o conteúdo juntos. */
-	.ilha:has(.ilha__botao:active) .ilha__painel,
+	/* A pílula encolhe um pouco no toque: o vidro e o conteúdo juntos. */
+	.ilha:has(.ilha__botao:active) .ilha__fundo,
 	.ilha__botao:active {
 		transform: scale(var(--motion-escala-pressionado));
 	}
 
-	/*
-	 * Painel: fechado, fica recortado no formato da pílula. Ao abrir, o recorte se abre até o
-	 * painel inteiro, com uma mola leve no tamanho. Ao fechar, volta mais rápido e sem mola.
-	 */
+	/* ---------- lista e detalhe ---------- */
 	.ilha__painel {
 		position: absolute;
 		inset-block-start: 0;
 		inset-inline-start: 50%;
-		margin-inline-start: calc(var(--ilha-painel-largura) / -2);
-		inline-size: var(--ilha-painel-largura);
-		padding: var(--ilha-painel-espaco-bloco) var(--ilha-painel-espaco-inline);
-		border-radius: var(--ilha-raio-aberta);
-		background: var(--ilha-fundo);
-		-webkit-backdrop-filter: var(--ilha-desfoque);
-		backdrop-filter: var(--ilha-desfoque);
-		color: var(--ilha-texto);
-		clip-path: var(--ilha-recorte);
-		transform-origin: 50% calc(var(--ilha-altura) / 2);
-		transition:
-			clip-path var(--motion-duration-rapida) var(--motion-ease-out),
-			transform var(--motion-duration-pressionar) var(--motion-ease-out);
+		z-index: 2;
 	}
 
-	.ilha__interno {
+	/* O conteúdo que sai perde opacidade com desfoque; o novo entra nítido. */
+	.ilha__vista {
+		position: absolute;
+		inset-block-start: 0;
+		inline-size: var(--largura);
+		margin-inline-start: calc(var(--largura) / -2);
+		padding: var(--ilha-painel-espaco-bloco) var(--ilha-painel-espaco-inline);
+		border-radius: var(--ilha-raio-aberta);
+		color: var(--ilha-texto);
 		visibility: hidden;
 		opacity: 0;
-		filter: var(--motion-desfoque-troca);
+		filter: var(--ilha-desfoque-saida);
 		transition:
 			opacity var(--motion-duration-rapida) var(--motion-ease-out),
 			filter var(--motion-duration-rapida) var(--motion-ease-out),
 			visibility 0s linear var(--motion-duration-rapida);
+	}
+
+	.ilha__vista--lista {
+		--largura: var(--ilha-largura-lista);
+	}
+
+	.ilha__vista--detalhe {
+		--largura: var(--ilha-largura-nivel-3);
+	}
+
+	.ilha[data-nivel="1"] .ilha__vista--lista,
+	.ilha[data-nivel="2"] .ilha__vista--detalhe {
+		visibility: visible;
+		opacity: 1;
+		filter: none;
+		transition:
+			opacity var(--motion-duration-base) var(--motion-ease-out)
+				calc(var(--motion-duration-rapida) / 3),
+			filter 0s,
+			visibility 0s;
 	}
 
 	.ilha__topo {
@@ -395,7 +710,7 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 	}
 
 	/* Área de toque maior que o texto, sem mudar o alinhamento nem a altura da linha. */
-	.ilha__fechar {
+	.ilha__acao {
 		margin: calc(-1 * var(--space-pequeno));
 		padding: var(--space-pequeno);
 		border: 0;
@@ -409,21 +724,50 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		--focus-cor: var(--ilha-focus-cor);
 	}
 
+	.ilha__lista {
+		position: relative;
+	}
+
 	.ilha__links {
 		padding: 0;
 		list-style: none;
+	}
+
+	/* Os itens entram um depois do outro, com um deslize curto de baixo para cima. */
+	.ilha__item {
+		opacity: 0;
+		transform: translateY(var(--ilha-deslize-item));
+		transition:
+			opacity var(--motion-duration-rapida) var(--motion-ease-out),
+			transform 0s linear var(--motion-duration-rapida);
+	}
+
+	.ilha[data-nivel="1"] .ilha__item {
+		opacity: 1;
+		transform: none;
+		transition:
+			opacity var(--motion-duration-base) var(--motion-ease-out)
+				calc(var(--i) * var(--ilha-intervalo-lista)),
+			transform var(--motion-duration-abrir) var(--motion-ease-out)
+				calc(var(--i) * var(--ilha-intervalo-lista));
 	}
 
 	.ilha__link {
 		display: flex;
 		align-items: center;
 		gap: var(--space-medio);
+		inline-size: 100%;
 		block-size: var(--ilha-linha-altura);
+		padding: 0;
+		border: 0;
+		background: transparent;
 		color: var(--ilha-texto);
+		font: inherit;
 		font-size: var(--text-rotulo);
 		font-weight: var(--peso-titulo);
 		letter-spacing: var(--tracking-texto);
-		text-decoration: none;
+		text-align: start;
+		cursor: pointer;
 		--focus-cor: var(--ilha-focus-cor);
 	}
 
@@ -431,82 +775,95 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		min-inline-size: 1.5em;
 	}
 
-	.ilha__link .ilha__ponto {
-		margin-inline-start: auto;
-		visibility: hidden;
+	/* Um ponto só, que desliza até a linha da seção atual. */
+	.ilha__marcador {
+		position: absolute;
+		inset-block-start: calc((var(--ilha-linha-altura) - var(--ilha-ponto)) / 2);
+		inset-inline-end: 0;
+		transition: transform var(--motion-duration-abrir) var(--motion-ease-out);
 	}
 
-	.ilha__link[aria-current] .ilha__ponto {
-		visibility: visible;
+	.ilha__detalhe-titulo {
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-medio);
+		font-size: var(--text-rotulo);
+		font-weight: var(--peso-titulo);
+		letter-spacing: var(--tracking-texto);
+	}
+
+	.ilha__detalhe-titulo .ilha__numero {
+		min-inline-size: 1.5em;
+	}
+
+	/* No máximo 2 linhas: as frases longas já chegam encurtadas; isto é só a garantia. */
+	.ilha__detalhe-frase {
+		display: -webkit-box;
+		overflow: hidden;
+		margin-block: var(--space-pequeno) var(--space-medio);
+		color: var(--ilha-texto-secundario);
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
+
+	/* A seta herda a cor clara do vidro; a área redonda dela fica fora do texto, sem empurrá-lo. */
+	.ilha__ir {
+		display: inline-flex;
+		align-items: center;
+		color: var(--ilha-texto);
+		font-weight: var(--peso-titulo);
+		text-decoration: none;
+		--focus-cor: var(--ilha-focus-cor);
+	}
+
+	.ilha__ir :global(.seta) {
+		margin-block: calc(-1 * var(--space-pequeno));
+		color: inherit;
 	}
 
 	@media (hover: hover) and (pointer: fine) {
-		.ilha__link:hover {
+		.ilha__link:hover,
+		.ilha__ir:hover {
 			color: var(--ilha-texto-secundario);
 		}
 
-		.ilha__fechar:hover {
+		.ilha__acao:hover {
 			color: var(--ilha-texto);
 		}
 	}
 
 	/* ---------- aberta ---------- */
-	.ilha[data-aberta] .ilha__botao {
+	.ilha:not([data-nivel="0"]) .ilha__botao {
 		visibility: hidden;
 		pointer-events: none;
 		transition: visibility 0s linear var(--motion-duration-rapida);
 	}
 
-	.ilha[data-aberta] .ilha__conteudo {
+	.ilha:not([data-nivel="0"]) .ilha__conteudo {
 		opacity: 0;
-		filter: var(--motion-desfoque-troca);
+		filter: var(--ilha-desfoque-saida);
 	}
 
-	.ilha[data-aberta] .ilha__painel {
-		clip-path: inset(0 round var(--ilha-raio-aberta));
-		transition: clip-path var(--motion-duration-abrir) var(--motion-ease-out);
-		animation: ilha-mola var(--motion-duration-abrir) var(--motion-ease-mola);
-	}
-
-	.ilha[data-aberta] .ilha__interno {
-		visibility: visible;
-		opacity: 1;
-		filter: none;
-		transition:
-			opacity var(--motion-duration-abrir) var(--motion-ease-out)
-				calc(var(--motion-duration-rapida) / 4),
-			filter var(--motion-duration-abrir) var(--motion-ease-out)
-				calc(var(--motion-duration-rapida) / 4),
-			visibility 0s;
-	}
-
-	@keyframes ilha-mola {
-		from {
-			transform: scale(var(--motion-escala-pressionado));
-		}
-	}
-
-	/* Teclado: nada de animação, nem para abrir nem para fechar. */
-	.ilha[data-instantaneo] .ilha__painel,
-	.ilha[data-instantaneo] .ilha__interno,
-	.ilha[data-instantaneo] .ilha__conteudo,
-	.ilha[data-instantaneo] .ilha__botao {
+	/* Teclado: nada de animação. */
+	.ilha[data-instantaneo] :is(.ilha__vista, .ilha__item, .ilha__conteudo, .ilha__botao) {
 		transition-duration: 0s;
 		transition-delay: 0s;
-		animation: none;
 	}
 
+	/* Movimento reduzido: troca instantânea, sem mola e sem desfoque. */
 	@media (prefers-reduced-motion: reduce) {
-		.ilha__painel,
-		.ilha__interno,
-		.ilha__conteudo {
+		.ilha *,
+		.ilha *::before,
+		.ilha *::after {
 			filter: none !important;
-			animation: none !important;
+			transition-duration: 0s !important;
+			transition-delay: 0s !important;
 		}
 	}
 
 	/* Telas bem estreitas (320 px): sem o número na pílula fechada, nome, ilha e status não se
-	   encostam. O número é decorativo e continua no painel aberto. */
+	   encostam. O número é decorativo e continua na lista. */
 	@media (max-width: 359px) {
 		.ilha__conteudo .ilha__numero {
 			display: none;

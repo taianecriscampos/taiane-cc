@@ -125,6 +125,7 @@
 	--prim-size-1800: 112.5rem;
 	--prim-colunas-12: 12;
 	--prim-desfoque-2: blur(2px);
+	--prim-desfoque-6: blur(6px);
 	--prim-desfoque-15: blur(15px);
 	--prim-desfoque-20: blur(20px);
 
@@ -140,11 +141,14 @@
 	--prim-duration-280: 0.28s;
 	--prim-duration-300: 0.3s;
 	--prim-duration-380: 0.38s;
+	--prim-duration-500: 0.5s; /* crescimento da ilha com mola (docs/movimento-ilha.md) */
+	--prim-intervalo-35: 35ms; /* entre itens de uma lista que entra em sequência */
 	--prim-duration-1000: 1s;
 	--prim-duration-2000: 2s;
 	--prim-duration-8000: 8s;
 	--prim-duration-18000: 18s; /* letreiro de Ferramentas: uma ida */
 	--prim-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--prim-ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
 	--prim-ease-in-out-suave: ease-in-out; /* movimento longo e contínuo: desacelera nas pontas */
 	/* Mola leve: passa 3% do destino e assenta. Curva desenhada ponto a ponto, sem biblioteca. */
 	--prim-ease-mola: linear(0, 0.3 8%, 0.69 18%, 0.93 29%, 1.025 39%, 1.03 47%, 1.01 62%, 1);
@@ -338,6 +342,19 @@
 	--ilha-ponto: var(--prim-size-6);
 	--ilha-raio-aberta: var(--radius-grande);
 	--ilha-largura-aberta: 20rem;
+	--ilha-largura-detalhe: 24rem; /* nível 3: a ilha cresce de novo a partir da lista */
+	/* Mola por movimento: todo crescimento passa do tamanho final sempre pelos mesmos 6 px,
+	   cresça pouco ou muito. Encolher não tem mola: só assenta com ease-out forte. */
+	--ilha-mola-sobra: 6px;
+	--ilha-mola-pico: 0.55; /* em que ponto do tempo a ilha chega ao máximo da sobra */
+	--ilha-crescer: var(--prim-duration-500);
+	--ilha-encolher: var(--motion-duration-base);
+	--ilha-curva-subida: var(--motion-ease-out);
+	--ilha-curva-assentar: var(--prim-ease-in-out);
+	--ilha-folga-fundo: 8px; /* espaço em volta do vidro para a sobra da mola aparecer */
+	--ilha-desfoque-saida: var(--prim-desfoque-6); /* conteúdo que sai; o novo entra nítido */
+	--ilha-intervalo-lista: var(--prim-intervalo-35);
+	--ilha-deslize-item: var(--prim-space-8);
 	--ilha-focus-cor: var(--color-vidro-texto);
 
 	--status-ponto: var(--prim-size-8);

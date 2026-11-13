@@ -22,6 +22,8 @@ interface Props {
 	noindex?: boolean;
 	/** Nos cases, o cabeçalho mostra as seções do case no lugar das seções da página inicial. */
 	secoesDoCase?: LinkDoCabecalho[];
+	/** Nos cases, o primeiro item da ilha (Visão geral), com a frase do detalhe. */
+	inicioDoCase?: LinkDoCabecalho;
 	/** Imagem de compartilhamento (Open Graph). Sem ela, vale a imagem padrão com nome e cargo. */
 	imagem?: { url: string; alt: string };
 	/** "article" nos cases; "website" nas demais páginas. */
@@ -30,7 +32,7 @@ interface Props {
 	dadosEstruturados?: object;
 }
 
-const { titulo, descricao, secoesDoCase, tipo = "website", dadosEstruturados } = Astro.props;
+const { titulo, descricao, secoesDoCase, inicioDoCase, tipo = "website", dadosEstruturados } = Astro.props;
 const noindex = Astro.props.noindex ?? !indexacaoLiberada;
 // Endereço canônico: sempre o do domínio oficial, mesmo numa prévia da Vercel.
 const canonica = urlAbsoluta(Astro.url.pathname);
@@ -87,7 +89,7 @@ const jsonLd = dadosEstruturados && JSON.stringify(dadosEstruturados).replace(/<
 			<Cabecalho
 				links={secoesDoCase}
 				rotulo="Neste case"
-				inicio={{ texto: "Visão geral", href: "#visao-geral" }}
+				inicio={inicioDoCase ?? { texto: "Visão geral", href: "#visao-geral" }}
 			/>
 		) : (
 			<Cabecalho />

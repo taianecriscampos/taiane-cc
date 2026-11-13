@@ -26,6 +26,7 @@ import { getImage } from "astro:assets";
 import { perfil } from "../../dados/perfil";
 import { artigoDoCase } from "../../dados/dados-estruturados";
 import { imagemPadrao, urlAbsoluta } from "../../dados/site";
+import { encurtar, fraseDaSecao } from "../../dados/frase-da-secao";
 import CabecalhoCase from "../blocos/CabecalhoCase.astro";
 import FechamentoCase from "../blocos/FechamentoCase.astro";
 import VisaoGeralCase from "../blocos/VisaoGeralCase.astro";
@@ -68,20 +69,35 @@ const minutos = Math.max(1, Math.ceil(palavras / 200));
  * O que vem antes do primeiro título (só comentários) fica de fora.
  */
 const html = await Astro.slots.render("default");
-const corpo = html
+const partes = html
 	.split(/(?=<h2[\s>])/)
 	.filter((parte) => parte.startsWith("<h2"))
 	.map((parte) => {
 		const fim = parte.indexOf("</h2>") + "</h2>".length;
-		return `<section class="case-secao">${parte.slice(0, fim)}<div class="case-secao__texto">${parte.slice(fim)}</div></section>`;
-	})
+		return { titulo: parte.slice(0, fim), texto: parte.slice(fim) };
+	});
+const corpo = partes
+	.map(
+		({ titulo, texto }) =>
+			`<section class="case-secao">${titulo}<div class="case-secao__texto">${texto}</div></section>`,
+	)
 	.join("");
+
+// Ilha, nível 3: cada seção com a primeira frase do próprio texto (encurtada se passar de 80
+// caracteres). A Visão geral usa a primeira frase do resumo.
+const secoesDaIlha = secoes.map((s, i) => ({ ...s, frase: fraseDaSecao(partes[i]?.texto ?? "") }));
+const visaoGeralDaIlha = {
+	texto: "Visão geral",
+	href: "#visao-geral",
+	frase: encurtar(dados.resumo.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? dados.resumo),
+};
 ---
 
 <LayoutBase
 	titulo={`${dados.titulo} · ${perfil.nome}`}
 	descricao={dados.resumo}
-	secoesDoCase={secoes}
+	secoesDoCase={secoesDaIlha}
+	inicioDoCase={visaoGeralDaIlha}
 	tipo="article"
 	imagem={imagemOg}
 	dadosEstruturados={artigoDoCase({
