@@ -2,9 +2,9 @@
 
 Atualize este arquivo ao final de cada tarefa.
 
-**Versão atual:** 1.1.0 (Ajustes rápidos: rolagem suave, hovers, transição de página, currículo desativado)
+**Versão atual:** 1.1.1 (Correção: vidro da ilha visível no iPhone, testes com WebKit)
 **Etapa atual:** 1.1.0 Movimento (publicada em 13/11/2026)
-**Fase da etapa:** 1.1.b Sumário do case com movimento suave · aprovado pela Taiane no localhost
+**Fase da etapa:** 1.1.1 Correção da ilha no WebKit (iPhone, Safari, Instagram) · publicada em 14/11/2026
 **Direção de arte (0.3.0):** aprovada pela Taiane
 **Status geral:** Publicado em 12/11/2026 (v1.0.0, conferido em taiane.cc: página, robots, sitemap, sem noindex e cabeçalhos de segurança)
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc

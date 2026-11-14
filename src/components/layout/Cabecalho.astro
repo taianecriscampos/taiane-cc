@@ -284,6 +284,16 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 			const dh = para.h - de.h;
 			if (Math.abs(dw) < 0.5 && Math.abs(dh) < 0.5) return { cresceu: false, duracao: 0 };
 
+			// A mola é melhoria: se o navegador recusar a animação, fica o recorte final, sem pulo.
+			try {
+				return animarRecorte(inicio, fim, para, dw, dh);
+			} catch {
+				animacao = null;
+				return { cresceu: false, duracao: 0 };
+			}
+		};
+
+		const animarRecorte = (inicio: string, fim: string, para: Caixa, dw: number, dh: number) => {
 			if (dw > 0.5 || dh > 0.5) {
 				// A sobra é sempre de SOBRA px, seja o passo de 10 px ou de 300 px.
 				const passou = recorte({
@@ -579,17 +589,27 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 		);
 	}
 
-	/* O vidro dos três níveis. Tamanho e recorte vêm do script; só o recorte anima. */
+	/* O vidro dos três níveis. Tamanho e recorte vêm do script; só o recorte anima.
+	   Base: fundo sólido escuro, que aparece em todo navegador. */
 	.ilha__fundo {
 		position: absolute;
 		inset-block-start: calc(-1 * var(--ilha-folga-fundo));
 		inset-inline-start: 50%;
-		background: var(--ilha-fundo);
-		-webkit-backdrop-filter: var(--ilha-desfoque);
-		backdrop-filter: var(--ilha-desfoque);
+		background: var(--ilha-fundo-solido);
 		pointer-events: none;
 		transform-origin: 50% calc(var(--ilha-folga-fundo) + var(--ilha-altura) / 2);
 		transition: transform var(--motion-duration-pressionar) var(--motion-ease-out);
+	}
+
+	/* Melhoria: vidro translúcido com desfoque, fora do WebKit. No WebKit (Safari e todo navegador
+	   do iPhone, inclusive o do Instagram), desfoque + clip-path dentro de um cabeçalho sticky faz
+	   o elemento sumir inteiro (WebKit 142662, 255701, 298709); lá fica a base sólida.
+	   Só o WebKit aceita o prefixo -webkit-backdrop-filter: é por ele que o WebKit fica de fora. */
+	@supports (backdrop-filter: blur(1px)) and (not (-webkit-backdrop-filter: blur(1px))) {
+		.ilha__fundo {
+			background: var(--ilha-fundo);
+			backdrop-filter: var(--ilha-desfoque);
+		}
 	}
 
 	.ilha__botao {
@@ -614,7 +634,7 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 
 	/* Sem script, o botão desenha a própria pílula e o resto não aparece. */
 	.ilha:not([data-pronta]) .ilha__botao {
-		background: var(--ilha-fundo);
+		background: var(--ilha-fundo-solido);
 	}
 
 	.ilha:not([data-pronta]) :is(.ilha__fundo, .ilha__painel) {

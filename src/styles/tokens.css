@@ -179,6 +179,8 @@
 	--color-escuro-texto-secundario: var(--prim-color-cinza-300);
 	--color-status: var(--prim-color-verde);
 	--color-vidro-fundo: var(--prim-color-preto-70);
+	/* Base sólida do vidro: aparece em todo navegador, com ou sem desfoque. Branco dá 15,75:1. */
+	--color-vidro-fundo-solido: var(--prim-color-cinza-900);
 	--color-vidro-texto: var(--prim-color-branco);
 	--color-vidro-texto-secundario: var(--prim-color-cinza-200);
 
@@ -334,6 +336,7 @@
 	--rodape-item-altura: var(--prim-size-32); /* 24 de texto + 8 de respiro (rodada 1f) */
 
 	--ilha-fundo: var(--color-vidro-fundo);
+	--ilha-fundo-solido: var(--color-vidro-fundo-solido);
 	--ilha-desfoque: var(--prim-desfoque-20);
 	--ilha-texto: var(--color-vidro-texto);
 	--ilha-texto-secundario: var(--color-vidro-texto-secundario);
