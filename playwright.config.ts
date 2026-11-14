@@ -1,7 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Testes de navegador. Só Chromium, em dois perfis: celular e desktop.
+ * Testes de navegador: Chromium em dois perfis (celular e desktop) e WebKit no iPhone,
+ * o mesmo motor do Safari e do navegador interno do Instagram.
  * Testa a versão compilada (dist/), a mesma que vai para o ar.
  * Rode `npm run build` antes, ou use `npm run qualidade`.
  * Porta própria (4322) para não confundir com o `npm run dev`, que usa a 4321.
@@ -21,6 +22,7 @@ export default defineConfig({
 	projects: [
 		{ name: "celular", use: { ...devices["Pixel 7"] } },
 		{ name: "desktop", use: { ...devices["Desktop Chrome"] } },
+		{ name: "iphone", use: { ...devices["iPhone 13"] } },
 	],
 	webServer: {
 		command: `npx astro preview --port ${porta}`,
