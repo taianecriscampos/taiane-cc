@@ -36,22 +36,6 @@ test("o vidro escuro da ilha aparece fechada e aberta", async ({ page }) => {
 	await page.goto("/");
 	await page.locator(".ilha[data-pronta]").waitFor();
 	await page.evaluate(() => document.fonts.ready);
-	// Diagnóstico no relatório: como o navegador enxerga o vidro.
-	const info = await page.evaluate(() => {
-		const f = document.querySelector<HTMLElement>("[data-fundo]")!;
-		const e = getComputedStyle(f);
-		const r = f.getBoundingClientRect();
-		return {
-			ua: navigator.userAgent,
-			clip: e.clipPath,
-			webkitClip: e.getPropertyValue("-webkit-clip-path"),
-			fundo: e.backgroundColor,
-			desfoque: e.getPropertyValue("-webkit-backdrop-filter") || e.backdropFilter,
-			caixa: [r.x, r.y, r.width, r.height],
-			inline: f.getAttribute("style"),
-		};
-	});
-	console.log(JSON.stringify(info));
 
 	expect(await brilhoMedio(page, ".ilha__botao")).toBeLessThan(140);
 
@@ -59,4 +43,22 @@ test("o vidro escuro da ilha aparece fechada e aberta", async ({ page }) => {
 	await expect(page.locator(".ilha")).toHaveAttribute("data-nivel", "1");
 	await page.waitForTimeout(800);
 	expect(await brilhoMedio(page, ".ilha__vista--lista")).toBeLessThan(140);
+});
+
+test("no WebKit, o vidro da ilha é sólido e sem desfoque; nos outros, translúcido com desfoque", async ({
+	page,
+	browserName,
+}) => {
+	// No WebKit com placa de vídeo (iPhone), desfoque + clip-path num cabeçalho sticky some.
+	// O WebKit sem tela dos testes não mostra o defeito, então a trava é no estilo.
+	await page.goto("/");
+	await page.locator(".ilha[data-pronta]").waitFor();
+	const fundo = page.locator("[data-fundo]");
+	if (browserName === "webkit") {
+		await expect(fundo).toHaveCSS("background-color", "rgb(26, 32, 37)");
+		await expect(fundo).toHaveCSS("backdrop-filter", "none");
+	} else {
+		await expect(fundo).toHaveCSS("background-color", "rgba(0, 0, 0, 0.7)");
+		await expect(fundo).toHaveCSS("backdrop-filter", "blur(20px)");
+	}
 });

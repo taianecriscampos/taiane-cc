@@ -6,6 +6,16 @@ e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+## [1.1.1] - 2026-11-14
+
+### Corrigido
+
+- Ilha invisível no iPhone (Safari e navegador interno do Instagram): no WebKit, desfoque de fundo com clip-path dentro do cabeçalho sticky faz o vidro sumir. O vidro agora tem base sólida escura em todo navegador; o desfoque translúcido fica só fora do WebKit, e a mola do recorte, se recusada, cai direto no tamanho final.
+
+### Adicionado
+
+- Projeto de testes WebKit (iPhone 13) no Playwright, rodando no GitHub Actions, com teste do vidro escuro da ilha.
+
 ## [1.1.0] - 2026-11-13
 
 ### Adicionado

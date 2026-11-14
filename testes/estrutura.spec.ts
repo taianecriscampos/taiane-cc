@@ -67,17 +67,21 @@ test("o rodapé traz o convite, o e-mail e a hora local", async ({ page }) => {
 test("o botão de copiar o e-mail avisa que copiou e o aviso some depois de 2 segundos", async ({
 	page,
 	context,
+	browserName,
 }) => {
-	await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+	// O WebKit do Playwright não dá permissão de ler a área de transferência: lá só o aviso é testado.
+	const leArea = browserName === "chromium";
+	if (leArea) await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 	await page.goto("/");
 	const rodape = page.getByRole("contentinfo");
 	await rodape.getByRole("button", { name: "Copiar e-mail" }).click();
 	const aviso = rodape.locator("[data-copiado]");
 	await expect(aviso).toHaveText("Copiado");
 	await expect(aviso).toHaveAttribute("aria-live", "polite");
-	expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-		"taianecriscampos@gmail.com",
-	);
+	if (leArea)
+		expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+			"taianecriscampos@gmail.com",
+		);
 	await expect(aviso).toHaveText("", { timeout: 4000 });
 });
 
