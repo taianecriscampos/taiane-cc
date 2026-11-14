@@ -42,7 +42,7 @@ export const perfil: Perfil = {
 	cidade: "Ribeirão Preto",
 	estado: "SP",
 	localizacao: "Ribeirão Preto / São Paulo, Brasil",
-	email: "taianecriscampos@gmail.com",
+	email: "taianecc.contato@gmail.com",
 	linkedin: "https://www.linkedin.com/in/taianecriscampos/",
 	substack: "https://taianecriscampos.substack.com/",
 	github: "https://github.com/taianecriscampos",

@@ -51,9 +51,9 @@ test("o rodapé traz o convite, o e-mail e a hora local", async ({ page }) => {
 	await page.goto("/");
 	const rodape = page.getByRole("contentinfo");
 	await expect(rodape.getByRole("heading", { name: "Me chama!" })).toBeVisible();
-	await expect(rodape.getByRole("link", { name: "taianecriscampos@gmail.com" })).toHaveAttribute(
+	await expect(rodape.getByRole("link", { name: "taianecc.contato@gmail.com" })).toHaveAttribute(
 		"href",
-		"mailto:taianecriscampos@gmail.com",
+		"mailto:taianecc.contato@gmail.com",
 	);
 	await expect(rodape.locator("[data-hora-valor]")).toHaveText(/^\d{2}:\d{2}$/);
 	await expect(rodape.getByText("Ribeirão Preto / São Paulo, Brasil")).toBeVisible();
@@ -80,7 +80,7 @@ test("o botão de copiar o e-mail avisa que copiou e o aviso some depois de 2 se
 	await expect(aviso).toHaveAttribute("aria-live", "polite");
 	if (leArea)
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-			"taianecriscampos@gmail.com",
+			"taianecc.contato@gmail.com",
 		);
 	await expect(aviso).toHaveText("", { timeout: 4000 });
 });

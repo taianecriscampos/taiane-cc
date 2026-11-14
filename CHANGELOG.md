@@ -6,6 +6,12 @@ e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+## [1.1.2] - 2026-11-14
+
+### Alterado
+
+- E-mail de contato trocado para taianecc.contato@gmail.com (perfil e testes).
+
 ## [1.1.1] - 2026-11-14
 
 ### Corrigido
