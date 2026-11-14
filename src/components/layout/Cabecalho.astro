@@ -604,8 +604,8 @@ const itens = [inicio, ...links].map((link, i) => ({ ...link, numero: numero(i) 
 	/* Melhoria: vidro translúcido com desfoque, fora do WebKit. No WebKit (Safari e todo navegador
 	   do iPhone, inclusive o do Instagram), desfoque + clip-path dentro de um cabeçalho sticky faz
 	   o elemento sumir inteiro (WebKit 142662, 255701, 298709); lá fica a base sólida.
-	   "font: -apple-system-body" só existe no WebKit. */
-	@supports (backdrop-filter: blur(1px)) and (not (font: -apple-system-body)) {
+	   Só o WebKit aceita o prefixo -webkit-backdrop-filter: é por ele que o WebKit fica de fora. */
+	@supports (backdrop-filter: blur(1px)) and (not (-webkit-backdrop-filter: blur(1px))) {
 		.ilha__fundo {
 			background: var(--ilha-fundo);
 			backdrop-filter: var(--ilha-desfoque);
