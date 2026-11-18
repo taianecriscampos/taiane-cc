@@ -1,0 +1,9 @@
+{
+	// Bloqueia vulnerabilidade alta ou crítica. Exceção única, ver docs/decisoes/0003-seguranca.md.
+	"high": true,
+	"allowlist": [
+		// picomatch: ReDoS em extglobs repetidos. Ferramenta de build, sem versão corrigida.
+		// Remover quando o picomatch tiver correção.
+		"GHSA-fc5q-39xc-vjpf",
+	],
+}

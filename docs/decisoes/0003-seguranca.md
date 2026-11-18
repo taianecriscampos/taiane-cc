@@ -23,7 +23,7 @@ Camada do site (fase 0.1.e, em vercel.json; nota A+ no Mozilla Observatory na 0.
 Camada do código (fases 0.1.d e 0.1.e):
 
 - Poucas dependências, versões travadas no package-lock.json.
-- `npm audit --audit-level=high` no script de qualidade; Dependabot no GitHub.
+- Audit no script de qualidade (`audit-ci --config audit-ci.jsonc`): bloqueia qualquer vulnerabilidade alta ou crítica, menos a exceção abaixo; Dependabot no GitHub.
 - Nenhum segredo no repositório; `.env*` no .gitignore.
 - Proteção da ramificação main: mudanças só por pull request com a qualidade aprovada.
 
@@ -49,6 +49,21 @@ Camada dos dados pessoais (fase 0.4.0):
 - Metadados: o PDF não tem autor, programa de criação nem datas. Ele ainda guarda um anexo de
   credenciais de conteúdo (C2PA) com o nome da ferramenta que o gerou e a data; remover ou manter
   é decisão pendente da Taiane.
+
+## Exceção do audit: picomatch (GHSA-fc5q-39xc-vjpf, 18/11/2026)
+
+- Aviso: "picomatch vulnerable to ReDoS through single-branch repeated extglobs" (gravidade alta),
+  em todas as versões até a 4.0.7 (a mais recente) e também na linha 2.x.
+- Por que é aceito: o picomatch vem com o Astro, o Vite e ferramentas de build; ele roda só na
+  compilação, não vai para o ar (o site é estático) e não recebe texto de visitantes. Não existe
+  versão corrigida, e o único remédio do npm (`audit fix --force`) trocaria o Astro por uma versão
+  major muito antiga.
+- Como: `audit-ci` (mantido, usa o próprio npm audit) com lista de exceções em `audit-ci.jsonc`,
+  só com esse código. Qualquer outra vulnerabilidade alta continua bloqueando a qualidade.
+- Até quando: a exceção sai quando o picomatch tiver correção. Remover o código do
+  `audit-ci.jsonc` e rodar `npm audit fix`.
+- Descartado: `--omit=dev` (o Astro está em `dependencies`, então o aviso continuaria) e
+  sobrescrita (`overrides`) do picomatch (não há versão corrigida).
 
 ## Fora do escopo
 
