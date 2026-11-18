@@ -237,6 +237,40 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 			if (evento.key === "Escape") virar(false);
 		});
 	}
+
+	// Só em telas de toque: o logo colorido acompanha o cartão que está na faixa central da tela.
+	// Um por vez: se dois estão na faixa, vale o mais perto do centro.
+	if (matchMedia("(hover: none)").matches) {
+		const cartoes = [...document.querySelectorAll<HTMLElement>("[data-virar]")];
+		const naFaixa = new Set<HTMLElement>();
+		const atualizar = () => {
+			const centro = innerHeight / 2;
+			let melhor: HTMLElement | null = null;
+			let menor = Infinity;
+			for (const c of naFaixa) {
+				const r = c.getBoundingClientRect();
+				const d = Math.abs(r.top + r.height / 2 - centro);
+				if (d < menor) {
+					menor = d;
+					melhor = c;
+				}
+			}
+			for (const c of cartoes) c.toggleAttribute("data-no-centro", c === melhor);
+		};
+		const observador = new IntersectionObserver(
+			(entradas) => {
+				for (const e of entradas) {
+					if (e.isIntersecting) naFaixa.add(e.target as HTMLElement);
+					else naFaixa.delete(e.target as HTMLElement);
+				}
+				atualizar();
+			},
+			{ rootMargin: "-40% 0px -40% 0px" },
+		);
+		for (const c of cartoes) observador.observe(c);
+		// Dois cartões na faixa ao mesmo tempo: reavalia a distância durante a rolagem.
+		addEventListener("scroll", () => naFaixa.size > 1 && atualizar(), { passive: true });
+	}
 </script>
 
 <style>
@@ -528,6 +562,18 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 		}
 	}
 
+	/* Toque (sem hover): o logo ganha cor quando o cartão está no centro da tela. O script
+	   põe data-no-centro em um cartão por vez. Só opacity, 400 ms, ease-out. */
+	@media (hover: none) {
+		.simbolo__marca {
+			transition: opacity var(--motion-duration-cor-centro) var(--motion-ease-out);
+		}
+
+		.projeto[data-no-centro] .simbolo__marca {
+			opacity: 1;
+		}
+	}
+
 	.projeto:has(.projeto__link:focus-visible) :global(.seta__icone),
 	.projeto:has(.projeto__virar:focus-visible) .projeto__icone {
 		transform: translateX(var(--space-minimo));
@@ -543,6 +589,10 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 
 		.projeto__face {
 			transition: opacity var(--motion-duration-esmaecer) var(--motion-ease-out);
+		}
+
+		.simbolo__marca {
+			transition: none;
 		}
 
 		.projeto__verso,
