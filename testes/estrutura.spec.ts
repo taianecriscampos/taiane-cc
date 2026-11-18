@@ -47,6 +47,25 @@ test("os artigos abrem em nova aba e avisam o leitor de tela, com o título inte
 	).toHaveCount(1);
 });
 
+test("os artigos ficam do mais recente ao mais antigo, com o do Substack por último", async ({
+	page,
+}) => {
+	await page.goto("/");
+	const titulos = page.locator("#artigos .entrada__titulo");
+	await expect(titulos.first()).toContainText("Design Engineering começa antes do código");
+	await expect(titulos.last()).toContainText("UX e Dev: Reconectando o Elo Perdido");
+});
+
+test("o Resumo cita o designDivergente.blog num link que abre em nova aba", async ({ page }) => {
+	await page.goto("/");
+	const sobre = page.locator("#sobre");
+	await expect(sobre.getByText(/^Sou Senior Product Designer, com mais de 10 anos/)).toBeVisible();
+	const link = sobre.getByRole("link", { name: /^designDivergente\.blog/ });
+	await expect(link).toHaveAttribute("href", "https://designdivergente.blog/");
+	await expect(link).toHaveAttribute("target", "_blank");
+	await expect(link).toHaveAccessibleName(/abre em nova aba$/);
+});
+
 test("o rodapé traz o convite, o e-mail e a hora local", async ({ page }) => {
 	await page.goto("/");
 	const rodape = page.getByRole("contentinfo");
@@ -192,7 +211,7 @@ test("o cartão vira com clique, mostra o verso e desvira com Voltar", async ({ 
 	await expect(botao).toHaveAttribute("aria-expanded", "true");
 	await expect(verso).not.toHaveAttribute("inert");
 	await expect(verso).toBeFocused();
-	await expect(verso.getByText(/^Assistente interno de IA generativa/)).toBeVisible();
+	await expect(verso.getByText(/^Assistente interno de IA/)).toBeVisible();
 	await expect(verso.getByText("Minha atuação", { exact: true })).toBeVisible();
 	await expect(verso.getByText(/Case em construção/)).toHaveCount(0);
 	const linkedin = verso.getByRole("link", { name: /^Me chama no LinkedIn/ });
