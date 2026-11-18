@@ -1,7 +1,7 @@
 ---
 titulo: "Azul GPT"
-chamada: "Assistente de IA generativa para a operação consultar normas técnicas direto na fonte."
-resumo: "Pela WeFit, participei do desenvolvimento do Azul GPT, assistente de IA generativa criado com a OpenAI para tripulantes e operações críticas da Azul. Conduzi a pesquisa com tripulantes e desenhei a experiência de conversa, das perguntas sugeridas ao jeito de mostrar a fonte de cada resposta. Resultado: dúvidas do dia a dia respondidas sem procurar em vários manuais."
+chamada: "Assistente de IA para a operação consultar normas técnicas direto na fonte."
+resumo: "Pela WeFit, participei do desenvolvimento do Azul GPT, assistente de IA criado com a OpenAI para tripulantes e operações críticas da Azul. Conduzi a pesquisa com tripulantes e desenhei a experiência de conversa, das perguntas sugeridas ao jeito de mostrar a fonte de cada resposta. Resultado: dúvidas do dia a dia respondidas sem procurar em vários manuais."
 empresa: "Azul Linhas Aéreas, cliente atendido pela WeFit"
 cliente: "Azul · WeFit"
 ano: 2024
@@ -10,7 +10,7 @@ duracao: "8 meses"
 disciplinas:
   - "UX Research"
   - "Design conversacional"
-  - "IA generativa"
+  - "IA"
   - "Arquitetura da Informação"
   - "Prototipação"
 sigilo: "confidencial"
@@ -30,7 +30,7 @@ resultados:
 rascunhos: ["resumo", "duracao", "disciplinas", "cartoes", "resultados"]
 pagina: false
 verso:
-  subtitulo: "Assistente interno de IA generativa, criado com a OpenAI, para a operação consultar normas técnicas direto no documento oficial."
+  subtitulo: "Assistente interno de IA, criado com a OpenAI, para a operação consultar normas técnicas direto no documento oficial."
   blocos:
     - rotulo: "Minha atuação"
       texto: "Arquitetura da informação, design de interface e de interação, protótipos e a interface de pré-produção, com todos os fluxos de sucesso, erro e exceção."
@@ -51,7 +51,7 @@ Resultados descritos em palavras, sem números inventados.
 
 Tripulantes da Azul consultam procedimentos o tempo todo: regras de escala, protocolos de bordo, mudanças de última hora. A informação existia, mas estava espalhada em manuais longos e em sistemas diferentes, cada um com a sua busca.
 
-A Azul decidiu testar um assistente de IA generativa, construído com a OpenAI, para responder essas perguntas em linguagem natural. A WeFit entrou no projeto para cuidar da experiência, e eu fiquei com a pesquisa e o desenho da conversa.
+A Azul decidiu testar um assistente de IA, construído com a OpenAI, para responder essas perguntas em linguagem natural. A WeFit entrou no projeto para cuidar da experiência, e eu fiquei com a pesquisa e o desenho da conversa.
 
 </div>
 

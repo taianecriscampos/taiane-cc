@@ -6,6 +6,20 @@ e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+## [1.1.3] - 2026-11-18
+
+### Adicionado
+
+- Nos cartões confidenciais, em telas de toque, o logo ganha a cor original ao passar pelo centro da tela, com esmaecimento cruzado de 700 ms.
+- Audit com `audit-ci`: bloqueia vulnerabilidade alta, exceto o aviso conhecido do picomatch (ADR 0003).
+
+### Alterado
+
+- "IA generativa" virou "IA" em todo o site (cartão e case do Azul GPT, Hard skills, llms.txt e dados estruturados).
+- Artigos em ordem de publicação: o do Substack vai para o fim.
+- Novo texto do Resumo (Sobre), com link para o designDivergente.blog.
+- Dependências atualizadas com `npm audit fix`.
+
 ## [1.1.2] - 2026-11-14
 
 ### Alterado
@@ -92,7 +106,8 @@ Etapa Fundação: a base técnica do portfólio, sem conteúdo real ainda.
 - GitHub Actions rodando a qualidade em todo envio e pull request; Dependabot semanal.
 - Publicação na Vercel: produção em taiane-cc.vercel.app e prévias da ramificação design.
 
-[Não publicado]: https://github.com/taianecriscampos/taiane-cc/compare/v1.0.0...HEAD
+[Não publicado]: https://github.com/taianecriscampos/taiane-cc/compare/v1.1.3...HEAD
+[1.1.3]: https://github.com/taianecriscampos/taiane-cc/compare/v1.1.2...v1.1.3
 [1.0.0]: https://github.com/taianecriscampos/taiane-cc/compare/v0.1.1...v1.0.0
 [0.1.1]: https://github.com/taianecriscampos/taiane-cc/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/taianecriscampos/taiane-cc/releases/tag/v0.1.0

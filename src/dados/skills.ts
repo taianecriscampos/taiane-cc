@@ -40,7 +40,7 @@ export const competencias: string[] = [
 	"Front-End",
 	"AI-Driven Development",
 	"Vibe Coding",
-	"IA Generativa",
+	"IA",
 	"Agentes de IA",
 	"MCP",
 	"Foundation Models",
