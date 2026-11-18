@@ -143,7 +143,7 @@
 	--prim-duration-300: 0.3s;
 	--prim-duration-350: 0.35s; /* sumário do case que se reorganiza */
 	--prim-duration-380: 0.38s;
-	--prim-duration-400: 0.4s; /* logo do cartão confidencial que ganha cor no centro da tela (toque) */
+	--prim-duration-700: 0.7s; /* logo do cartão confidencial que ganha cor no centro da tela (toque) */
 	--prim-duration-500: 0.5s; /* crescimento da ilha com mola (docs/movimento-ilha.md) */
 	--prim-intervalo-35: 35ms; /* entre itens de uma lista que entra em sequência */
 	--prim-duration-1000: 1s;
@@ -267,7 +267,7 @@
 	--motion-duration-abrir: var(--prim-duration-300);
 	--motion-duration-reorganizar: var(--prim-duration-350);
 	--motion-duration-virar: var(--prim-duration-380); /* cartão que vira, decisão da Taiane */
-	--motion-duration-cor-centro: var(--prim-duration-400);
+	--motion-duration-cor-centro: var(--prim-duration-700);
 	--motion-duration-esmaecer: var(
 		--prim-duration-150
 	); /* troca sem movimento (movimento reduzido) */

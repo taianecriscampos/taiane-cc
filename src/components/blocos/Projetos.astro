@@ -265,7 +265,7 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 				}
 				atualizar();
 			},
-			{ rootMargin: "-40% 0px -40% 0px" },
+			{ rootMargin: "-35% 0px -35% 0px" },
 		);
 		for (const c of cartoes) observador.observe(c);
 		// Dois cartões na faixa ao mesmo tempo: reavalia a distância durante a rolagem.
@@ -563,10 +563,10 @@ const { projetos, id = "projetos", rotulo = "Projetos", icone = "seta" } = Astro
 	}
 
 	/* Toque (sem hover): o logo ganha cor quando o cartão está no centro da tela. O script
-	   põe data-no-centro em um cartão por vez. Só opacity, 400 ms, ease-out. */
+	   põe data-no-centro em um cartão por vez. Esmaecimento cruzado só com opacity, 700 ms, ease-in-out. */
 	@media (hover: none) {
 		.simbolo__marca {
-			transition: opacity var(--motion-duration-cor-centro) var(--motion-ease-out);
+			transition: opacity var(--motion-duration-cor-centro) var(--motion-ease-in-out-suave);
 		}
 
 		.projeto[data-no-centro] .simbolo__marca {
