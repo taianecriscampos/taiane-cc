@@ -1,8 +1,13 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 
-/** A Vercel define VERCEL_ENV como "production" só na compilação do taiane.cc. */
-const ehProducao = process.env.VERCEL_ENV === "production";
+/**
+ * É produção na Vercel (VERCEL_ENV "production") ou no Cloudflare Pages
+ * (CF_PAGES "1" na ramificação main). Prévias de outras ramificações não são produção.
+ */
+const ehProducao =
+	process.env.VERCEL_ENV === "production" ||
+	(process.env.CF_PAGES === "1" && process.env.CF_PAGES_BRANCH === "main");
 
 /**
  * Inclui o /laboratorio em todo ambiente, menos a produção:

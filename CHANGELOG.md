@@ -6,6 +6,13 @@ e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+## [1.1.4] - 2026-11-20
+
+### Alterado
+
+- Preparado para o Cloudflare Pages (a conta da Vercel foi pausada): produção também é reconhecida por `CF_PAGES` e `CF_PAGES_BRANCH`.
+- Cabeçalhos de segurança em `public/_headers`, iguais aos do `vercel.json`.
+
 ## [1.1.3] - 2026-11-18
 
 ### Adicionado

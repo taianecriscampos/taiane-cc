@@ -15,6 +15,14 @@ e por engenheiros que podem inspecionar o código.
 - Sem servidor, banco de dados ou CMS. Contato por e-mail e LinkedIn.
 - JavaScript apenas nas ilhas de interação (GSAP, Lenis).
 
+## Atualização: hospedagem no Cloudflare Pages (v1.1.4)
+
+A conta da Vercel foi pausada, então o site passa a ser publicado no Cloudflare Pages.
+O ambiente de produção é reconhecido por `VERCEL_ENV === "production"` ou por `CF_PAGES === "1"`
+com `CF_PAGES_BRANCH === "main"`; prévias de outras ramificações seguem com noindex e com o
+Laboratório. Os cabeçalhos de segurança ficam em `public/_headers` (mesmos valores do
+`vercel.json`, que foi mantido).
+
 ## Alternativas consideradas
 
 - Next.js + Sanity (stack do designDivergente): mais poder, mas custo de complexidade
