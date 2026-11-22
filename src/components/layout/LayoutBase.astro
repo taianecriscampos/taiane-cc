@@ -56,6 +56,8 @@ const jsonLd = dadosEstruturados && JSON.stringify(dadosEstruturados).replace(/<
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- Impede o iPhone de transformar "Grupo Sifra", anos etc. em link de telefone, data ou endereço. -->
+		<meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
 		<!-- Barra de status do celular na cor do fundo da página. -->
 		<meta name="theme-color" content="#fafafa" />
 		<title>{titulo}</title>

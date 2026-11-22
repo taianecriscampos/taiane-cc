@@ -2,9 +2,9 @@
 
 Atualize este arquivo ao final de cada tarefa.
 
-**Versão atual:** 1.1.4 (Ajuste: hospedagem no Cloudflare Pages)
+**Versão atual:** 1.1.5 (Correção: link dentro do texto e detecção automática no iPhone)
 **Etapa atual:** 1.1.0 Movimento (publicada em 13/11/2026)
-**Fase da etapa:** 1.1.4 Preparação para o Cloudflare Pages · 20/11/2026
+**Fase da etapa:** 1.1.5 Correções no iPhone · 22/11/2026
 **Direção de arte (0.3.0):** aprovada pela Taiane
 **Status geral:** Publicado em 12/11/2026 (v1.0.0, conferido em taiane.cc: página, robots, sitemap, sem noindex e cabeçalhos de segurança)
 **Meta de lançamento:** 1.0.0 em 12/11/2026, no taiane.cc
