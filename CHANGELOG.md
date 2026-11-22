@@ -6,6 +6,13 @@ e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+## [1.1.5] - 2026-11-22
+
+### Corrigido
+
+- No Resumo do Sobre, o link "designDivergente.blog" não quebra mais o parágrafo no celular: nova variante de link dentro do texto (`noTexto`), com a altura de linha do parágrafo e a seta e a vírgula coladas na palavra.
+- No iPhone, "Grupo Sifra" e os anos não aparecem mais como links: `format-detection` no `<head>` e links automáticos do Safari neutralizados no CSS.
+
 ## [1.1.4] - 2026-11-20
 
 ### Alterado

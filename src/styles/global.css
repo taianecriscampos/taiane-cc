@@ -199,6 +199,14 @@
 		}
 	}
 
+	/* Links que o Safari cria sozinho (detecção de data, endereço etc.): aparência do texto comum. */
+	a[x-apple-data-detectors] {
+		color: inherit !important;
+		font: inherit !important;
+		text-decoration: none !important;
+		pointer-events: none;
+	}
+
 	/* Seção da página inicial: rótulo pequeno e, 24 px abaixo, o conteúdo.
 	   Respiro em cima e embaixo, como na debora.wiki: 80 + 80 px entre seções (40 + 40 no celular). */
 	.secao {
