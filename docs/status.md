@@ -2,7 +2,7 @@
 
 Atualize este arquivo ao final de cada tarefa.
 
-**Versão atual:** 1.1.5 (Correção: link dentro do texto e detecção automática no iPhone)
+**Versão atual:** 1.2.0 (Artigos automáticos, 26/11/2026)
 **Etapa atual:** 1.1.0 Movimento (publicada em 13/11/2026)
 **Fase da etapa:** 1.1.5 Correções no iPhone · 22/11/2026
 **Direção de arte (0.3.0):** aprovada pela Taiane
@@ -343,3 +343,19 @@ Ramificação design, sem envio ao GitHub. Efeitos da v1.1 aprovados (ver seçã
   lista de projetos mostra só o título.
 - **Ambiente:** com pouca memória livre no computador, rodar os testes com `--workers=1`.
 - **11/2027:** renovar a data `Expires` do `public/.well-known/security.txt` antes de 11/11/2027.
+
+## Artigos automáticos
+
+Status: aprovado pela Taiane em 26/11/2026 (versão 1.2.0).
+
+- A seção Artigos é montada no build: os 2 posts mais recentes do designDivergente, direto da
+  API pública do Sanity (projeto 8n0erfvy, dataset production, sem token), e o artigo do
+  Substack fixo por último (`src/dados/artigos-do-blog.ts`). Se a busca falhar, entra a reserva
+  de `src/dados/artigos.ts`, com aviso no registro do build.
+- Rebuild diário às 06:17 de Brasília (`.github/workflows/rebuild-diario.yml`).
+- Falta: criar o deploy hook no Cloudflare Pages (ramificação main) e o segredo
+  `CLOUDFLARE_DEPLOY_HOOK` no GitHub. O agendamento só vale depois de chegar à main.
+- Qualidade em 25/11/2026: check sem erros, formatação ok, audit aprovado, 127 testes
+  aprovados e 7 pulados de propósito. Testados também o build sem rede e títulos de 110 letras.
+- Em 26/11/2026, a reserva passou a ter os 2 posts mais recentes do blog.
+- Pendência do blog: o post "Fluência em IA" respondia 500 em 26/11/2026.
