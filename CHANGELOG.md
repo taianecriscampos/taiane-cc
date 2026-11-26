@@ -6,6 +6,18 @@ e o projeto usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+## [1.2.0] - 2026-11-26
+
+### Adicionado
+
+- A seção Artigos se atualiza sozinha: no build, busca os 2 posts mais recentes do designDivergente na API pública do Sanity e mantém o artigo do Substack por último. Se a busca falhar, usa a lista de reserva.
+- Rebuild diário pelo GitHub Actions, com um deploy hook do Cloudflare Pages (segredo `CLOUDFLARE_DEPLOY_HOOK`).
+- Backlog do projeto em `docs/backlog.md`.
+
+### Corrigido
+
+- A lista de reserva troca os 2 links do blog que respondiam 404 pelos 2 posts mais recentes.
+
 ## [1.1.5] - 2026-11-22
 
 ### Corrigido
