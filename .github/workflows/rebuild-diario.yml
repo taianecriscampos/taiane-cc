@@ -1,0 +1,31 @@
+# Publica o site de novo uma vez por dia, para a seção Artigos pegar os posts novos do blog.
+# Chama o "deploy hook" do Cloudflare Pages, um endereço secreto guardado no segredo
+# CLOUDFLARE_DEPLOY_HOOK do GitHub. Nunca escreva esse endereço em arquivos do repositório.
+# O GitHub só executa o agendamento a partir da ramificação main.
+name: Rebuild diário
+
+on:
+  schedule:
+    # 09:17 UTC, 06:17 em Brasília. O GitHub pode atrasar a execução alguns minutos.
+    - cron: "17 9 * * *"
+  # Botão "Run workflow", na aba Actions, para rodar na hora.
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Chamar o deploy hook do Cloudflare Pages
+        env:
+          DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "::error::Falta o segredo CLOUDFLARE_DEPLOY_HOOK nas configurações do repositório."
+            exit 1
+          fi
+          curl --fail --silent --show-error --max-time 30 --retry 3 \
+            --request POST --output /dev/null "$DEPLOY_HOOK"
+          echo "Publicação pedida ao Cloudflare Pages."

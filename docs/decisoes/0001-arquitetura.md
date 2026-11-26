@@ -33,3 +33,10 @@ Laboratório. Os cabeçalhos de segurança ficam em `public/_headers` (mesmos va
 
 - Site rápido, seguro e barato; menos superfície de ataque.
 - Adicionar um formulário ou CMS no futuro exige nova ADR (ex.: função serverless na Vercel).
+
+## Atualização: artigos buscados no build
+
+A seção Artigos lê os posts do designDivergente na API pública do Sanity durante o build. O site
+continua estático, sem back-end e sem token. Como o conteúdo só muda quando há um build, o GitHub
+Actions chama uma vez por dia um deploy hook do Cloudflare Pages. O endereço do hook é um segredo
+do GitHub (`CLOUDFLARE_DEPLOY_HOOK`) e não entra no repositório.

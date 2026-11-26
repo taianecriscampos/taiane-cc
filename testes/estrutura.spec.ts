@@ -39,21 +39,24 @@ test("os artigos abrem em nova aba e avisam o leitor de tela, com o título inte
 		await expect(link).toHaveAttribute("target", "_blank");
 		await expect(link).toHaveAccessibleName(/abre em nova aba$/);
 	}
-	// O título resumido na tela continua inteiro para o leitor de tela.
-	await expect(
-		artigos.getByRole("link", {
-			name: /^Design Engineering começa antes do código: o que aprendi construindo o designDivergente/,
-		}),
-	).toHaveCount(1);
+	// Os títulos vêm do blog no build, então o teste não fixa textos: confere que nenhum é cortado.
+	for (const titulo of await artigos.locator(".entrada__titulo").all()) {
+		await expect(titulo).not.toHaveCSS("text-overflow", "ellipsis");
+		await expect(titulo).toHaveCSS("-webkit-line-clamp", "none");
+	}
 });
 
-test("os artigos ficam do mais recente ao mais antigo, com o do Substack por último", async ({
-	page,
-}) => {
+test("os artigos trazem 2 do blog e, por último, o do Substack", async ({ page }) => {
 	await page.goto("/");
-	const titulos = page.locator("#artigos .entrada__titulo");
-	await expect(titulos.first()).toContainText("Design Engineering começa antes do código");
-	await expect(titulos.last()).toContainText("UX e Dev: Reconectando o Elo Perdido");
+	// Vale com a busca no blog e com a lista de reserva. A ordem por data é pedida na consulta.
+	const links = page.locator("#artigos .entrada__link");
+	for (const posicao of [0, 1]) {
+		await expect(links.nth(posicao)).toHaveAttribute(
+			"href",
+			/^https:\/\/designdivergente\.blog\/.+/,
+		);
+	}
+	await expect(links.last()).toContainText("UX e Dev: Reconectando o Elo Perdido");
 });
 
 test("o Resumo cita o designDivergente.blog num link que abre em nova aba", async ({ page }) => {
